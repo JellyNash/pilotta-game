@@ -1,0 +1,817 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useAppSelector } from '../store/hooks';
+import { Suit, Player, BiddingEntry } from '../core/types';
+import { gameManager } from '../game/GameManager';
+import { useAccessibility } from '../accessibility';
+
+// Bidding History Table Component
+interface BiddingHistoryTableProps {
+  biddingHistory: BiddingEntry[];
+  players: Player[];
+  humanPlayerId?: string;
+  dealerIndex: number;
+  getSuitColor: (suit: Suit) => string;
+  getSuitSymbol: (suit: Suit) => string;
+}
+
+const BiddingHistoryTable: React.FC<BiddingHistoryTableProps> = ({
+  biddingHistory,
+  players,
+  humanPlayerId,
+  dealerIndex,
+  getSuitColor,
+  getSuitSymbol
+}) => {
+  // Get player order starting from dealer + 1
+  const getPlayerOrder = () => {
+    const order: Player[] = [];
+    for (let i = 1; i <= 4; i++) {
+      order.push(players[(dealerIndex + i) % 4]);
+    }
+    return order;
+  };
+
+  const playerOrder = getPlayerOrder();
+  
+  // Group bids by round
+  const bidsByRound: BiddingEntry[][] = [];
+  let currentRound: BiddingEntry[] = [];
+  
+  biddingHistory.forEach((bid, index) => {
+    currentRound.push(bid);
+    if (currentRound.length === 4 || index === biddingHistory.length - 1) {
+      bidsByRound.push([...currentRound]);
+      currentRound = [];
+    }
+  });
+
+  return (
+    <div className="bg-slate-900/50 rounded-xl p-6 overflow-y-auto">
+      <table className="w-full text-base">
+        <thead>
+          <tr className="border-b border-slate-700/50">
+            {playerOrder.map((player) => (
+              <th 
+                key={player.id} 
+                className={`px-3 py-3 text-center font-semibold text-lg ${
+                  player.id === humanPlayerId 
+                    ? 'text-blue-400 bg-blue-600/10 rounded-t-lg' 
+                    : 'text-slate-400'
+                }`}
+              >
+                {player.name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {bidsByRound.map((round, roundIndex) => (
+            <tr key={roundIndex} className="border-b border-slate-800/50">
+              {playerOrder.map((player) => {
+                const bid = round.find(b => b.player.id === player.id);
+                return (
+                  <td 
+                    key={player.id} 
+                    className={`px-3 py-4 text-center ${
+                      player.id === humanPlayerId ? 'bg-blue-600/5' : ''
+                    }`}
+                  >
+                    {bid ? (
+                      bid.bid === 'pass' ? (
+                        <span className="inline-block px-4 py-1 rounded-full bg-slate-600 text-slate-300 text-lg">Pass</span>
+                      ) : bid.bid === 'double' ? (
+                        <span className="inline-block px-4 py-1 rounded-full bg-red-900/30 text-red-400 font-bold text-lg">×2</span>
+                      ) : bid.bid === 'redouble' ? (
+                        <span className="inline-block px-4 py-1 rounded-full bg-purple-900/30 text-purple-400 font-bold text-lg">×4</span>
+                      ) : (
+                        <div className="inline-flex items-center justify-center space-x-1 px-4 py-1 rounded-full bg-slate-600">
+                          <span className="text-white font-bold text-xl">{bid.bid}</span>
+                          <span className={`${getSuitColor(bid.trump!)} text-2xl`}>
+                            {getSuitSymbol(bid.trump!)}
+                          </span>
+                        </div>
+                      )
+                    ) : (
+                      <span className="text-slate-700 text-lg">-</span>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const BiddingInterface: React.FC = () => {
+  const { settings, announceToScreenReader } = useAccessibility();
+  const currentPlayer = useAppSelector(state => state.game.players[state.game.currentPlayerIndex]);
+  const contract = useAppSelector(state => state.game.contract);
+  const biddingHistory = useAppSelector(state => state.game.biddingHistory);
+  const humanPlayer = useAppSelector(state => state.game.players.find(p => !p.isAI));
+  const players = useAppSelector(state => state.game.players);
+  const dealerIndex = useAppSelector(state => state.game.dealerIndex);
+  const isHumanTurn = !currentPlayer?.isAI;
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Determine if human team is winning the current contract
+  const isHumanTeamWinning = contract && humanPlayer && contract.team === humanPlayer.teamId;
+  
+  // Get minimum and maximum bid values
+  const minBid = gameManager.getMinimumBid();
+  const maxBid = 490;
+  
+  const [selectedBid, setSelectedBid] = useState<number>(minBid);
+  const [selectedTrump, setSelectedTrump] = useState<Suit | null>(null);
+  const [focusedElement, setFocusedElement] = useState<'bid' | 'trump' | 'actions'>('bid');
+  const [isIncrementing, setIsIncrementing] = useState(false);
+  const [isDecrementing, setIsDecrementing] = useState(false);
+  const incrementIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const incrementTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const decrementIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const decrementTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Set initial bid to minimum when component mounts or minBid changes
+  useEffect(() => {
+    setSelectedBid(minBid);
+  }, [minBid]);
+  
+  // Check if double/redouble are available
+  const canDouble = contract && !contract.doubled && humanPlayer?.teamId !== contract.team && isHumanTurn;
+  const canRedouble = contract && contract.doubled && !contract.redoubled && humanPlayer?.teamId === contract.team && isHumanTurn;
+  const isDoubled = contract?.doubled || false;
+
+  // Announce turn to screen reader
+  useEffect(() => {
+    if (isHumanTurn) {
+      announceToScreenReader('Your turn to bid. Use arrow keys to navigate, space or enter to select.');
+    }
+  }, [isHumanTurn, announceToScreenReader]);
+
+  // Cleanup intervals on unmount
+  useEffect(() => {
+    return () => {
+      if (incrementIntervalRef.current) clearInterval(incrementIntervalRef.current);
+      if (incrementTimeoutRef.current) clearTimeout(incrementTimeoutRef.current);
+      if (decrementIntervalRef.current) clearInterval(decrementIntervalRef.current);
+      if (decrementTimeoutRef.current) clearTimeout(decrementTimeoutRef.current);
+    };
+  }, []);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!isHumanTurn || !settings.keyboard.enabled) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!containerRef.current?.contains(document.activeElement)) return;
+
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'ArrowRight':
+          e.preventDefault();
+          if (focusedElement === 'trump') {
+            const suits = Object.values(Suit);
+            const currentSuit = selectedTrump || suits[0];
+            const currentIndex = suits.indexOf(currentSuit);
+            const newIndex = e.key === 'ArrowRight' 
+              ? (currentIndex + 1) % suits.length
+              : (currentIndex - 1 + suits.length) % suits.length;
+            setSelectedTrump(suits[newIndex]);
+            announceToScreenReader(`Selected ${getSuitName(suits[newIndex])}`);
+          } else if (focusedElement === 'bid') {
+            const change = e.key === 'ArrowRight' ? 10 : -10;
+            const newBid = Math.max(minBid, Math.min(maxBid, selectedBid + change));
+            setSelectedBid(newBid);
+            announceToScreenReader(`Bid ${newBid}`);
+          }
+          break;
+        case 'ArrowUp':
+        case 'ArrowDown':
+          e.preventDefault();
+          const elements: ('bid' | 'trump' | 'actions')[] = ['bid', 'trump', 'actions'];
+          const currentIdx = elements.indexOf(focusedElement);
+          const newIdx = e.key === 'ArrowDown' 
+            ? (currentIdx + 1) % elements.length
+            : (currentIdx - 1 + elements.length) % elements.length;
+          setFocusedElement(elements[newIdx]);
+          announceToScreenReader(`Navigate to ${elements[newIdx]}`);
+          break;
+        case 'b':
+        case 'B':
+          if (!isDoubled) {
+            e.preventDefault();
+            handleBid();
+          }
+          break;
+        case 'p':
+        case 'P':
+          e.preventDefault();
+          handlePass();
+          break;
+        case 'd':
+        case 'D':
+          if (canDouble) {
+            e.preventDefault();
+            handleDouble();
+          }
+          break;
+        case 'r':
+        case 'R':
+          if (canRedouble) {
+            e.preventDefault();
+            handleRedouble();
+          }
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isHumanTurn, settings.keyboard.enabled, focusedElement, selectedBid, selectedTrump, isDoubled, canDouble, canRedouble, minBid, maxBid]);
+
+  // Bid increment/decrement handlers
+  const startIncrementing = () => {
+    setIsIncrementing(true);
+    // Single increment
+    const newBid = Math.min(maxBid, selectedBid + 10);
+    setSelectedBid(newBid);
+    announceToScreenReader(`Bid ${newBid}`);
+    
+    // Start accelerating after 300ms
+    incrementTimeoutRef.current = setTimeout(() => {
+      let speed = 100; // Start with 100ms intervals
+      incrementIntervalRef.current = setInterval(() => {
+        setSelectedBid(prev => {
+          const increment = speed < 50 ? 50 : speed < 20 ? 20 : 10;
+          const newValue = Math.min(maxBid, prev + increment);
+          if (newValue === maxBid) {
+            stopIncrementing();
+          }
+          return newValue;
+        });
+        // Accelerate
+        speed = Math.max(20, speed * 0.9);
+      }, speed);
+    }, 300);
+  };
+
+  const stopIncrementing = () => {
+    setIsIncrementing(false);
+    if (incrementIntervalRef.current) {
+      clearInterval(incrementIntervalRef.current);
+      incrementIntervalRef.current = null;
+    }
+    if (incrementTimeoutRef.current) {
+      clearTimeout(incrementTimeoutRef.current);
+      incrementTimeoutRef.current = null;
+    }
+  };
+
+  const startDecrementing = () => {
+    setIsDecrementing(true);
+    // Single decrement
+    const newBid = Math.max(minBid, selectedBid - 10);
+    setSelectedBid(newBid);
+    announceToScreenReader(`Bid ${newBid}`);
+    
+    // Start accelerating after 300ms
+    decrementTimeoutRef.current = setTimeout(() => {
+      let speed = 100; // Start with 100ms intervals
+      decrementIntervalRef.current = setInterval(() => {
+        setSelectedBid(prev => {
+          const decrement = speed < 50 ? 50 : speed < 20 ? 20 : 10;
+          const newValue = Math.max(minBid, prev - decrement);
+          if (newValue === minBid) {
+            stopDecrementing();
+          }
+          return newValue;
+        });
+        // Accelerate
+        speed = Math.max(20, speed * 0.9);
+      }, speed);
+    }, 300);
+  };
+
+  const stopDecrementing = () => {
+    setIsDecrementing(false);
+    if (decrementIntervalRef.current) {
+      clearInterval(decrementIntervalRef.current);
+      decrementIntervalRef.current = null;
+    }
+    if (decrementTimeoutRef.current) {
+      clearTimeout(decrementTimeoutRef.current);
+      decrementTimeoutRef.current = null;
+    }
+  };
+
+  const handleBid = async () => {
+    if (isHumanTurn && selectedBid && selectedTrump) {
+      await gameManager.makeBid(selectedBid, selectedTrump);
+      announceToScreenReader(`You bid ${selectedBid} ${getSuitName(selectedTrump)}`);
+    }
+  };
+
+  const handlePass = async () => {
+    if (isHumanTurn) {
+      await gameManager.makeBid('pass');
+      announceToScreenReader('You passed');
+    }
+  };
+
+  const handleDouble = async () => {
+    if (canDouble) {
+      await gameManager.doubleBid();
+      announceToScreenReader('You doubled the bid');
+    }
+  };
+
+  const handleRedouble = async () => {
+    if (canRedouble) {
+      await gameManager.redoubleBid();
+      announceToScreenReader('You redoubled the bid');
+    }
+  };
+
+  const getSuitSymbol = (suit: Suit) => {
+    const symbols: Record<Suit, string> = {
+      [Suit.Hearts]: '♥',
+      [Suit.Diamonds]: '♦',
+      [Suit.Clubs]: '♣',
+      [Suit.Spades]: '♠'
+    };
+    return symbols[suit];
+  };
+
+  const getSuitName = (suit: Suit) => {
+    const names: Record<Suit, string> = {
+      [Suit.Hearts]: 'Hearts',
+      [Suit.Diamonds]: 'Diamonds',
+      [Suit.Clubs]: 'Clubs',
+      [Suit.Spades]: 'Spades'
+    };
+    return names[suit];
+  };
+
+  const getSuitColor = (suit: Suit) => {
+    if (settings.theme === 'colorblind-safe' || settings.colorblindMode !== 'none') {
+      return `suit-${suit.toLowerCase()}`;
+    }
+    return suit === Suit.Hearts || suit === Suit.Diamonds ? 'text-red-500' : 'text-gray-900';
+  };
+
+  if (!isHumanTurn) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+      >
+        <div className="bg-slate-800/90 backdrop-blur-md rounded-xl p-6 shadow-2xl pointer-events-auto">
+          <p className="text-slate-300 text-lg">
+            {currentPlayer?.name} is thinking...
+          </p>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="fixed inset-0 flex items-center justify-center z-50"
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-auto" />
+      
+      {/* Centered bidding card */}
+      <div
+        ref={containerRef}
+        className="relative bg-slate-800/75 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl pointer-events-auto max-w-4xl w-full mx-4"
+        role="region"
+        aria-label="Bidding controls"
+        aria-live="polite"
+      >
+        <div className="space-y-6">
+          {/* Top Row - Suit Selection and Current Bid/Double */}
+          <div className="flex items-start gap-4">
+            {/* Left side: Suit Selection (2/3 width) */}
+            <div className={`flex-grow flex-shrink-0 w-2/3 ${focusedElement === 'trump' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
+              <div className="flex justify-start space-x-6" role="radiogroup" aria-labelledby="trump-label">
+                {Object.values(Suit).map((suit) => (
+                  <motion.button
+                    key={suit}
+                    whileHover={{ 
+                      scale: 1.05,
+                      rotateY: 15,
+                      z: 50
+                    }}
+                    whileTap={{ 
+                      scale: 0.95,
+                      rotateY: 0
+                    }}
+                    onClick={() => {
+                      setSelectedTrump(suit);
+                      announceToScreenReader(`Selected ${getSuitName(suit)} as trump`);
+                    }}
+                    style={{ transformStyle: "preserve-3d" }}
+                    className={`
+                      relative px-6 py-4 sm:px-7 sm:py-5 rounded-xl transition-all duration-300 touch-target min-w-[100px] sm:min-w-[110px] transform perspective-1000
+                      ${selectedTrump === suit 
+                        ? 'bg-gradient-to-br from-blue-500/90 to-blue-600/90 shadow-2xl' 
+                        : 'bg-gradient-to-br from-slate-700/90 to-slate-800/90 hover:from-slate-600/90 hover:to-slate-700/90 shadow-lg hover:shadow-xl'
+                      }
+                      border border-slate-500/30 backdrop-blur-sm overflow-hidden group
+                    `}
+                    role="radio"
+                    aria-checked={selectedTrump === suit}
+                    aria-label={`${getSuitName(suit)} trump`}
+                  >
+                    {/* Floating particles effect */}
+                    {selectedTrump === suit && (
+                      <>
+                        <motion.div
+                          className="absolute inset-0 opacity-30"
+                          animate={{
+                            background: [
+                              "radial-gradient(circle at 20% 80%, transparent 0%, rgba(59, 130, 246, 0.3) 50%, transparent 70%)",
+                              "radial-gradient(circle at 80% 20%, transparent 0%, rgba(59, 130, 246, 0.3) 50%, transparent 70%)",
+                              "radial-gradient(circle at 20% 80%, transparent 0%, rgba(59, 130, 246, 0.3) 50%, transparent 70%)"
+                            ]
+                          }}
+                          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                        />
+                        <motion.div
+                          className="absolute inset-0 border-2 border-blue-400/50 rounded-xl"
+                          animate={{
+                            boxShadow: [
+                              "0 0 20px rgba(59, 130, 246, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.2)",
+                              "0 0 30px rgba(59, 130, 246, 0.7), inset 0 0 30px rgba(59, 130, 246, 0.3)",
+                              "0 0 20px rgba(59, 130, 246, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.2)"
+                            ]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                      </>
+                    )}
+                    
+                    {/* Card shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12" />
+                    
+                    {/* Suit symbol with 3D effect */}
+                    <motion.span 
+                      className={`relative text-7xl sm:text-8xl ${getSuitColor(suit)} ${settings.suitPatterns ? `suit-pattern-${suit.toLowerCase()}` : ''} z-10`}
+                      animate={selectedTrump === suit ? {
+                        filter: [
+                          "drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))",
+                          "drop-shadow(0 0 20px rgba(59, 130, 246, 0.7))",
+                          "drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))"
+                        ]
+                      } : {}}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      {getSuitSymbol(suit)}
+                    </motion.span>
+                    
+                    {/* Hover particle effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {[...Array(3)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-1 h-1 bg-white/50 rounded-full"
+                          initial={{ 
+                            x: Math.random() * 100 - 50, 
+                            y: 60,
+                            opacity: 0 
+                          }}
+                          animate={{ 
+                            y: -20,
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{
+                            duration: 2,
+                            delay: i * 0.3,
+                            repeat: Infinity,
+                            ease: "easeOut"
+                          }}
+                          style={{ left: "50%" }}
+                        />
+                      ))}
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Right side: Current Bid + Double/Redouble (1/3 width) */}
+            <div className="flex-shrink-0 w-1/3 flex items-stretch">
+              <div className="flex flex-col items-center justify-between py-4 space-y-3 ml-auto mr-[15%]">
+                {/* Current Contract - always show to maintain height */}
+                <div className={`
+                  inline-flex items-center rounded-xl px-6 py-3 shadow-lg w-[200px] justify-center flex-1
+                  ${contract 
+                    ? isHumanTeamWinning 
+                      ? 'bg-green-900/30 border border-green-600/30' 
+                      : 'bg-red-900/30 border border-red-600/30'
+                    : 'bg-slate-700/30 border border-slate-600/30'
+                  }
+                `} aria-label="Current contract">
+                  {contract ? (
+                    <>
+                      <span className="text-2xl font-bold text-white mr-2">{contract.value}</span>
+                      <span className={`text-4xl ${getSuitColor(contract.trump)}`}>
+                        {getSuitSymbol(contract.trump)}
+                      </span>
+                      {contract.doubled && !contract.redoubled && (
+                        <span className="text-red-400 text-xl font-bold ml-3">×2</span>
+                      )}
+                      {contract.redoubled && (
+                        <span className="text-purple-400 text-xl font-bold ml-3">×4</span>
+                      )}
+                    </>
+                  ) : (
+                    <span className="text-xl font-semibold text-slate-400">No bids</span>
+                  )}
+                </div>
+                
+                {/* Double/Redouble button - fixed height */}
+                {(canDouble || canRedouble) ? (
+                  <>
+                    {canDouble && (
+                      <motion.button
+                        whileHover={{ 
+                          scale: 1.02,
+                          boxShadow: "0 0 30px rgba(239, 68, 68, 0.5), 0 0 60px rgba(239, 68, 68, 0.3)"
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                        animate={{
+                          boxShadow: [
+                            "0 0 20px rgba(239, 68, 68, 0.3)",
+                            "0 0 25px rgba(239, 68, 68, 0.4)",
+                            "0 0 20px rgba(239, 68, 68, 0.3)"
+                          ]
+                        }}
+                        transition={{
+                          boxShadow: {
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }
+                        }}
+                        onClick={handleDouble}
+                        className="relative px-8 py-3 bg-gradient-to-b from-red-500/90 to-red-600/90 hover:from-red-400/90 hover:to-red-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 w-[200px] mt-2 border border-red-400/30 overflow-hidden group"
+                        aria-label="Double the current bid"
+                        title="Keyboard shortcut: D"
+                      >
+                        <span className="relative z-10">DOUBLE ×2</span>
+                        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </motion.button>
+                    )}
+                    
+                    {canRedouble && (
+                      <motion.button
+                        whileHover={{ 
+                          scale: 1.02,
+                          boxShadow: "0 0 30px rgba(168, 85, 247, 0.5), 0 0 60px rgba(168, 85, 247, 0.3)"
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                        animate={{
+                          boxShadow: [
+                            "0 0 20px rgba(168, 85, 247, 0.3)",
+                            "0 0 30px rgba(168, 85, 247, 0.5)",
+                            "0 0 20px rgba(168, 85, 247, 0.3)"
+                          ]
+                        }}
+                        transition={{
+                          boxShadow: {
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }
+                        }}
+                        onClick={handleRedouble}
+                        className="relative px-8 py-3 bg-gradient-to-b from-purple-500/90 to-purple-600/90 hover:from-purple-400/90 hover:to-purple-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 w-[200px] mt-2 border border-purple-400/30 overflow-hidden group"
+                        aria-label="Redouble the current bid"
+                        title="Keyboard shortcut: R"
+                      >
+                        <span className="relative z-10">REDOUBLE ×4</span>
+                        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </motion.button>
+                    )}
+                  </>
+                ) : (
+                  <div className="h-[52px] w-[200px] mt-2"></div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Section - Bid Controls */}
+          <div className={`text-center ${focusedElement === 'bid' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
+            <div className="flex items-center justify-center space-x-6">
+              {/* Pass Button - Left side */}
+              <motion.button
+                whileHover={{ 
+                  scale: 1.02,
+                  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.3)"
+                }}
+                whileTap={{ 
+                  scale: 0.98,
+                  boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)"
+                }}
+                onClick={handlePass}
+                className="relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 w-[200px] border border-slate-400/20 backdrop-blur-sm overflow-hidden group"
+                aria-label="Pass"
+                title="Keyboard shortcut: P"
+              >
+                <span className="relative z-10">PASS</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </motion.button>
+
+              {/* Decrement Button */}
+              <motion.button
+                whileHover={{ 
+                  scale: 1.05,
+                  rotate: -5
+                }}
+                whileTap={{ 
+                  scale: 0.95,
+                  rotate: -10
+                }}
+                onMouseDown={startDecrementing}
+                onMouseUp={stopDecrementing}
+                onMouseLeave={stopDecrementing}
+                onTouchStart={startDecrementing}
+                onTouchEnd={stopDecrementing}
+                disabled={selectedBid <= minBid}
+                className={`
+                  relative w-16 h-16 rounded-full transition-all duration-300 touch-target flex items-center justify-center
+                  ${selectedBid <= minBid 
+                    ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed' 
+                    : 'bg-gradient-to-b from-slate-600/90 to-slate-700/90 hover:from-slate-500/90 hover:to-slate-600/90 text-white shadow-lg hover:shadow-xl border border-slate-500/30'
+                  }
+                  ${isDecrementing ? 'scale-95 shadow-inner bg-gradient-to-b from-slate-700/90 to-slate-800/90' : ''}
+                `}
+                aria-label="Decrease bid"
+                title="Hold to decrease faster"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {isDecrementing && (
+                  <div className="absolute inset-0 rounded-full border-2 border-slate-400/50 animate-ping" />
+                )}
+              </motion.button>
+
+              {/* Bid Display */}
+              <div className="relative bg-gradient-to-b from-slate-900/70 to-slate-800/70 rounded-2xl px-10 py-4 min-w-[180px] border border-slate-600/30 shadow-inner overflow-hidden">
+                <div className="relative h-[60px] flex items-center justify-center">
+                  {/* Gradient masks for fade effect */}
+                  <div className="absolute inset-0 z-10 pointer-events-none">
+                    <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-slate-900/70 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-slate-800/70 to-transparent" />
+                  </div>
+                  
+                  {/* Number wheel container */}
+                  <div className="relative">
+                    <motion.div
+                      key={selectedBid}
+                      initial={{ y: isIncrementing ? 60 : -60 }}
+                      animate={{ y: 0 }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 300, 
+                        damping: 30,
+                        mass: 0.5
+                      }}
+                      className="relative"
+                    >
+                      {/* Previous number (above) */}
+                      <div className="absolute -top-[60px] left-1/2 transform -translate-x-1/2 text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white/30 to-slate-300/30 tabular-nums blur-[1px]">
+                        {selectedBid > minBid ? selectedBid - 10 : maxBid}
+                      </div>
+                      
+                      {/* Current number */}
+                      <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 tabular-nums relative">
+                        {selectedBid}
+                        <motion.div
+                          initial={{ scaleX: 0, opacity: 0 }}
+                          animate={{ scaleX: 1, opacity: 1 }}
+                          exit={{ scaleX: 0, opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent"
+                        />
+                      </div>
+                      
+                      {/* Next number (below) */}
+                      <div className="absolute top-[60px] left-1/2 transform -translate-x-1/2 text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white/30 to-slate-300/30 tabular-nums blur-[1px]">
+                        {selectedBid < maxBid ? selectedBid + 10 : minBid}
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-transparent to-white/5 pointer-events-none" />
+              </div>
+
+              {/* Increment Button */}
+              <motion.button
+                whileHover={{ 
+                  scale: 1.05,
+                  rotate: 5
+                }}
+                whileTap={{ 
+                  scale: 0.95,
+                  rotate: 10
+                }}
+                onMouseDown={startIncrementing}
+                onMouseUp={stopIncrementing}
+                onMouseLeave={stopIncrementing}
+                onTouchStart={startIncrementing}
+                onTouchEnd={stopIncrementing}
+                disabled={selectedBid >= maxBid}
+                className={`
+                  relative w-16 h-16 rounded-full transition-all duration-300 touch-target flex items-center justify-center
+                  ${selectedBid >= maxBid 
+                    ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed' 
+                    : 'bg-gradient-to-b from-slate-600/90 to-slate-700/90 hover:from-slate-500/90 hover:to-slate-600/90 text-white shadow-lg hover:shadow-xl border border-slate-500/30'
+                  }
+                  ${isIncrementing ? 'scale-95 shadow-inner bg-gradient-to-b from-slate-700/90 to-slate-800/90' : ''}
+                `}
+                aria-label="Increase bid"
+                title="Hold to increase faster"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {isIncrementing && (
+                  <div className="absolute inset-0 rounded-full border-2 border-slate-400/50 animate-ping" />
+                )}
+              </motion.button>
+
+              {/* Bid Button - Right side */}
+              {!isDoubled && (
+                <motion.button
+                  whileHover={{ 
+                    scale: 1.02,
+                    boxShadow: "0 12px 40px rgba(34, 197, 94, 0.4)"
+                  }}
+                  whileTap={{ 
+                    scale: 0.98,
+                    boxShadow: "0 4px 20px rgba(34, 197, 94, 0.3)"
+                  }}
+                  onClick={handleBid}
+                  className={`
+                    relative px-10 py-5 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 w-[200px] overflow-hidden group
+                    ${!selectedTrump 
+                      ? 'bg-gradient-to-b from-slate-600/50 to-slate-700/50 cursor-not-allowed opacity-60' 
+                      : 'bg-gradient-to-b from-emerald-500/90 to-green-600/90 hover:from-emerald-400/90 hover:to-green-500/90 border border-green-400/30 backdrop-blur-sm'
+                    }
+                  `}
+                  aria-label={`Bid ${selectedBid} ${selectedTrump ? getSuitName(selectedTrump) : ''}`}
+                  title="Keyboard shortcut: B"
+                  disabled={!selectedTrump}
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    BID
+                    {selectedTrump && (
+                      <span className={`text-2xl ${getSuitColor(selectedTrump)}`}>
+                        {getSuitSymbol(selectedTrump)}
+                      </span>
+                    )}
+                  </span>
+                  {selectedTrump && (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-1 bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </>
+                  )}
+                </motion.button>
+              )}
+            </div>
+          </div>
+
+
+          {/* Bidding History Table */}
+          {biddingHistory.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-slate-700/50">
+              <BiddingHistoryTable 
+                biddingHistory={biddingHistory} 
+                players={players}
+                humanPlayerId={humanPlayer?.id}
+                dealerIndex={dealerIndex}
+                getSuitColor={getSuitColor}
+                getSuitSymbol={getSuitSymbol}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default BiddingInterface;

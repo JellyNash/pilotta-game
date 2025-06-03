@@ -1,0 +1,179 @@
+/* Responsive CSS utilities and custom properties */
+
+:root {
+  /* Responsive spacing scale */
+  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 2vw, 0.75rem);
+  --space-md: clamp(0.75rem, 3vw, 1.25rem);
+  --space-lg: clamp(1rem, 4vw, 2rem);
+  --space-xl: clamp(1.5rem, 5vw, 3rem);
+  --space-2xl: clamp(2rem, 6vw, 4rem);
+
+  /* Responsive font sizes */
+  --text-xs: clamp(0.625rem, 1.5vw, 0.75rem);
+  --text-sm: clamp(0.75rem, 2vw, 0.875rem);
+  --text-base: clamp(0.875rem, 2.5vw, 1rem);
+  --text-lg: clamp(1rem, 3vw, 1.125rem);
+  --text-xl: clamp(1.125rem, 3.5vw, 1.25rem);
+  --text-2xl: clamp(1.25rem, 4vw, 1.5rem);
+  --text-3xl: clamp(1.5rem, 5vw, 2rem);
+
+  /* Responsive card sizes */
+  --card-width-sm: clamp(3rem, 8vw, 4rem);
+  --card-width-md: clamp(4rem, 10vw, 5rem);
+  --card-width-lg: clamp(5rem, 12vw, 6.5rem);
+  --card-height-ratio: 1.4;
+}
+
+/* Responsive utility classes */
+.responsive-container {
+  width: 100%;
+  max-width: 100vw;
+  padding-inline: var(--space-md);
+  margin-inline: auto;
+}
+
+/* Responsive grid system */
+.game-grid-responsive {
+  display: grid;
+  width: 100%;
+  height: 100vh;
+  grid-template-columns: 
+    minmax(0, 1fr) 
+    minmax(min(100%, 40rem), 2fr) 
+    minmax(0, 1fr);
+  grid-template-rows: 
+    minmax(0, 1fr) 
+    minmax(min(100%, 30rem), 2fr) 
+    minmax(0, 1fr);
+}
+
+/* Mobile-first responsive breakpoints */
+@media (max-width: 639px) {
+  .game-grid-responsive {
+    grid-template-columns: 3rem 1fr 3rem;
+    grid-template-rows: 5rem 1fr 6rem;
+    gap: var(--space-xs);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .game-grid-responsive {
+    grid-template-columns: 
+      minmax(4rem, 0.5fr) 
+      minmax(20rem, 3fr) 
+      minmax(4rem, 0.5fr);
+    gap: var(--space-sm);
+  }
+}
+
+@media (min-width: 1024px) {
+  .game-grid-responsive {
+    gap: var(--space-md);
+  }
+}
+
+/* Container queries for component-level responsiveness */
+@supports (container-type: size) {
+  .card-container {
+    container-type: size;
+  }
+
+  @container (max-width: 20rem) {
+    .card-responsive {
+      --card-scale: 0.7;
+    }
+  }
+
+  @container (min-width: 20rem) and (max-width: 30rem) {
+    .card-responsive {
+      --card-scale: 0.85;
+    }
+  }
+
+  @container (min-width: 30rem) {
+    .card-responsive {
+      --card-scale: 1;
+    }
+  }
+}
+
+/* Responsive positioning utilities */
+.position-responsive {
+  position: fixed;
+}
+
+.position-responsive.bottom-left {
+  bottom: var(--space-lg);
+  left: var(--space-lg);
+}
+
+.position-responsive.bottom-right {
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+}
+
+.position-responsive.top-left {
+  top: var(--space-lg);
+  left: var(--space-lg);
+}
+
+.position-responsive.top-right {
+  top: var(--space-lg);
+  right: var(--space-lg);
+}
+
+/* Responsive for different orientations */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --space-xs: 0.25rem;
+    --space-sm: 0.375rem;
+    --space-md: 0.5rem;
+    --space-lg: 0.75rem;
+  }
+  
+  .game-grid-responsive {
+    grid-template-rows: 4rem 1fr 5rem;
+  }
+}
+
+/* Touch-device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    padding: var(--space-sm);
+  }
+  
+  .card-responsive {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* High DPI screen optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .card-responsive {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Safe area insets for modern devices */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Responsive animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidding UI Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Touch target sizing */
+        .touch-target {
+            min-width: 44px;
+            min-height: 44px;
+        }
+        
+        /* Smooth number transitions */
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Button press effects */
+        .active\:shadow-inner:active {
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Suit colors */
+        .suit-hearts { color: #e11d48; }
+        .suit-diamonds { color: #f97316; }
+        .suit-clubs { color: #059669; }
+        .suit-spades { color: #1e40af; }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <!-- Test Bidding Interface -->
+    <div class="fixed inset-0 flex items-center justify-center z-50">
+        <!-- Dark overlay -->
+        <div class="absolute inset-0 bg-black/50"></div>
+        
+        <!-- Bidding card -->
+        <div class="relative bg-slate-800/95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl max-w-3xl w-full mx-4">
+            <h2 class="text-2xl font-bold text-white text-center mb-6">Bidding Interface Test</h2>
+            
+            <!-- Trump Selection -->
+            <div class="text-center p-4">
+                <label class="text-lg text-slate-300 font-medium mb-4 block">Choose Trump Suit</label>
+                <div class="flex justify-center space-x-3">
+                    <button class="p-5 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 scale-110 shadow-xl ring-4 ring-blue-400/50 transition-all duration-200">
+                        <span class="text-5xl suit-hearts">♥</span>
+                    </button>
+                    <button class="p-5 rounded-xl bg-slate-700 hover:bg-slate-600 shadow-lg transition-all duration-200">
+                        <span class="text-5xl suit-diamonds">♦</span>
+                    </button>
+                    <button class="p-5 rounded-xl bg-slate-700 hover:bg-slate-600 shadow-lg transition-all duration-200">
+                        <span class="text-5xl suit-clubs">♣</span>
+                    </button>
+                    <button class="p-5 rounded-xl bg-slate-700 hover:bg-slate-600 shadow-lg transition-all duration-200">
+                        <span class="text-5xl suit-spades">♠</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bid Amount Selection -->
+            <div class="text-center p-4 mt-6">
+                <label class="text-lg text-slate-300 font-medium mb-4 block">Your Bid</label>
+                <div class="flex items-center justify-center space-x-4">
+                    <!-- Decrement Button -->
+                    <button class="p-4 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white shadow-lg transition-all duration-200 touch-target">
+                        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+
+                    <!-- Bid Display -->
+                    <div class="bg-slate-900/50 rounded-xl px-12 py-6 min-w-[200px]">
+                        <div class="text-6xl font-bold text-white tabular-nums">180</div>
+                        <div class="text-sm text-slate-400 mt-1">Min: 100 • Max: 490</div>
+                    </div>
+
+                    <!-- Increment Button -->
+                    <button class="p-4 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white shadow-lg transition-all duration-200 touch-target">
+                        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 p-4 mt-6">
+                <button class="px-10 py-4 bg-gradient-to-br from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-200 touch-target min-w-[140px]">
+                    PASS
+                </button>
+                <button class="px-10 py-4 bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-200 touch-target min-w-[140px]">
+                    BID
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test the increment/decrement functionality
+        let currentBid = 180;
+        const minBid = 100;
+        const maxBid = 490;
+        
+        const bidDisplay = document.querySelector('.text-6xl');
+        const decrementBtn = document.querySelector('button:has(path[d*="M15"])');
+        const incrementBtn = document.querySelector('button:has(path[d*="M9"])');
+        
+        let incrementInterval, decrementInterval;
+        let incrementTimeout, decrementTimeout;
+        
+        // Increment logic
+        incrementBtn.addEventListener('mousedown', () => {
+            currentBid = Math.min(maxBid, currentBid + 10);
+            bidDisplay.textContent = currentBid;
+            
+            incrementTimeout = setTimeout(() => {
+                let speed = 100;
+                incrementInterval = setInterval(() => {
+                    const increment = speed < 50 ? 50 : speed < 20 ? 20 : 10;
+                    currentBid = Math.min(maxBid, currentBid + increment);
+                    bidDisplay.textContent = currentBid;
+                    if (currentBid >= maxBid) {
+                        clearInterval(incrementInterval);
+                    }
+                    speed = Math.max(20, speed * 0.9);
+                }, speed);
+            }, 300);
+        });
+        
+        incrementBtn.addEventListener('mouseup', () => {
+            clearTimeout(incrementTimeout);
+            clearInterval(incrementInterval);
+        });
+        
+        incrementBtn.addEventListener('mouseleave', () => {
+            clearTimeout(incrementTimeout);
+            clearInterval(incrementInterval);
+        });
+        
+        // Decrement logic
+        decrementBtn.addEventListener('mousedown', () => {
+            currentBid = Math.max(minBid, currentBid - 10);
+            bidDisplay.textContent = currentBid;
+            
+            decrementTimeout = setTimeout(() => {
+                let speed = 100;
+                decrementInterval = setInterval(() => {
+                    const decrement = speed < 50 ? 50 : speed < 20 ? 20 : 10;
+                    currentBid = Math.max(minBid, currentBid - decrement);
+                    bidDisplay.textContent = currentBid;
+                    if (currentBid <= minBid) {
+                        clearInterval(decrementInterval);
+                    }
+                    speed = Math.max(20, speed * 0.9);
+                }, speed);
+            }, 300);
+        });
+        
+        decrementBtn.addEventListener('mouseup', () => {
+            clearTimeout(decrementTimeout);
+            clearInterval(decrementInterval);
+        });
+        
+        decrementBtn.addEventListener('mouseleave', () => {
+            clearTimeout(decrementTimeout);
+            clearInterval(decrementInterval);
+        });
+        
+        // Trump selection
+        const trumpButtons = document.querySelectorAll('.flex.justify-center.space-x-3 button');
+        trumpButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                trumpButtons.forEach(b => {
+                    b.classList.remove('bg-gradient-to-br', 'from-blue-600', 'to-blue-700', 'scale-110', 'shadow-xl', 'ring-4', 'ring-blue-400/50');
+                    b.classList.add('bg-slate-700', 'hover:bg-slate-600');
+                });
+                btn.classList.remove('bg-slate-700', 'hover:bg-slate-600');
+                btn.classList.add('bg-gradient-to-br', 'from-blue-600', 'to-blue-700', 'scale-110', 'shadow-xl', 'ring-4', 'ring-blue-400/50');
+            });
+        });
+    </script>
+</body>
+</html>
