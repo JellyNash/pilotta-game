@@ -11,9 +11,10 @@ interface TrickPileProps {
   teamId: 'A' | 'B';
   position: 'north' | 'east' | 'south' | 'west';
   currentTrickNumber: number;
+  isLastTrickPile?: boolean;
 }
 
-const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, currentTrickNumber }) => {
+const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, currentTrickNumber, isLastTrickPile = false }) => {
   const [showViewer, setShowViewer] = useState(false);
   const settings = useSelector((state: RootState) => state.game.settings);
   const cardSize = settings?.cardSize || 'medium';
@@ -36,25 +37,8 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
     xlarge: 'w-12 h-12 text-lg'
   };
   
-  // Calculate pile position based on player position (to the RIGHT of each player)
-  const getPileStyles = () => {
-    switch (position) {
-      case 'north':
-        // Place to the right side of north player
-        return 'top-20 left-[65%]';
-      case 'south':
-        // Place to the right side of south player
-        return 'bottom-20 left-[65%]';
-      case 'east':
-        // Place below east player (to their right from their perspective)
-        return 'top-[55%] right-20';
-      case 'west':
-        // Place above west player (to their right from their perspective)
-        return 'top-[25%] left-20';
-      default:
-        return '';
-    }
-  };
+  // Piles are now positioned by parent container using center-based layout
+  // No need for absolute positioning here
   
   // Get team color
   const teamColor = teamId === 'A' ? 'blue' : 'red';
@@ -62,7 +46,7 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
   return (
     <>
       <motion.div
-        className={`absolute ${getPileStyles()} cursor-pointer z-10`}
+        className="relative cursor-pointer z-10"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         whileHover={{ scale: 1.1 }}
@@ -121,6 +105,23 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
           )}
         </div>
         
+        {/* Previous trick indicator */}
+        {isLastTrickPile && (
+          <motion.div
+            className="absolute -top-4 -right-4 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full shadow-lg"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          >
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+              </svg>
+              PREVIOUS
+            </div>
+          </motion.div>
+        )}
+        
         {/* Hover text */}
         <motion.div
           className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap"
@@ -128,7 +129,7 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
           whileHover={{ opacity: 1, y: 0 }}
         >
           <div className="bg-black/80 text-white text-xs px-2 py-1 rounded">
-            Click to view last trick
+            {isLastTrickPile ? 'Click to view previous trick' : 'Click to view last trick won'}
           </div>
         </motion.div>
       </motion.div>
@@ -141,6 +142,7 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
             teamId={teamId}
             onClose={() => setShowViewer(false)}
             currentTrickNumber={currentTrickNumber}
+            isLastTrickPile={isLastTrickPile}
           />
         )}
       </AnimatePresence>

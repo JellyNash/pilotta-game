@@ -2,18 +2,29 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Trick, Suit } from '../core/types';
 import Card from './Card';
+import './TrickPileViewer.css';
 
 interface TrickPileViewerProps {
   tricks: Trick[];
   teamId: 'A' | 'B';
   onClose: () => void;
   currentTrickNumber: number;
+  isLastTrickPile?: boolean;
 }
 
-const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClose, currentTrickNumber }) => {
-  // Only show the last trick (previous trick to the current one)
-  const previousTrickIndex = currentTrickNumber - 2; // -2 because currentTrickNumber is 1-based and we want previous
-  const lastTrick = previousTrickIndex >= 0 && previousTrickIndex < tricks.length ? tricks[previousTrickIndex] : null;
+const getSuitSymbol = (suit: Suit): string => {
+  const symbols = {
+    [Suit.Hearts]: '♥',
+    [Suit.Diamonds]: '♦',
+    [Suit.Clubs]: '♣',
+    [Suit.Spades]: '♠'
+  };
+  return symbols[suit];
+};
+
+const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClose, currentTrickNumber, isLastTrickPile = false }) => {
+  // Show the most recent trick in this team's pile
+  const lastTrick = tricks.length > 0 ? tricks[tricks.length - 1] : null;
   
   // Use useEffect to handle closing when there's no trick to show
   React.useEffect(() => {
@@ -33,22 +44,22 @@ const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClo
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-slate-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden"
+        className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl border border-slate-700/50 max-w-5xl w-full"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className={`${
           teamId === 'A' ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gradient-to-r from-red-600 to-red-700'
-        } px-6 py-4 flex justify-between items-center`}>
+        } px-6 py-4 flex justify-between items-center rounded-t-3xl`}>
           <h2 className="text-2xl font-bold text-white">
-            Previous Trick (Trick {previousTrickIndex + 1})
+            {isLastTrickPile ? 'Previous Trick' : `Last Trick Won by Team ${teamId}`}
           </h2>
           <div className="flex items-center gap-4">
             <div className="text-white">
@@ -66,78 +77,86 @@ const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClo
           </div>
         </div>
         
-        {/* Single trick display */}
-        <div className="p-6">
-          <div className="space-y-6">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-slate-700/50 rounded-xl p-4"
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-semibold text-white">
-                    Trick {previousTrickIndex + 1}
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-slate-400">
-                      Lead: {getSuitSymbol(lastTrick.leadSuit)}
-                    </span>
-                    <span className="text-sm text-slate-400">
-                      Winner: {lastTrick.winner?.name}
-                    </span>
-                    <span className={`text-sm font-bold ${
-                      teamId === 'A' ? 'text-blue-400' : 'text-red-400'
-                    }`}>
-                      {lastTrick.points} pts
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Cards in trick */}
-                <div className="grid grid-cols-4 gap-3">
-                  {lastTrick.cards.map((trickCard, cardIndex) => (
-                    <div key={cardIndex} className="text-center">
-                      <div className="text-xs text-slate-400 mb-1">
-                        {trickCard.player.name}
-                      </div>
-                      <div className="flex justify-center">
-                        <div className="transform scale-75">
-                          <Card
-                            card={trickCard.card}
-                            faceUp={true}
-                            size="small"
-                            disabled={true}
-                          />
-                        </div>
-                      </div>
-                      {trickCard.player.id === lastTrick.winner?.id && (
-                        <div className="text-xs text-green-400 mt-1">Winner</div>
+        {/* Cards display in cross layout */}
+        <div className="p-8">
+          <div className="trick-viewer-container">
+            {/* Table background circle */}
+            <div className="trick-table-circle" />
+            
+            {/* Cards positioned using center-based layout */}
+            {lastTrick.cards.map((trickCard, index) => {
+              const isWinner = trickCard.player.id === lastTrick.winner?.id;
+              const playerPosition = trickCard.player.position;
+              
+              return (
+                <motion.div
+                  key={index}
+                  className={`trick-card-position ${playerPosition}`}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="trick-card-wrapper">
+                    {/* Player name */}
+                    <div className={`text-sm font-medium ${isWinner ? 'text-yellow-400' : 'text-slate-400'}`}>
+                      {trickCard.player.name}
+                    </div>
+                    
+                    {/* Card with winner glow */}
+                    <div className={`relative ${isWinner ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900 rounded-lg' : ''}`}>
+                      <Card
+                        card={trickCard.card}
+                        faceDown={false}
+                        size="large"
+                      />
+                      {isWinner && (
+                        <motion.div
+                          className="absolute -inset-2 bg-yellow-400/20 rounded-lg -z-10"
+                          animate={{ opacity: [0.5, 0.8, 0.5] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
                       )}
                     </div>
-                  ))}
+                    
+                    {/* Winner badge */}
+                    {isWinner && (
+                      <motion.div 
+                        className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.5, type: "spring" }}
+                      >
+                        WINNER
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+            
+            {/* Center info */}
+            <div className="trick-viewer-center">
+              <div className="trick-center-info">
+                <div className="text-sm text-slate-400 mb-1">Lead Suit</div>
+                <div className={`text-4xl mb-2 ${
+                  lastTrick.leadSuit === Suit.Hearts || lastTrick.leadSuit === Suit.Diamonds 
+                    ? 'text-red-500' 
+                    : 'text-gray-900'
+                }`}>
+                  {getSuitSymbol(lastTrick.leadSuit)}
                 </div>
-              </motion.div>
+                <div className={`text-2xl font-bold ${
+                  teamId === 'A' ? 'text-blue-400' : 'text-red-400'
+                }`}>
+                  {lastTrick.points} pts
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>
     </motion.div>
   );
-};
-
-// Helper function to get suit symbol
-const getSuitSymbol = (suit: Suit): string => {
-  switch (suit) {
-    case Suit.Hearts:
-      return '♥';
-    case Suit.Diamonds:
-      return '♦';
-    case Suit.Clubs:
-      return '♣';
-    case Suit.Spades:
-      return '♠';
-    default:
-      return '';
-  }
 };
 
 export default TrickPileViewer;

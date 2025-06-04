@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
 import { motion } from 'framer-motion';
 import { Player, Card as CardType, Suit } from '../core/types';
 import Card from './Card';
 import { sortHumanPlayerCards } from '../utils/cardSorting';
 import { sortCards } from '../utils/cardSortUtils';
 import { useAppSelector } from '../store/hooks';
-import { useAccessibility } from '../accessibility';
+import { useViewportSize } from '../hooks/useViewportSize';
 
 interface PlayerHandProps {
   player: Player;
@@ -30,14 +30,12 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
   validMoves = [],
   trumpSuit
 }) => {
-  const { settings, announceToScreenReader } = useAccessibility();
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
-  const [focusedCardIndex, setFocusedCardIndex] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
   const cardSize = useAppSelector(state => state.game.settings?.cardSize || 'medium');
-  const accessibilityCardSize = settings?.cardSize || 100;
   const isHorizontal = position === 'north' || position === 'south';
+  const viewport = useViewportSize();
   
   // Sort cards based on player type
   // Human player gets special sorting with alternating colors and trump on right
@@ -54,27 +52,30 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
     }
   }, [player.hand, player.isAI, trumpSuit, showCards]);
 
-  // Update container dimensions on resize
+  // Update container dimensions on resize with batched reads
   useEffect(() => {
     const updateDimensions = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        setContainerDimensions({ width: rect.width, height: rect.height });
-      }
+      requestAnimationFrame(() => {
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect();
+          setContainerDimensions({ width: rect.width, height: rect.height });
+        }
+      });
     };
 
     updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, []);
+    // Use the viewport size hook instead of direct resize listener
+    // This batches resize events
+    return () => {};
+  }, [viewport]);
 
   // Calculate responsive card dimensions and arc parameters
   const cardLayout = useMemo(() => {
     const cardCount = sortedCards.length;
     if (cardCount === 0) return { cards: [], availableWidth: 0 };
 
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    const viewportWidth = viewport?.width || 1200;
+    const viewportHeight = viewport?.height || 800;
     
     // Available space for cards (with padding)
     const availableWidth = isHorizontal 
@@ -116,9 +117,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
       cardHeight = Math.max(84, Math.min(140, cardHeight));
     }
 
-    // Apply accessibility scaling
-    cardWidth *= (accessibilityCardSize / 100);
-    cardHeight *= (accessibilityCardSize / 100);
+    // Card scaling removed (was part of accessibility system)
 
     // Calculate arc parameters
     const totalWidth = cardWidth * cardCount;
@@ -196,143 +195,53 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
     });
 
     return { cards, arcRadius, cardWidth, cardHeight, availableWidth };
-  }, [sortedCards, isHorizontal, position, containerDimensions.width, containerDimensions.height, accessibilityCardSize, hoveredCardId]);
+  }, [sortedCards, isHorizontal, position, containerDimensions.width, containerDimensions.height, viewport]);
 
-  // Handle keyboard navigation
-  useEffect(() => {
-    if (!showCards || !settings?.keyboard?.enabled) return;
+  // Calculate hover adjustments separately to avoid recalculating base layout
+  const hoverAdjustments = useMemo(() => {
+    if (position !== 'south' || !hoveredCardId || !cardLayout.availableWidth) {
+      return {};
+    }
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!containerRef.current?.contains(document.activeElement)) return;
+    const hoveredIndex = sortedCards.findIndex(c => c.id === hoveredCardId);
+    if (hoveredIndex < 0) return {};
 
-      let newIndex = focusedCardIndex;
-      let handled = false;
+    const adjustments: Record<string, number> = {};
+    const extraSpacing = 30; // Fixed pixel amount for consistent spacing
 
-      switch (e.key) {
-        case 'ArrowLeft':
-          if (isHorizontal || position === 'west') {
-            newIndex = Math.max(0, focusedCardIndex - 1);
-            handled = true;
-          }
-          break;
-        case 'ArrowRight':
-          if (isHorizontal || position === 'east') {
-            newIndex = Math.min(sortedCards.length - 1, focusedCardIndex + 1);
-            handled = true;
-          }
-          break;
-        case 'ArrowUp':
-          if (!isHorizontal && position === 'east') {
-            newIndex = Math.max(0, focusedCardIndex - 1);
-            handled = true;
-          } else if (!isHorizontal && position === 'west') {
-            newIndex = Math.min(sortedCards.length - 1, focusedCardIndex + 1);
-            handled = true;
-          }
-          break;
-        case 'ArrowDown':
-          if (!isHorizontal && position === 'east') {
-            newIndex = Math.min(sortedCards.length - 1, focusedCardIndex + 1);
-            handled = true;
-          } else if (!isHorizontal && position === 'west') {
-            newIndex = Math.max(0, focusedCardIndex - 1);
-            handled = true;
-          }
-          break;
-        case 'Home':
-          newIndex = 0;
-          handled = true;
-          break;
-        case 'End':
-          newIndex = sortedCards.length - 1;
-          handled = true;
-          break;
-        case 'Enter':
-        case ' ':
-          const currentCard = sortedCards[focusedCardIndex];
-          const isValid = validMoves.some(c => c.id === currentCard.id);
-          if (isValid && onCardPlay) {
-            e.preventDefault();
-            onCardPlay(currentCard);
-            announceToScreenReader(`Played ${currentCard.rank} of ${currentCard.suit}`);
-            handled = true;
-          }
-          break;
+    // Calculate adjustments for cards to the right of hovered card
+    sortedCards.forEach((card, index) => {
+      if (index > hoveredIndex) {
+        adjustments[card.id] = extraSpacing;
       }
+    });
 
-      if (handled) {
-        e.preventDefault();
-        setFocusedCardIndex(newIndex);
-        
-        // Focus the card element
-        const cardElements = containerRef.current?.querySelectorAll('[role="button"]');
-        if (cardElements && cardElements[newIndex]) {
-          (cardElements[newIndex] as HTMLElement).focus();
-        }
+    return adjustments;
+  }, [position, hoveredCardId, sortedCards, cardLayout.availableWidth]);
 
-        // Announce card to screen reader
-        const card = sortedCards[newIndex];
-        announceToScreenReader(`${card.rank} of ${card.suit}, ${newIndex + 1} of ${sortedCards.length}`);
-      }
-    };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [showCards, focusedCardIndex, sortedCards, validMoves, onCardPlay, isHorizontal, position, settings?.keyboard?.enabled, announceToScreenReader]);
-
-  const getContainerStyle = () => {
-    const style: React.CSSProperties = {
-      display: 'flex',
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-      alignItems: 'center',
-      justifyContent: 'center'
-    };
-
-    return style;
-  };
+  const containerStyle = useMemo(() => ({
+    display: 'flex',
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  } as React.CSSProperties), []);
 
   return (
     <div 
-      className="player-hand relative"
+      className={`player-hand-container ${isHorizontal ? 'horizontal' : 'vertical'}`}
       ref={containerRef}
       data-position={position}
       id={position === 'south' ? 'hand' : undefined}
-      role="region"
-      aria-label={`${player.name}'s hand`}
-      style={{
-        width: isHorizontal ? '100%' : 'auto',
-        height: !isHorizontal ? '100%' : 'auto'
-      }}
     >
-      {/* Player Name & Indicator */}
-      <div className={`absolute whitespace-nowrap z-20 ${
-        position === 'north' ? 'bottom-full mb-1' :
-        position === 'south' ? 'top-full mt-1' :
-        position === 'east' ? 'right-full mr-1' :
-        'left-full ml-1'
-      } ${isHorizontal ? 'left-1/2 transform -translate-x-1/2' : 'top-1/2 transform -translate-y-1/2'}`}>
-        <div className={`
-          px-2 py-1 rounded text-sm font-medium transition-all shadow-lg
-          ${isCurrentPlayer 
-            ? 'bg-blue-600 text-white shadow-blue-600/50' 
-            : 'bg-slate-700/90 text-slate-300'
-          }
-        `}>
-          {player.name}
-          {player.teamId && (
-            <span className="ml-1 text-xs opacity-75">Team {player.teamId}</span>
-          )}
-        </div>
-      </div>
+      {/* Player Name & Indicator are now handled by GameTable component */}
 
       {/* Cards Container */}
       <div 
-        style={getContainerStyle()}
-        role="group"
-        aria-label="Cards in hand"
-        className="cards-container"
+        style={containerStyle}
+        className="cards-container contain-layout"
       >
         <div className="relative" style={{ 
           width: isHorizontal ? '100%' : 'auto',
@@ -346,19 +255,8 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
             const isHovered = hoveredCardId === item.card.id;
             const otherCardsHovered = hoveredCardId !== null && hoveredCardId !== item.card.id;
             
-            // Calculate adjusted position when hovering
-            let adjustedX = item.x;
-            if (position === 'south' && hoveredCardId !== null && cardLayout.availableWidth) {
-              const hoveredIndex = sortedCards.findIndex(c => c.id === hoveredCardId);
-              if (hoveredIndex >= 0) {
-                // If this card is to the right of hovered card, shift it right
-                if (index > hoveredIndex) {
-                  // Add extra spacing to make room for the hovered card
-                  const extraSpacing = 30; // Fixed pixel amount for consistent spacing
-                  adjustedX += extraSpacing;
-                }
-              }
-            }
+            // Use pre-calculated hover adjustments
+            const adjustedX = item.x + (hoverAdjustments[item.card.id] || 0);
 
             return (
               <motion.div
@@ -387,7 +285,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
                   transformOrigin: position === 'south' ? 'center bottom' : 'center center',
                   zIndex: isSelected ? 40 : item.zIndex + 10, // Removed hover z-index change
                 }}
-                className="card-wrapper"
+                className="card-wrapper will-change-transform transform-gpu"
                 onMouseEnter={() => showCards && setHoveredCardId(item.card.id)}
                 onMouseLeave={() => showCards && setHoveredCardId(null)}
               >
@@ -397,7 +295,6 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
                   isSelected={isSelected}
                   isTrump={isTrump}
                   teamId={player.teamId as 'team1' | 'team2' | undefined}
-                  tabIndex={showCards && index === focusedCardIndex ? 0 : -1}
                   onClick={showCards ? () => {
                     if (onCardClick) onCardClick(item.card);
                     // Auto-play on valid card click
@@ -420,29 +317,37 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
         </div>
       </div>
 
-      {/* Card count for hidden hands */}
+      {/* Card count badge */}
       {!showCards && player.hand.length > 0 && (
-        <div 
-          aria-label={`${player.name} has ${player.hand.length} cards`}
-          className={`
-          absolute bg-slate-800/90 text-white text-xs px-2 py-0.5 rounded-full shadow-lg z-20
-          ${position === 'north' ? 'top-full mt-0.5 left-1/2 transform -translate-x-1/2' :
-            position === 'south' ? 'bottom-full mb-0.5 left-1/2 transform -translate-x-1/2' :
-            position === 'east' ? 'left-full ml-0.5 top-1/2 transform -translate-y-1/2' :
-            'right-full mr-0.5 top-1/2 transform -translate-y-1/2'}
-        `}>
+        <div className="player-badge bg-slate-800/90 text-white">
           {player.hand.length}
         </div>
       )}
       
-      {/* Screen reader announcement for valid moves */}
-      {showCards && validMoves.length > 0 && (
-        <span className="sr-only" role="status" aria-live="polite">
-          {validMoves.length} playable card{validMoves.length !== 1 ? 's' : ''}
-        </span>
-      )}
     </div>
   );
 };
 
-export default PlayerHand;
+// Memoize PlayerHand component with custom comparison
+export default memo(PlayerHand, (prevProps, nextProps) => {
+  // Deep comparison for arrays - check length and IDs only
+  const sameHand = prevProps.player.hand.length === nextProps.player.hand.length &&
+    prevProps.player.hand.every((card, idx) => card.id === nextProps.player.hand[idx]?.id);
+  
+  const sameValidMoves = prevProps.validMoves?.length === nextProps.validMoves?.length &&
+    (prevProps.validMoves || []).every((card, idx) => card?.id === nextProps.validMoves?.[idx]?.id);
+  
+  return (
+    prevProps.player.id === nextProps.player.id &&
+    prevProps.player.name === nextProps.player.name &&
+    prevProps.player.isAI === nextProps.player.isAI &&
+    prevProps.player.teamId === nextProps.player.teamId &&
+    sameHand &&
+    prevProps.position === nextProps.position &&
+    prevProps.isCurrentPlayer === nextProps.isCurrentPlayer &&
+    prevProps.showCards === nextProps.showCards &&
+    prevProps.selectedCard?.id === nextProps.selectedCard?.id &&
+    sameValidMoves &&
+    prevProps.trumpSuit === nextProps.trumpSuit
+  );
+});

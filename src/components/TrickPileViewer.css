@@ -1,0 +1,91 @@
+/* TrickPileViewer centered card layout */
+
+.trick-viewer-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+/* Center reference point */
+.trick-viewer-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+/* Card positions - all centered then offset */
+.trick-card-position {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+/* South card - bottom */
+.trick-card-position.south {
+  transform: translate(-50%, -50%) translateY(35%);
+}
+
+/* North card - top */
+.trick-card-position.north {
+  transform: translate(-50%, -50%) translateY(-35%);
+}
+
+/* East card - right */
+.trick-card-position.east {
+  transform: translate(-50%, -50%) translateX(35%);
+}
+
+/* West card - left */
+.trick-card-position.west {
+  transform: translate(-50%, -50%) translateX(-35%);
+}
+
+/* Wrapper for card and labels */
+.trick-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Adjust label positions based on card position */
+.trick-card-position.north .trick-card-wrapper {
+  flex-direction: column-reverse;
+}
+
+.trick-card-position.east .trick-card-wrapper {
+  flex-direction: row;
+}
+
+.trick-card-position.west .trick-card-wrapper {
+  flex-direction: row-reverse;
+}
+
+/* Center info box */
+.trick-center-info {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  border: 1px solid rgba(100, 116, 139, 0.5);
+  text-align: center;
+  min-width: 120px;
+}
+
+/* Table circle decoration */
+.trick-table-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 50%;
+  height: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(30, 41, 59, 0.3);
+  border: 2px solid rgba(100, 116, 139, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+}
