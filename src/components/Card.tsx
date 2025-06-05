@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { toggleCardZoom } from '../store/gameSlice';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSuitColorValue, CardStyle } from '../utils/suitColors';
 
 interface CardProps {
   card: CardType;
@@ -80,15 +81,8 @@ const Card: React.FC<CardProps> = ({
   
 
 
-  const getSuitColor = (suit: Suit) => {
-    // Modern color palette based on card style
-    if (cardStyle === 'modern' || cardStyle === 'minimalist') {
-      return suit === Suit.Hearts || suit === Suit.Diamonds 
-        ? 'text-rose-500 font-black' 
-        : 'text-slate-800 font-black';
-    }
-    
-    return suit === Suit.Hearts || suit === Suit.Diamonds ? 'text-red-600 font-black' : 'text-gray-900 font-black';
+  const getSuitColor = (suit: Suit): string => {
+    return getSuitColorValue(suit, cardStyle as CardStyle);
   };
 
 
@@ -211,21 +205,23 @@ const Card: React.FC<CardProps> = ({
             {/* Corner indicators - TOP LEFT (Enlarged) */}
             <div className="absolute top-3 left-3 text-center">
               <div 
-                className={`font-bold leading-none ${getSuitColor(card.suit)}`}
+                className="font-bold leading-none"
                 style={{ 
                   fontSize: `${cornerFontSize * fontSizeMultiplier}px`, 
                   fontWeight: '900',
-                  fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit'
+                  fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
+                  color: getSuitColor(card.suit)
                 }}
               >
                 {getDisplayRank(card.rank)}
               </div>
               <div 
-                className={`leading-none ${getSuitColor(card.suit)}`}
+                className="leading-none"
                 style={{ 
                   fontSize: `${cornerSuitSize * fontSizeMultiplier}px`, 
                   fontWeight: '900',
-                  marginTop: '0px'
+                  marginTop: '0px',
+                  color: getSuitColor(card.suit)
                 }}
               >
                 {getSuitSymbol(card.suit)}
@@ -234,10 +230,11 @@ const Card: React.FC<CardProps> = ({
               {/* Extra suit indicator for accessible style */}
               {cardStyle === 'accessible' && (
                 <div 
-                  className={`leading-none ${getSuitColor(card.suit)} mt-1`}
+                  className="leading-none mt-1"
                   style={{ 
                     fontSize: `${(cornerSuitSize * 0.7) * fontSizeMultiplier}px`, 
-                    fontWeight: '700'
+                    fontWeight: '700',
+                    color: getSuitColor(card.suit)
                   }}
                 >
                   {getSuitSymbol(card.suit)}
@@ -250,23 +247,25 @@ const Card: React.FC<CardProps> = ({
             <div className="flex-1 flex items-center justify-center p-4" style={{ paddingLeft: '15%', paddingTop: '15%' }}>
               <div className="text-center">
                 <div 
-                  className={`font-black ${getSuitColor(card.suit)} leading-none`}
+                  className="font-black leading-none"
                   style={{ 
                     fontSize: `${mainFontSize * fontSizeMultiplier}px`,
                     textShadow: cardStyle === 'minimalist' ? 'none' : '2px 2px 3px rgba(0,0,0,0.3)',
                     fontWeight: '900',
-                    fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit'
+                    fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
+                    color: getSuitColor(card.suit)
                   }}
                 >
                   {getDisplayRank(card.rank)}
                 </div>
                 <div 
-                  className={`${getSuitColor(card.suit)} leading-none`}
+                  className="leading-none"
                   style={{ 
                     fontSize: `${mainSuitSize * fontSizeMultiplier}px`,
                     textShadow: cardStyle === 'minimalist' ? 'none' : '2px 2px 3px rgba(0,0,0,0.3)',
                     fontWeight: '900',
-                    marginTop: '-2px'
+                    marginTop: '-2px',
+                    color: getSuitColor(card.suit)
                   }}
                 >
                   {getSuitSymbol(card.suit)}
@@ -366,21 +365,23 @@ const Card: React.FC<CardProps> = ({
                   {/* Corner indicators - TOP LEFT (Enlarged) */}
                   <div className="absolute top-3 left-3 text-center">
                     <div 
-                      className={`font-bold leading-none ${getSuitColor(card.suit)}`}
+                      className="font-bold leading-none"
                       style={{ 
                         fontSize: `${cornerFontSize * fontSizeMultiplier}px`, 
                         fontWeight: '900',
-                        fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit'
+                        fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
+                        color: getSuitColor(card.suit)
                       }}
                     >
                       {getDisplayRank(card.rank)}
                     </div>
                     <div 
-                      className={`leading-none ${getSuitColor(card.suit)}`}
+                      className="leading-none"
                       style={{ 
                         fontSize: `${cornerSuitSize * fontSizeMultiplier}px`, 
                         fontWeight: '900',
-                        marginTop: '0px'
+                        marginTop: '0px',
+                        color: getSuitColor(card.suit)
                       }}
                     >
                       {getSuitSymbol(card.suit)}
@@ -389,10 +390,11 @@ const Card: React.FC<CardProps> = ({
                     {/* Extra suit indicator for accessible style */}
                     {cardStyle === 'accessible' && (
                       <div 
-                        className={`leading-none ${getSuitColor(card.suit)} mt-1`}
+                        className="leading-none mt-1"
                         style={{ 
                           fontSize: `${(cornerSuitSize * 0.7) * fontSizeMultiplier}px`, 
-                          fontWeight: '700'
+                          fontWeight: '700',
+                          color: getSuitColor(card.suit)
                         }}
                       >
                         {getSuitSymbol(card.suit)}
@@ -404,25 +406,27 @@ const Card: React.FC<CardProps> = ({
                   <div className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                       <div 
-                        className={`font-bold ${getSuitColor(card.suit)}`}
+                        className="font-bold"
                         style={{ 
                           fontSize: `${mainFontSize * fontSizeMultiplier}px`, 
                           lineHeight: '1',
                           fontWeight: '900',
                           fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
                           marginLeft: `${actualWidth * 0.07}px`,
-                          marginTop: `${actualHeight * 0.05}px`
+                          marginTop: `${actualHeight * 0.05}px`,
+                          color: getSuitColor(card.suit)
                         }}
                       >
                         {getDisplayRank(card.rank)}
                       </div>
                       <div 
-                        className={`${getSuitColor(card.suit)}`}
+                        className=""
                         style={{ 
                           fontSize: `${mainSuitSize * fontSizeMultiplier}px`, 
                           marginTop: '-5px',
                           fontWeight: '900',
-                          marginLeft: `${actualWidth * 0.07}px`
+                          marginLeft: `${actualWidth * 0.07}px`,
+                          color: getSuitColor(card.suit)
                         }}
                       >
                         {getSuitSymbol(card.suit)}

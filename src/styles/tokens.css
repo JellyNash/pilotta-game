@@ -1,13 +1,19 @@
 /* Design Tokens - Centralized CSS Custom Properties */
 :root {
-  /* Z-index System */
+  /* Z-index System - Properly layered to prevent conflicts */
   --z-card-base: 10;
-  --z-card-hover: 100;
-  --z-card-selected: 90;
   --z-player-indicator: 20;
+  --z-card-selected: 30;
+  --z-card-hover: 40;
   --z-ui-overlay: 50;
+  --z-trick-pile: 60;
+  --z-announcement: 70;
+  --z-bidding-interface: 80;
+  --z-modal-backdrop: 90;
   --z-modal: 100;
-  --z-header: 100;
+  --z-header: 110;
+  --z-notification: 120;
+  --z-tooltip: 130;
 
   /* Layout - Header */
   --header-height: 5rem;
@@ -38,19 +44,19 @@
   --text-player-label: clamp(0.875rem, 1.5vw, 1.125rem);
   --text-badge: clamp(0.75rem, 1.2vw, 1rem);
 
-  /* Card Dimensions */
+  /* Card Dimensions - Consolidated */
   --card-base-width: 120px;
   --card-base-height: 168px;
-  --card-width-base: 120px;
-  --card-height-base: 168px;
+  --card-height-ratio: 1.4;
   --card-width-responsive: clamp(80px, 6vw, 120px);
-  --card-height-responsive: clamp(112px, calc(6vw * 1.4), 168px);
+  --card-height-responsive: calc(var(--card-width-responsive) * var(--card-height-ratio));
   --card-width-sm: clamp(3rem, 8vw, 4rem);
   --card-width-md: clamp(4rem, 10vw, 5rem);
   --card-width-lg: clamp(5rem, 12vw, 6.5rem);
-  --card-height-ratio: 1.4;
-  --card-width: clamp(6rem, 8vw, 8rem);
-  --card-height: calc(var(--card-width) * 1.4);
+  --card-width: var(--card-base-width);
+  --card-height: var(--card-base-height);
+  --card-width-base: var(--card-base-width);
+  --card-height-base: var(--card-base-height);
   
   /* Card Layout */
   --card-gap: clamp(0.5rem, 1vw, 1rem);
@@ -107,18 +113,26 @@
   --announcement-offset-x: 0px;
   --announcement-offset-y: 0px;
   --announcement-enter-distance: 30px;
+
+  /* PlayerHandArcImproved Local Variables */
+  /* These are dynamically set per card position but need defaults */
+  --abs-pos: 0;
+  --normalized-pos: 0;
+  --elevation: 0;
+  --card-count: 8;
 }
 
 /* Responsive Overrides */
 @media (aspect-ratio: 16/9) {
   :root {
-    --card-width-base: clamp(4rem, 5.5vw, 7.5rem);
+    --card-base-width: clamp(4rem, 5.5vw, 7.5rem);
+    --card-base-height: calc(var(--card-base-width) * var(--card-height-ratio));
   }
 }
 
 @media (aspect-ratio: 16/10) {
   :root {
-    --card-height-base: calc(var(--card-width-base) * 1.45);
+    --card-height-ratio: 1.45;
   }
 }
 

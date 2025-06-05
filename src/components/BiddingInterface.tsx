@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAppSelector } from '../store/hooks';
 import { Suit, Player, BiddingEntry } from '../core/types';
 import { gameManager } from '../game/GameManager';
+import { getSuitColorValue } from '../utils/suitColors';
 
 // Bidding History Table Component
 interface BiddingHistoryTableProps {
@@ -86,7 +87,7 @@ const BiddingHistoryTable: React.FC<BiddingHistoryTableProps> = ({
                       ) : (
                         <div className="inline-flex items-center justify-center space-x-1 px-4 py-1 rounded-full bg-slate-600">
                           <span className="text-white font-bold text-xl">{bid.bid}</span>
-                          <span className={`${getSuitColor(bid.trump!)} text-2xl`}>
+                          <span className="text-2xl" style={{ color: getSuitColor(bid.trump!) }}>
                             {getSuitSymbol(bid.trump!)}
                           </span>
                         </div>
@@ -272,7 +273,7 @@ const BiddingInterface: React.FC = () => {
   };
 
   const getSuitColor = (suit: Suit) => {
-    return suit === Suit.Hearts || suit === Suit.Diamonds ? 'text-red-500' : 'text-gray-900';
+    return getSuitColorValue(suit, 'modern');
   };
 
   if (!isHumanTurn) {
@@ -370,7 +371,8 @@ const BiddingInterface: React.FC = () => {
                     
                     {/* Suit symbol with 3D effect */}
                     <motion.span 
-                      className={`relative ${getSuitColor(suit)} z-10`}
+                      className="relative z-10"
+                      style={{ color: getSuitColor(suit) }}
                       style={{ fontSize: 'calc(var(--suit-button-size) * 0.6)' }}
                       animate={selectedTrump === suit ? {
                         filter: [
@@ -430,7 +432,7 @@ const BiddingInterface: React.FC = () => {
                   {contract ? (
                     <>
                       <span className="text-2xl font-bold text-white mr-2">{contract.value}</span>
-                      <span className={`text-4xl ${getSuitColor(contract.trump)}`}>
+                      <span className="text-4xl" style={{ color: getSuitColor(contract.trump) }}>
                         {getSuitSymbol(contract.trump)}
                       </span>
                       {contract.doubled && !contract.redoubled && (
@@ -679,7 +681,7 @@ const BiddingInterface: React.FC = () => {
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     BID
                     {selectedTrump && (
-                      <span className={`text-2xl ${getSuitColor(selectedTrump)}`}>
+                      <span className="text-2xl" style={{ color: getSuitColor(selectedTrump) }}>
                         {getSuitSymbol(selectedTrump)}
                       </span>
                     )}

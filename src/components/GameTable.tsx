@@ -21,8 +21,18 @@ const GameTable: React.FC = () => {
   const dispatch = useAppDispatch();
     // Selectors
   const players = useAppSelector(state => state.game.players);
+  const currentPlayerIndex = useAppSelector(state => state.game.currentPlayerIndex);
   const isHumanTurn = useAppSelector(state => !state.game.players[state.game.currentPlayerIndex]?.isAI);
   const validMoves = useAppSelector(state => state.game.validMoves);
+  
+  // Debug logging
+  React.useEffect(() => {
+    console.log('GameTable render - players:', players.map(p => ({
+      name: p.name,
+      position: p.position,
+      cards: p.hand.length
+    })));
+  }, [players]);
   
   // State
   const phase = useAppSelector(state => state.game.phase);
@@ -92,9 +102,8 @@ const GameTable: React.FC = () => {
   useEffect(() => {
     if (notifications.length > 0) {
       const latestNotification = notifications[notifications.length - 1];
-      
-      // Skip if already shown
-      if (shownNotificationTimestamps.has(latestNotification.timestamp)) {
+        // Skip if timestamp is undefined or already shown
+      if (latestNotification.timestamp === undefined || shownNotificationTimestamps.has(latestNotification.timestamp)) {
         return;
       }
       
@@ -108,9 +117,8 @@ const GameTable: React.FC = () => {
           position: player.position,
           trumpSuit: trumpSuit || undefined,
           timestamp: latestNotification.timestamp
-        };
-        setAnnouncements(prev => [...prev, announcementData]);
-        setShownNotificationTimestamps(prev => new Set([...prev, latestNotification.timestamp]));
+        };        setAnnouncements(prev => [...prev, announcementData]);
+        setShownNotificationTimestamps(prev => new Set([...prev, latestNotification.timestamp!]));
       }
     }
   }, [notifications, players, trumpSuit, shownNotificationTimestamps]);
@@ -143,10 +151,9 @@ const GameTable: React.FC = () => {
       }
     });
   }, [declarationTracking, players, declarations, shownDeclarationIds, phase, trickNumber]);
-
   // Handle declaration showing in trick 2
   useEffect(() => {
-    if (phase === GamePhase.Playing && trickNumber === 2) {
+    if (phase === GamePhase.Playing && trickNumber === 2 && declarationTracking) {
       // In the second trick, players should show their cards
       // This is handled by DeclarationViewer component which is already in place
       // We just need to ensure shownInTrick is updated
@@ -237,7 +244,7 @@ const GameTable: React.FC = () => {
         <PlayerHand
           player={player}
           position={position}
-          isCurrentPlayer={false}
+          isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
           showCards={isHuman}
           onCardClick={isHuman ? handleCardClick : undefined}
           onCardPlay={isHuman ? handleCardPlay : undefined}
@@ -319,7 +326,7 @@ const GameTable: React.FC = () => {
       
       {/* Early Termination Animation */}
       <AnimatePresence>
-        {earlyTermination && settings?.animations?.cardAnimations && (
+        {earlyTermination && settings?.animationSpeed && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

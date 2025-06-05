@@ -19,6 +19,7 @@ import VictoryCelebration from './components/VictoryCelebration';
 import DetailedScoreboard from './components/DetailedScoreboard';
 import DevTools from './components/DevTools';
 import AnnouncementDisplay from './components/AnnouncementDisplay';
+import { CardDebug } from './components/CardDebug';
 import './App.css';
 
 // Detect if device supports touch
@@ -181,6 +182,9 @@ function GameContent() {
           
           {/* Announcement Display for Belote/Rebelote */}
           <AnnouncementDisplay />
+          
+          {/* Debug Card Display */}
+          <CardDebug />
           
           {gamePhase === GamePhase.Bidding && (
             <div id="bidding">

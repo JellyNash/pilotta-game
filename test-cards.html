@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Display Test</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .test-card {
+            width: 120px;
+            height: 168px;
+            background: white;
+            border-radius: 8px;
+            margin: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .red { color: #dc2626; }
+        .black { color: #111827; }
+        .face-down {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: transparent;
+        }
+        h2 {
+            margin-top: 30px;
+            color: #94a3b8;
+        }
+        .card-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .status {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Card Display Test</h1>
+    
+    <div class="status" id="status">
+        Loading game state...
+    </div>
+    
+    <h2>Test Cards (Static)</h2>
+    <div class="card-row">
+        <div class="test-card red">A♥</div>
+        <div class="test-card black">K♠</div>
+        <div class="test-card red">Q♦</div>
+        <div class="test-card black">J♣</div>
+        <div class="test-card face-down">?</div>
+    </div>
+    
+    <h2>Game Cards (Dynamic)</h2>
+    <div id="game-cards"></div>
+    
+    <script src="/debug-cards.js"></script>
+    <script>
+        // Wait for page load then check game state
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                // Get Redux store from React app
+                const store = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__.store;
+                
+                if (store) {
+                    const state = store.getState();
+                    const gameState = state.game;
+                    
+                    const statusEl = document.getElementById('status');
+                    statusEl.innerHTML = `
+                        <h3>Game State:</h3>
+                        <p>Phase: ${gameState.phase}</p>
+                        <p>Players: ${gameState.players.length}</p>
+                        <p>Cards dealt: ${gameState.players.every(p => p.hand.length > 0) ? 'Yes' : 'No'}</p>
+                        ${gameState.players.map((p, i) => `
+                            <p>Player ${i+1} (${p.name}): ${p.hand.length} cards</p>
+                        `).join('')}
+                    `;
+                    
+                    // Show actual cards
+                    const cardsContainer = document.getElementById('game-cards');
+                    gameState.players.forEach((player, pIndex) => {
+                        const playerDiv = document.createElement('div');
+                        playerDiv.innerHTML = `<h3>${player.name} (${player.position})</h3>`;
+                        
+                        const cardRow = document.createElement('div');
+                        cardRow.className = 'card-row';
+                        
+                        player.hand.forEach(card => {
+                            const cardDiv = document.createElement('div');
+                            cardDiv.className = `test-card ${card.suit === 'Hearts' || card.suit === 'Diamonds' ? 'red' : 'black'}`;
+                            cardDiv.textContent = `${card.rank}${getSuitSymbol(card.suit)}`;
+                            cardRow.appendChild(cardDiv);
+                        });
+                        
+                        playerDiv.appendChild(cardRow);
+                        cardsContainer.appendChild(playerDiv);
+                    });
+                } else {
+                    document.getElementById('status').innerHTML = 'Redux store not found. Make sure the game is running.';
+                }
+                
+                function getSuitSymbol(suit) {
+                    const symbols = {
+                        'Hearts': '♥',
+                        'Diamonds': '♦',
+                        'Clubs': '♣',
+                        'Spades': '♠'
+                    };
+                    return symbols[suit] || '?';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

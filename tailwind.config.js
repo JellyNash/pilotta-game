@@ -4,6 +4,15 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    // Suit color classes that might be dynamically generated
+    'text-rose-500',
+    'text-red-600', 
+    'text-red-700',
+    'text-slate-800',
+    'text-gray-900',
+    'font-black'
+  ],
   theme: {
     extend: {
       animation: {

@@ -9,7 +9,7 @@
   backdrop-filter: blur(8px);
   border-radius: 0.75rem;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  z-index: 30;
+  z-index: var(--z-ui-overlay);
 }
 
 .contract-value {
