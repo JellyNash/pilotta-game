@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import './game-grid.css';
-import './responsive-variables.css';
 
 interface GameLayoutProps {
   northPlayer: React.ReactNode;

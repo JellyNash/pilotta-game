@@ -1,0 +1,53 @@
+/* CSS Containment for Performance Optimization */
+
+/* Game table contains all layout changes */
+.game-table {
+  contain: layout style;
+}
+
+/* Player hands contain their own layout */
+.player-hand-wrapper {
+  contain: layout;
+}
+
+/* Cards contain styling but not layout (they need to overflow for effects) */
+.game-card {
+  contain: style paint;
+  content-visibility: auto;
+}
+
+/* Trick area contains layout changes during animations */
+.trick-area {
+  contain: layout;
+  content-visibility: auto;
+}
+
+/* Announcement system contains all changes */
+.announcement-container {
+  contain: layout style paint;
+}
+
+/* Modal overlays contain everything */
+.bidding-modal,
+.settings-modal,
+.score-modal {
+  contain: strict;
+}
+
+/* Scoreboard updates frequently but in isolation */
+.scoreboard {
+  contain: layout style;
+}
+
+/* Performance: Skip rendering of hidden elements */
+[data-face-down="true"] {
+  content-visibility: auto;
+}
+
+/* Skip rendering of off-screen player zones */
+@supports (content-visibility: auto) {
+  .player-zone {
+    content-visibility: auto;
+    contain-intrinsic-size: 300px 200px;
+  }
+}

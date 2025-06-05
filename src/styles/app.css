@@ -51,7 +51,7 @@
 
 /* Utilities layer - Helper classes */
 @layer utilities {
-  /* Utility classes will go here */
+  @import './containment.css';
 }
 
 /* Overrides layer - Last resort !important rules */

@@ -1,5 +1,4 @@
-/* Import responsive variables first */
-@import './responsive-variables.css';
+/* Variables now in tokens.css */
 
 /* Main game grid layout */
 .game-table-grid {
