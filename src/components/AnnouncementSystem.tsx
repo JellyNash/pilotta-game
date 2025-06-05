@@ -205,6 +205,11 @@ const AnnouncementSystem: React.FC<AnnouncementSystemProps> = ({ announcements, 
                 rotate: {
                   duration: 0.6,
                   ease: [0.23, 1, 0.32, 1]
+                },
+                filter: {
+                  type: 'tween',
+                  duration: 0.3,
+                  ease: 'easeOut'
                 }
               }}
             >

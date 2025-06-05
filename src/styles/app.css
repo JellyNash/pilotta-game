@@ -35,7 +35,6 @@
 /* Components layer - Component styles */
 @layer components {
   @import '../components/PlayerHandArcImproved.css';
-  @import '../components/PlayerHand-refactored.css';
   @import '../components/AnnouncementSystem.css';
   @import '../components/BiddingInterface.css';
   @import '../components/ContractIndicator.css';
@@ -52,6 +51,7 @@
 /* Utilities layer - Helper classes */
 @layer utilities {
   @import './containment.css';
+  @import './responsive-fixes.css';
 }
 
 /* Overrides layer - Last resort !important rules */

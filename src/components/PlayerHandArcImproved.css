@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  z-index: var(--z-card-base);
   isolation: isolate;
 }
 
@@ -171,7 +171,7 @@
 
 /* Hover states maintain the arc but lift up */
 .ph-wrapper[data-position="south"] .ph-card-slot:hover { 
-  z-index: 30; 
+  z-index: var(--z-card-hover); 
 }
 
 /* Hover states - same elevation calculation */
@@ -335,15 +335,15 @@
 
 /* Z-index management */
 .ph-card-slot {
-  z-index: calc(var(--card-index, 0) + 1);
+  z-index: calc(var(--card-index, 0) + var(--z-card-base));
 }
 
 .ph-card-slot.ph-selected {
-  z-index: 20;
+  z-index: var(--z-card-selected);
 }
 
 .ph-card-slot:hover {
-  z-index: 30;
+  z-index: var(--z-card-hover);
 }
 
 /* Hover transitions */

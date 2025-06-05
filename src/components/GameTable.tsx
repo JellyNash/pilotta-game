@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameLayout } from '../layouts/GameLayout';
@@ -11,24 +11,20 @@ import DeclarationCardsDisplay from './DeclarationCardsDisplay';
 import AnnouncementSystem, { AnnouncementData } from './AnnouncementSystem';
 import TrickPile from './TrickPile';
 import ContractIndicator from './ContractIndicator';
-import { PositionedElement } from '../layouts/PositioningSystem';
-import { Card as CardType, GamePhase, BidEntry, Player } from '../core/types';
+import { Card as CardType, GamePhase, Player } from '../core/types';
 import { gameManager } from '../game/GameManager';
 import { selectCard } from '../store/gameSlice';
+import { mapGameToUIPosition } from '../utils/positionMapping';
 import { v4 as uuidv4 } from 'uuid';
 
 const GameTable: React.FC = () => {
   const dispatch = useAppDispatch();
-  
-  // Selectors
+    // Selectors
   const players = useAppSelector(state => state.game.players);
-  const humanPlayer = useAppSelector(state => state.game.players.find(p => !p.isAI));
-  const currentPlayer = useAppSelector(state => state.game.players[state.game.currentPlayerIndex]);
   const isHumanTurn = useAppSelector(state => !state.game.players[state.game.currentPlayerIndex]?.isAI);
   const validMoves = useAppSelector(state => state.game.validMoves);
   
   // State
-  const currentPlayerIndex = useAppSelector(state => state.game.currentPlayerIndex);
   const phase = useAppSelector(state => state.game.phase);
   const trumpSuit = useAppSelector(state => state.game.trumpSuit);
   const currentTrick = useAppSelector(state => state.game.currentTrick);
@@ -42,10 +38,7 @@ const GameTable: React.FC = () => {
   const biddingHistory = useAppSelector(state => state.game.biddingHistory);
   const settings = useAppSelector(state => state.game.settings);
   const notifications = useAppSelector(state => state.game.notifications || []);
-  
-  // Track recent bids and viewing state
-  const [recentBids, setRecentBids] = useState<Record<string, BidEntry | null>>({});
-  const [showBidAnnouncements, setShowBidAnnouncements] = useState<Record<string, boolean>>({});
+  // Track viewing state
   const [trickWinner, setTrickWinner] = useState<string | undefined>(undefined);
   const [shownInTrick, setShownInTrick] = useState<Record<string, number>>({});
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
@@ -62,13 +55,10 @@ const GameTable: React.FC = () => {
   }, [players]);
   
   const { north: northPlayer, east: eastPlayer, south: southPlayer, west: westPlayer } = playersByPosition;
-  
-  // Update recent bids when bidding history changes
+    // Update bidding announcements when bidding history changes
   useEffect(() => {
     if (biddingHistory.length > 0 && phase === GamePhase.Bidding) {
       const latestBid = biddingHistory[biddingHistory.length - 1];
-      setRecentBids(prev => ({ ...prev, [latestBid.player.id]: latestBid }));
-      setShowBidAnnouncements(prev => ({ ...prev, [latestBid.player.id]: true }));
       
       // Add to announcements for new system
       const announcementData: AnnouncementData = {
@@ -84,21 +74,14 @@ const GameTable: React.FC = () => {
         trumpSuit: latestBid.trump,
         timestamp: Date.now()
       };
-      setAnnouncements(prev => [...prev, announcementData]);
-      
-      const timer = setTimeout(() => {
-        setShowBidAnnouncements(prev => ({ ...prev, [latestBid.player.id]: false }));
-      }, 3000);
-      
-      return () => clearTimeout(timer);
+      setAnnouncements((prev: AnnouncementData[]) => [...prev, announcementData]);
     }
   }, [biddingHistory, phase]);
   
-  // Clear bid announcements when bidding phase ends
+  // Clear announcements when bidding phase ends
   useEffect(() => {
     if (phase !== GamePhase.Bidding) {
-      setRecentBids({});
-      setShowBidAnnouncements({});
+      setAnnouncements([]);
     }
   }, [phase]);
   
@@ -241,13 +224,11 @@ const GameTable: React.FC = () => {
     });
   }, [declarationTracking, trickNumber, shownInTrick]);
   
-
   // Render player zone content
   const renderPlayerZone = (player: Player | undefined, position: 'north' | 'east' | 'south' | 'west') => {
     if (!player) return null;
     
     const isHuman = !player.isAI;
-    const bid = recentBids[player.id];
     const playerDeclarations = declarations.filter(d => d.player.id === player.id);
     
     return (
@@ -256,7 +237,7 @@ const GameTable: React.FC = () => {
         <PlayerHand
           player={player}
           position={position}
-          isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
+          isCurrentPlayer={false}
           showCards={isHuman}
           onCardClick={isHuman ? handleCardClick : undefined}
           onCardPlay={isHuman ? handleCardPlay : undefined}
@@ -264,9 +245,8 @@ const GameTable: React.FC = () => {
           validMoves={validMoves}
           trumpSuit={trumpSuit}
         />
-        
-        {/* Belote Indicator */}
-        <BeloteIndicator playerId={player.id} position={position} />
+          {/* Belote Indicator */}
+        <BeloteIndicator playerId={player.id} position={mapGameToUIPosition(position)} />
         
         {/* Declaration Manager */}
         <DeclarationManager playerId={player.id} position={position} />
@@ -311,29 +291,28 @@ const GameTable: React.FC = () => {
       
       {/* Contract Indicator - manages its own responsive positioning */}
       <ContractIndicator />
-      
-      {/* Team B Trick Pile - Upper Left */}
-      {teams.B.wonTricks.length > 0 && (
-        <div className="absolute top-4 left-4 z-10">
+        {/* Team B Trick Pile - Upper Left */}
+      {teams.B?.wonTricks && teams.B.wonTricks.length > 0 && (
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 lg:top-6 lg:left-6 z-10">
           <TrickPile 
             tricks={teams.B.wonTricks} 
             teamId="B" 
             position="north" 
             currentTrickNumber={trickNumber}
-            isLastTrickPile={completedTricks.length > 0 && completedTricks[completedTricks.length - 1].winner.teamId === 'B'}
+            isLastTrickPile={completedTricks.length > 0 && completedTricks[completedTricks.length - 1]?.winner?.teamId === 'B'}
           />
         </div>
       )}
       
       {/* Team A Trick Pile - Lower Right (Human's team) */}
-      {teams.A.wonTricks.length > 0 && (
-        <div className="absolute bottom-4 right-4 z-10">
+      {teams.A?.wonTricks && teams.A.wonTricks.length > 0 && (
+        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 lg:bottom-6 lg:right-6 z-10">
           <TrickPile 
             tricks={teams.A.wonTricks} 
             teamId="A" 
             position="south" 
             currentTrickNumber={trickNumber}
-            isLastTrickPile={completedTricks.length > 0 && completedTricks[completedTricks.length - 1].winner.teamId === 'A'}
+            isLastTrickPile={completedTricks.length > 0 && completedTricks[completedTricks.length - 1]?.winner?.teamId === 'A'}
           />
         </div>
       )}
