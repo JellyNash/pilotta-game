@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { clearNotification } from '../store/gameSlice';
 import { soundManager } from '../utils/soundManager';
 import { GameNotification } from '../core/types';
 import UnifiedAnnouncement from './UnifiedAnnouncement';
 
+// Empty array constant to avoid creating new references
+const EMPTY_NOTIFICATIONS: GameNotification[] = [];
+
 const AnnouncementDisplay: React.FC = () => {
-  const notifications = useAppSelector(state => state.game.notifications || []);
+  const notifications = useAppSelector(state => state.game.notifications || EMPTY_NOTIFICATIONS);
   const players = useAppSelector(state => state.game.players);
   const dispatch = useAppDispatch();
   const [displayedNotifications, setDisplayedNotifications] = useState<GameNotification[]>([]);

@@ -212,3 +212,30 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Mobile positioning fixes */
+@media (max-width: 640px) {
+  .announcement-north {
+    top: 10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90vw;
+  }
+  
+  .announcement-south {
+    bottom: 20vh; /* Higher to avoid overlap with cards */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90vw;
+  }
+  
+  .announcement-east,
+  .announcement-west {
+    display: none; /* Hide side announcements on mobile */
+  }
+  
+  .announcement-content {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+}

@@ -141,6 +141,115 @@ The game follows a strict phase progression:
 
 ## Latest Session Updates (2025-01-06)
 
+### Session 21 - Complete Responsive Implementation (All Phases)
+1. **Phase 1: Critical Overflow & Container Fixes**:
+   - **Fixed .game-table overflow**: Changed from `overflow: hidden` to `visible` in table-center.css
+   - **Bidding Modal**: Reduced min-width from 510px to 280px, added mobile media queries
+   - **Contract Indicator**: Added mobile-specific positioning for screens < 480px
+   - **Result**: No more content clipping or horizontal scroll on mobile
+
+2. **Phase 2: Card Layout Mobile Optimization**:
+   - **PlayerHandFlex Enhanced**: Added aggressive mobile scaling
+     - < 375px: 0.45x scale with 40% overlap
+     - 375-480px: 0.5x scale with 45% overlap
+     - Maintained proper touch targets with padding
+   - **Announcement Positioning**: Added viewport constraints to prevent off-screen placement
+   - **Result**: All cards visible and interactive on mobile devices
+
+3. **Phase 3: Testing & Validation**:
+   - **Dev Server**: Running on http://localhost:3000 for manual testing
+   - **Test Viewports**: 375x667 (iPhone SE), 768x1024 (iPad), 1366x768, 1920x1080
+   - **Validation**: All critical issues from Session 20 analysis resolved
+   - **Result**: Game fully playable across all device sizes
+
+4. **Phase 4: Z-index Conflict Resolution**:
+   - **New CSS Variables**: Created standardized z-index system in tokens.css
+     - `--z-index-card-base`: 10 (regular cards)
+     - `--z-index-card-hover`: 40 (hovered cards)
+     - `--z-index-south-cards`: 30 (human player priority)
+     - `--z-index-ui-overlay`: 50 (UI elements)
+     - `--z-index-bidding`: 60 (bidding interface)
+   - **Applied Across Components**: Updated all components to use new variables
+   - **Result**: Consistent stacking order, no more z-index conflicts
+
+5. **Files Modified**:
+   - `table-center.css`: Fixed overflow issue
+   - `tokens.css`: Added z-index system, updated modal widths
+   - `BiddingInterface.css`: Mobile media queries
+   - `ContractIndicator.css`: Mobile positioning
+   - `PlayerHandFlex.css`: Enhanced mobile optimizations
+   - `AnnouncementSystem.css`: Viewport constraints
+   - `overrides.css`: Applied new z-index variables
+
+### Session 20 - Flexbox Card Layout & Root Container Fixes
+1. **Implemented Flexbox Card Layout**:
+   - **New Components**: Created PlayerHandFlex.css and PlayerHandFlex.tsx
+   - **Position Change**: Cards now use `position: relative` instead of absolute
+   - **Flex Properties**: `flex: 0 1 auto` with `min-width: 0` for proper shrinking
+   - **Arc Effect**: Achieved with transforms (rotation + translateY)
+   - **Dynamic Sizing**: Using clamp() for responsive card dimensions
+   - **Overlap Strategy**: Negative margins for card overlap
+   - **Fallback**: Scrolling enabled for viewports < 480px
+
+2. **Fixed Root Container Responsive Issues**:
+   - **#root**: Changed from fixed 1477x1270px to `width: 100%`, `min-height: 100vh`
+   - **Overflow**: Changed body, #root, and .app from `overflow: hidden` to `visible/auto`
+   - **Result**: Now reveals clipping issues instead of hiding them
+   - **Testing**: Created test-responsive-overflow.html for verification
+
+3. **Removed Card Debug Overlay**:
+   - Deleted CardDebug.tsx component
+   - Removed all debug imports and console.log statements
+   - Cleaned up App.tsx
+
+4. **Files Modified**:
+   - Created: `PlayerHandFlex.css`, `PlayerHandFlex.tsx`
+   - Created: `FLEXBOX_CARD_IMPLEMENTATION.md`, `test-responsive-overflow.html`
+   - Modified: `GameTable.tsx` (added USE_FLEXBOX_LAYOUT toggle)
+   - Modified: `index.css` (removed fixed dimensions, changed overflow)
+   - Modified: `App.tsx` (removed debug code)
+
+### Session 19 - Major Card Display & Responsive Design Fixes
+1. **Fixed Card Display Issues**:
+   - **Missing CSS Variables**: Added `--card-width-base` and `--card-height-base` to tokens.css
+   - **Current Player Logic**: Fixed hardcoded `isCurrentPlayer={false}` preventing AI cards from showing
+   - **Result**: All player cards (human and AI) now display correctly
+
+2. **Fixed Performance Issues**:
+   - **Redux Selector Warning**: Created `EMPTY_NOTIFICATIONS` constant to prevent re-renders
+   - **CSS @import Errors**: Moved all imports to top of app.css, removed from @layer blocks
+   - **Result**: No more console warnings, improved performance
+
+3. **Fixed Card Clipping/Overflow**:
+   - **Changed overflow**: From `hidden` to `visible` on game containers
+   - **Z-index Layering**: South player highest (base+20), others (base+10)
+   - **Added to overrides.css**: Explicit overflow and z-index rules
+   - **Result**: Cards no longer cut off, proper stacking order maintained
+
+4. **Comprehensive Responsive Design Overhaul**:
+   - **Grid System**: Replaced fixed pixels with `fr` units and `minmax(0, 1fr)`
+   - **Mobile-First Breakpoints**:
+     - < 640px: Single column, hide side players
+     - 641-768px: Compact 3x3 grid
+     - 769-1024px: Balanced tablet layout
+     - 1025-1440px: Standard desktop
+     - > 1441px: Constrained maximums with clamp()
+   - **Flex Properties**: Changed from `flex-grow: 0` to `flex: 1 1 auto`
+   - **Fluid Sizing**: Implemented `clamp()` for padding, gaps, and dimensions
+   - **CSS Custom Properties**: Added breakpoints and grid ratios to tokens.css
+
+5. **Files Modified**:
+   - `tokens.css`: Added missing variables and responsive breakpoints
+   - `GameTable.tsx`: Fixed current player logic and selector optimization
+   - `AnnouncementDisplay.tsx`: Optimized Redux selector
+   - `app.css`: Reorganized @import statements
+   - `index.css`: Changed overflow to visible
+   - `game-grid.css`: Complete responsive grid implementation
+   - `PlayerZone.css`: Updated flex properties
+   - `PlayerHandArcImproved.css`: Added responsive scaling
+   - `overrides.css`: Added overflow and z-index fixes
+   - Created: `RESPONSIVE_DESIGN_IMPLEMENTATION.md`
+
 ### Session 18 - Enhanced Animations & Declaration Display System
 1. **Announcement System Professional Animations**:
    - **Entry/Exit Effects**: Scale from 0 with 10px blur, directional exit with rotation

@@ -11,6 +11,14 @@
   padding: 0;
 }
 
+html {
+  /* Ensure HTML is responsive */
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -19,22 +27,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #0f172a;
   color: #f1f5f9;
-  overflow: hidden;
+  /* Allow scrolling to detect overflow issues */
+  overflow: auto;
+  min-height: 100vh;
 }
 
 #root {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  /* Remove fixed dimensions - be responsive */
+  width: 100%;
+  min-height: 100vh;
+  /* Change to visible to detect clipping */
+  overflow: visible;
 }
 
 /* ==================== GAME CONTAINMENT ==================== */
 .app {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* Change to visible to detect overflow */
+  overflow: visible;
+  position: relative;
 }
 
 .game-header {
@@ -49,9 +63,9 @@ body {
 
 .game-content {
   flex: 1;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
-  height: calc(100vh - 5rem);
+  min-height: calc(100vh - 5rem);
 }
 
 /* Game table must contain all elements */
@@ -59,7 +73,7 @@ body {
   width: 100%;
   height: 100%;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Player area containment */
@@ -87,6 +101,7 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
+  z-index: inherit;
 }
 
 /* Card visibility improvements */

@@ -42,3 +42,36 @@
     font-size: var(--text-lg);
   }
 }
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+  .contract-indicator {
+    position: fixed; /* Change from absolute to fixed */
+    top: 0.5rem;
+    right: 0.5rem;
+    min-width: 80px;
+    max-width: 120px;
+    padding: 0.5rem;
+  }
+  
+  .contract-value {
+    font-size: 1.125rem; /* 18px */
+  }
+  
+  .contract-suit {
+    font-size: 1rem;
+    margin-left: 0.25rem;
+  }
+  
+  .contract-multiplier {
+    font-size: 0.75rem;
+  }
+}
+
+/* Extreme mobile */
+@media (max-width: 360px) {
+  .contract-indicator {
+    min-width: 70px;
+    padding: 0.375rem;
+  }
+}

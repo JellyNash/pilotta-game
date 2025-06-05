@@ -9,7 +9,8 @@ import {
   Declaration,
   DeclarationType,
   DECLARATION_POINTS,
-  LAST_TRICK_BONUS
+  LAST_TRICK_BONUS,
+  TOTAL_POINTS_ALL_TRICKS
 } from './types';
 import { 
   hasSuit, 
@@ -353,14 +354,31 @@ export function calculateRoundScore(
   const contractTeam = contract.team;
   const defendingTeam = contractTeam === 'A' ? 'B' : 'A';
   
-  // Add last trick bonus
-  trickPoints[lastTrickWinner] += LAST_TRICK_BONUS;
+  // Check if one team collected all tricks
+  const teamATricks = gameState.completedTricks.filter(t => t.winner.teamId === 'A').length;
+  const teamBTricks = gameState.completedTricks.filter(t => t.winner.teamId === 'B').length;
   
   // Calculate total points for each team
-  const totalPoints = {
-    A: trickPoints.A + declarationPoints.A + belotePoints.A,
-    B: trickPoints.B + declarationPoints.B + belotePoints.B
+  let totalPoints = {
+    A: 0,
+    B: 0
   };
+  
+  // If a team collected all tricks, they get 250 points
+  if (teamATricks === 8) {
+    totalPoints.A = TOTAL_POINTS_ALL_TRICKS;
+  } else if (teamBTricks === 8) {
+    totalPoints.B = TOTAL_POINTS_ALL_TRICKS;
+  } else {
+    // Normal scoring: add trick points and last trick bonus
+    trickPoints[lastTrickWinner] += LAST_TRICK_BONUS;
+    totalPoints.A = trickPoints.A;
+    totalPoints.B = trickPoints.B;
+  }
+  
+  // Add declarations and belote points (always added)
+  totalPoints.A += declarationPoints.A + belotePoints.A;
+  totalPoints.B += declarationPoints.B + belotePoints.B;
   
   // Check if contract was made
   const contractMade = totalPoints[contractTeam] >= contract.value;
@@ -383,11 +401,28 @@ export function calculateRoundScore(
     totalPoints.B *= multiplier;
   }
   
-  // Divide by 10 and round up for final score
-  const finalPoints = {
-    A: Math.ceil(totalPoints.A / 10),
-    B: Math.ceil(totalPoints.B / 10)
+  // Apply new rounding rules
+  const remainderA = totalPoints.A % 10;
+  const remainderB = totalPoints.B % 10;
+  
+  let finalPoints = {
+    A: Math.floor(totalPoints.A / 10),
+    B: Math.floor(totalPoints.B / 10)
   };
+  
+  // Determine who rounds up based on highest remainder
+  if (remainderA > remainderB) {
+    finalPoints.A = Math.ceil(totalPoints.A / 10);
+  } else if (remainderB > remainderA) {
+    finalPoints.B = Math.ceil(totalPoints.B / 10);
+  } else if (remainderA === remainderB && remainderA > 0) {
+    // Equal remainders - the team with more trick-taking points rounds up
+    if (trickPoints.A > trickPoints.B) {
+      finalPoints.A = Math.ceil(totalPoints.A / 10);
+    } else {
+      finalPoints.B = Math.ceil(totalPoints.B / 10);
+    }
+  }
   
   return {
     A: finalPoints.A,

@@ -28,3 +28,42 @@
   height: calc(var(--suit-button-size) * 1.4);
   font-size: calc(var(--suit-button-size) * 0.6);
 }
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+  .bidding-container {
+    padding: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .bid-amount-display {
+    font-size: 2rem; /* Reduce from 3rem */
+  }
+  
+  .suit-selection {
+    gap: 0.5rem; /* Reduce gap between suit buttons */
+  }
+  
+  .suit-card-button {
+    width: 3rem;
+    height: 4.2rem;
+    font-size: 1.8rem;
+  }
+  
+  .bid-actions {
+    gap: 0.5rem;
+  }
+  
+  .bid-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .bidding-container {
+    min-width: 95vw;
+  }
+}

@@ -372,8 +372,10 @@ const BiddingInterface: React.FC = () => {
                     {/* Suit symbol with 3D effect */}
                     <motion.span 
                       className="relative z-10"
-                      style={{ color: getSuitColor(suit) }}
-                      style={{ fontSize: 'calc(var(--suit-button-size) * 0.6)' }}
+                      style={{ 
+                        color: getSuitColor(suit),
+                        fontSize: 'calc(var(--suit-button-size) * 0.6)'
+                      }}
                       animate={selectedTrump === suit ? {
                         filter: [
                           "drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))",

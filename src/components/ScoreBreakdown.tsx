@@ -93,8 +93,8 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
                           </span>
                         </div>
                         <div className="flex justify-between text-xs text-slate-500 mt-1">
-                          <span>÷ 10 rounded up</span>
-                          <span>= {Math.ceil((rawPoints?.A || 0) / 10)}</span>
+                          <span>÷ 10</span>
+                          <span>= {roundScore.team1Score}</span>
                         </div>
                       </div>
                       
@@ -140,8 +140,8 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
                           </span>
                         </div>
                         <div className="flex justify-between text-xs text-slate-500 mt-1">
-                          <span>÷ 10 rounded up</span>
-                          <span>= {Math.ceil((rawPoints?.B || 0) / 10)}</span>
+                          <span>÷ 10</span>
+                          <span>= {roundScore.team2Score}</span>
                         </div>
                       </div>
                       
@@ -166,7 +166,7 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
                         <span className="text-white">{roundScore.team1Tricks || 0}/8</span>
                       </div>
                       {roundScore.team1AllTricks && (
-                        <div className="text-green-400 text-xs">All tricks bonus!</div>
+                        <div className="text-green-400 text-xs">All tricks bonus! (250 points)</div>
                       )}
                     </div>
                     
@@ -176,7 +176,7 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
                         <span className="text-white">{roundScore.team2Tricks || 0}/8</span>
                       </div>
                       {roundScore.team2AllTricks && (
-                        <div className="text-green-400 text-xs">All tricks bonus!</div>
+                        <div className="text-green-400 text-xs">All tricks bonus! (250 points)</div>
                       )}
                     </div>
                   </div>

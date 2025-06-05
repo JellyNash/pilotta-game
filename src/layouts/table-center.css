@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: visible; /* Allow cards to extend beyond container */
 }
 
 /* Center reference point */

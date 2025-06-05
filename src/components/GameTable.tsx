@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GameLayout } from '../layouts/GameLayout';
 import { PlayerZone } from './PlayerZone';
 import PlayerHand from './PlayerHand';
+import PlayerHandFlex from './PlayerHandFlex';
 import TrickArea from './TrickArea';
 import BeloteIndicator from './BeloteIndicator';
 import DeclarationManager from './DeclarationManager';
@@ -18,21 +19,14 @@ import { mapGameToUIPosition } from '../utils/positionMapping';
 import { v4 as uuidv4 } from 'uuid';
 
 const GameTable: React.FC = () => {
+  // Toggle for testing flexbox layout - can be removed after testing
+  const USE_FLEXBOX_LAYOUT = true; // Set to true to test new flexbox layout
   const dispatch = useAppDispatch();
     // Selectors
   const players = useAppSelector(state => state.game.players);
   const currentPlayerIndex = useAppSelector(state => state.game.currentPlayerIndex);
   const isHumanTurn = useAppSelector(state => !state.game.players[state.game.currentPlayerIndex]?.isAI);
   const validMoves = useAppSelector(state => state.game.validMoves);
-  
-  // Debug logging
-  React.useEffect(() => {
-    console.log('GameTable render - players:', players.map(p => ({
-      name: p.name,
-      position: p.position,
-      cards: p.hand.length
-    })));
-  }, [players]);
   
   // State
   const phase = useAppSelector(state => state.game.phase);
@@ -48,6 +42,21 @@ const GameTable: React.FC = () => {
   const biddingHistory = useAppSelector(state => state.game.biddingHistory);
   const settings = useAppSelector(state => state.game.settings);
   const notifications = useAppSelector(state => state.game.notifications || []);
+  
+  // Debug logging
+  React.useEffect(() => {
+    console.log('GameTable render - players:', players.map(p => ({
+      name: p.name,
+      position: p.position,
+      cards: p.hand.length
+    })));
+    console.log('Teams data:', {
+      teamA: teams.A,
+      teamB: teams.B,
+      teamATricks: teams.A?.wonTricks?.length || 0,
+      teamBTricks: teams.B?.wonTricks?.length || 0
+    });
+  }, [players, teams]);
   // Track viewing state
   const [trickWinner, setTrickWinner] = useState<string | undefined>(undefined);
   const [shownInTrick, setShownInTrick] = useState<Record<string, number>>({});
@@ -241,17 +250,31 @@ const GameTable: React.FC = () => {
     return (
       <PlayerZone player={player} position={position}>
         {/* Player Hand */}
-        <PlayerHand
-          player={player}
-          position={position}
-          isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
-          showCards={isHuman}
-          onCardClick={isHuman ? handleCardClick : undefined}
-          onCardPlay={isHuman ? handleCardPlay : undefined}
-          selectedCard={selectedCard}
-          validMoves={validMoves}
-          trumpSuit={trumpSuit}
-        />
+        {USE_FLEXBOX_LAYOUT ? (
+          <PlayerHandFlex
+            player={player}
+            position={position}
+            isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
+            showCards={isHuman}
+            onCardClick={isHuman ? handleCardClick : undefined}
+            onCardPlay={isHuman ? handleCardPlay : undefined}
+            selectedCard={selectedCard}
+            validMoves={validMoves}
+            trumpSuit={trumpSuit}
+          />
+        ) : (
+          <PlayerHand
+            player={player}
+            position={position}
+            isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
+            showCards={isHuman}
+            onCardClick={isHuman ? handleCardClick : undefined}
+            onCardPlay={isHuman ? handleCardPlay : undefined}
+            selectedCard={selectedCard}
+            validMoves={validMoves}
+            trumpSuit={trumpSuit}
+          />
+        )}
           {/* Belote Indicator */}
         <BeloteIndicator playerId={player.id} position={mapGameToUIPosition(position)} />
         

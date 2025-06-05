@@ -1,4 +1,22 @@
 /* CSS Layer Architecture for Pilotta Game */
+
+/* Import all CSS files at the top */
+@import './tokens.css';
+@import '../layouts/game-grid.css';
+@import '../layouts/table-center.css';
+@import '../layouts/responsive.css';
+@import '../components/PlayerHandArcImproved.css';
+@import '../components/AnnouncementSystem.css';
+@import '../components/BiddingInterface.css';
+@import '../components/ContractIndicator.css';
+@import '../components/PlayerZone.css';
+@import '../components/TrickArea.css';
+@import '../components/TrickPileViewer.css';
+@import './containment.css';
+@import './responsive-fixes.css';
+@import './overrides.css';
+
+/* Define layer order */
 @layer reset, base, tokens, tailwind, layout, components, states, utilities, overrides;
 
 /* Reset layer - Normalize styles */
@@ -17,7 +35,7 @@
 
 /* Tokens layer - Design tokens */
 @layer tokens {
-  @import './tokens.css';
+  /* Tokens imported above */
 }
 
 /* Tailwind layer - Utility framework */
@@ -27,20 +45,12 @@
 
 /* Layout layer - Structural styles */
 @layer layout {
-  @import '../layouts/game-grid.css';
-  @import '../layouts/table-center.css';
-  @import '../layouts/responsive.css';
+  /* Layout files imported above */
 }
 
 /* Components layer - Component styles */
 @layer components {
-  @import '../components/PlayerHandArcImproved.css';
-  @import '../components/AnnouncementSystem.css';
-  @import '../components/BiddingInterface.css';
-  @import '../components/ContractIndicator.css';
-  @import '../components/PlayerZone.css';
-  @import '../components/TrickArea.css';
-  @import '../components/TrickPileViewer.css';
+  /* Component files imported above */
 }
 
 /* States layer - Interactive states */
@@ -50,11 +60,10 @@
 
 /* Utilities layer - Helper classes */
 @layer utilities {
-  @import './containment.css';
-  @import './responsive-fixes.css';
+  /* Utility files imported above */
 }
 
 /* Overrides layer - Last resort !important rules */
 @layer overrides {
-  @import './overrides.css';
+  /* Override files imported above */
 }

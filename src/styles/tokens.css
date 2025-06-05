@@ -1,10 +1,13 @@
 /* Design Tokens - Centralized CSS Custom Properties */
 :root {
   /* Z-index System - Properly layered to prevent conflicts */
+  --z-base: 1;
   --z-card-base: 10;
-  --z-player-indicator: 20;
-  --z-card-selected: 30;
-  --z-card-hover: 40;
+  --z-trick-cards: 20;
+  --z-south-player: 25; /* Between trick and hover */
+  --z-player-indicator: 30;
+  --z-card-hover: 35; /* Changed from 30 to avoid conflict */
+  --z-card-selected: 40;
   --z-ui-overlay: 50;
   --z-trick-pile: 60;
   --z-announcement: 70;
@@ -14,6 +17,21 @@
   --z-header: 110;
   --z-notification: 120;
   --z-tooltip: 130;
+  
+  /* Responsive breakpoints */
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-laptop: 1024px;
+  --breakpoint-desktop: 1440px;
+  --breakpoint-wide: 1920px;
+  --breakpoint-ultrawide: 3440px;
+  
+  /* Grid proportions - can be adjusted via media queries */
+  --grid-side-ratio: 1;
+  --grid-center-ratio: 2;
+  --grid-top-ratio: 1;
+  --grid-middle-ratio: 2;
+  --grid-bottom-ratio: 1;
 
   /* Layout - Header */
   --header-height: 5rem;
@@ -86,16 +104,16 @@
   --trick-area-max: 40rem;
 
   /* Bidding Interface */
-  --bid-modal-width: clamp(510px, 59.5vw, 850px);
+  --bid-modal-width: clamp(280px, 85vw, 850px);
   --bid-button-width: clamp(102px, 12.75vw, 170px);
   --suit-button-size: clamp(68px, 6.8vw, 102px);
   --bid-card-scale: clamp(0.68, 0.85vw, 1.02);
 
   /* Player Hand Specific (ph- prefix) */
-  --ph-card-width: 156px;
-  --ph-card-height: 218px;
+  --ph-card-width: clamp(100px, 12vw, 156px);
+  --ph-card-height: clamp(140px, 16.8vw, 218px);
   --ph-fan-spread: 0.65;
-  --ph-fan-arc-height: 30px;
+  --ph-fan-arc-height: clamp(20px, 3vw, 30px);
   --ph-fan-rotation-range: 25deg;
   --ph-card-scale: 1;
   --ph-hover-scale: 1.1;

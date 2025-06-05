@@ -234,6 +234,9 @@ export const DECLARATION_POINTS = {
 // Last trick bonus
 export const LAST_TRICK_BONUS = 10;
 
+// Total points when a team collects all tricks
+export const TOTAL_POINTS_ALL_TRICKS = 250;
+
 // Total available points (without declarations)
 export const TOTAL_TRICK_POINTS = 162;
 

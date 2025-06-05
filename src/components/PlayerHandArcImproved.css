@@ -21,8 +21,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-card-base);
+  z-index: inherit;
   isolation: isolate;
+  overflow: visible;
 }
 
 /* Container */
@@ -45,6 +46,7 @@
   right: auto;
   bottom: auto;
   left: auto;
+  z-index: inherit;
 }
 
 /* Prevent child positioning issues */
@@ -55,9 +57,14 @@
 /* SOUTH PLAYER - Improved Arc with limited extremes */
 .ph-wrapper[data-position="south"] .ph-container {
   --card-count: 8;
-  width: calc(var(--ph-card-width) * var(--card-count) * var(--ph-fan-spread) * var(--ph-card-scale));
+  /* Constrain width to available space */
+  width: min(
+    calc(var(--ph-card-width) * var(--card-count) * var(--ph-fan-spread) * var(--ph-card-scale)),
+    90vw
+  );
   height: calc((var(--ph-card-height) + var(--ph-fan-arc-height)) * var(--ph-card-scale));
   padding-bottom: 2rem;
+  max-width: 100%;
 }
 
 .ph-wrapper[data-position="south"] .ph-card-slot {
@@ -273,8 +280,12 @@
 
 /* NORTH PLAYER - Keep existing */
 .ph-wrapper[data-position="north"] .ph-container {
-  width: calc(var(--ph-card-width) * 8 * 0.4 * var(--ph-card-scale));
+  width: min(
+    calc(var(--ph-card-width) * 8 * 0.4 * var(--ph-card-scale)),
+    90%
+  );
   height: calc(var(--ph-card-height) * var(--ph-card-scale));
+  max-width: 100%;
 }
 
 .ph-wrapper[data-position="north"] .ph-card-slot {
@@ -293,9 +304,13 @@
 
 /* EAST PLAYER - 90deg rotation */
 .ph-wrapper[data-position="east"] .ph-container {
-  width: calc(var(--ph-card-height) * 8 * 0.3 * var(--ph-card-scale));
+  width: min(
+    calc(var(--ph-card-height) * 8 * 0.3 * var(--ph-card-scale)),
+    90%
+  );
   height: calc(var(--ph-card-width) * var(--ph-card-scale));
   flex-direction: column;
+  max-height: 100%;
 }
 
 .ph-wrapper[data-position="east"] .ph-card-slot {
@@ -314,9 +329,13 @@
 
 /* WEST PLAYER - -90deg rotation */
 .ph-wrapper[data-position="west"] .ph-container {
-  width: calc(var(--ph-card-height) * 8 * 0.3 * var(--ph-card-scale));
+  width: min(
+    calc(var(--ph-card-height) * 8 * 0.3 * var(--ph-card-scale)),
+    90%
+  );
   height: calc(var(--ph-card-width) * var(--ph-card-scale));
   flex-direction: column;
+  max-height: 100%;
 }
 
 .ph-wrapper[data-position="west"] .ph-card-slot {
@@ -354,4 +373,28 @@
 /* Card size controls from Settings - using CSS variable */
 .ph-wrapper {
   --ph-card-scale: var(--card-size-scale, 1.0);
+}
+
+/* Responsive card scaling */
+@media (max-width: 768px) {
+  .ph-wrapper {
+    --ph-card-scale: 0.7;
+  }
+  
+  .ph-wrapper[data-position="east"],
+  .ph-wrapper[data-position="west"] {
+    --ph-card-scale: 0.6;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .ph-wrapper {
+    --ph-card-scale: 0.85;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .ph-wrapper {
+    --ph-card-scale: 0.95;
+  }
 }

@@ -19,7 +19,6 @@ import VictoryCelebration from './components/VictoryCelebration';
 import DetailedScoreboard from './components/DetailedScoreboard';
 import DevTools from './components/DevTools';
 import AnnouncementDisplay from './components/AnnouncementDisplay';
-import { CardDebug } from './components/CardDebug';
 import './App.css';
 
 // Detect if device supports touch
@@ -41,22 +40,6 @@ function GameContent() {
     return null;
   });
   
-  // Debug logging for card display issues
-  const players = useAppSelector(state => state.game.players);
-  const humanPlayer = players.find(p => !p.isAI);
-  
-  useEffect(() => {
-    console.log('=== GAME DEBUG INFO ===');
-    console.log('Game Phase:', gamePhase);
-    console.log('Human player:', humanPlayer?.name || 'Not found');
-    console.log('Human player cards:', humanPlayer?.hand?.length || 0);
-    if (humanPlayer?.hand && humanPlayer.hand.length > 0) {
-      console.log('Cards:', humanPlayer.hand.map(c => `${c.rank} of ${c.suit}`).join(', '));
-      console.log('Card elements visible:', document.querySelectorAll('.playing-card[data-face-down="false"]').length);
-    }
-    console.log('===================');
-  }, [gamePhase, humanPlayer]);
-
   const [showSettings, setShowSettings] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showScoreBreakdown, setShowScoreBreakdown] = useState(false);
@@ -182,9 +165,6 @@ function GameContent() {
           
           {/* Announcement Display for Belote/Rebelote */}
           <AnnouncementDisplay />
-          
-          {/* Debug Card Display */}
-          <CardDebug />
           
           {gamePhase === GamePhase.Bidding && (
             <div id="bidding">
