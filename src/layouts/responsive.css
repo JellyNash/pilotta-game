@@ -1,29 +1,6 @@
 /* Responsive CSS utilities and custom properties */
 
-:root {
-  /* Responsive spacing scale */
-  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
-  --space-sm: clamp(0.5rem, 2vw, 0.75rem);
-  --space-md: clamp(0.75rem, 3vw, 1.25rem);
-  --space-lg: clamp(1rem, 4vw, 2rem);
-  --space-xl: clamp(1.5rem, 5vw, 3rem);
-  --space-2xl: clamp(2rem, 6vw, 4rem);
-
-  /* Responsive font sizes */
-  --text-xs: clamp(0.625rem, 1.5vw, 0.75rem);
-  --text-sm: clamp(0.75rem, 2vw, 0.875rem);
-  --text-base: clamp(0.875rem, 2.5vw, 1rem);
-  --text-lg: clamp(1rem, 3vw, 1.125rem);
-  --text-xl: clamp(1.125rem, 3.5vw, 1.25rem);
-  --text-2xl: clamp(1.25rem, 4vw, 1.5rem);
-  --text-3xl: clamp(1.5rem, 5vw, 2rem);
-
-  /* Responsive card sizes */
-  --card-width-sm: clamp(3rem, 8vw, 4rem);
-  --card-width-md: clamp(4rem, 10vw, 5rem);
-  --card-width-lg: clamp(5rem, 12vw, 6.5rem);
-  --card-height-ratio: 1.4;
-}
+/* CSS variables moved to tokens.css */
 
 /* Responsive utility classes */
 .responsive-container {
@@ -127,12 +104,7 @@
 
 /* Responsive for different orientations */
 @media (orientation: landscape) and (max-height: 500px) {
-  :root {
-    --space-xs: 0.25rem;
-    --space-sm: 0.375rem;
-    --space-md: 0.5rem;
-    --space-lg: 0.75rem;
-  }
+  /* Variable overrides now in tokens.css */
   
   .game-grid-responsive {
     grid-template-rows: 4rem 1fr 5rem;
@@ -174,8 +146,8 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
   }
 }

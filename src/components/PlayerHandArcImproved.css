@@ -1,27 +1,11 @@
 /* PlayerHand Arc CSS - Improved curve with limited extremes */
-@import '../layouts/responsive-variables.css';
 
 /* 
  * Improved Arc System with gentler curve
  * Uses modified parabolic curve to limit extreme elevations
  */
 
-:root {
-  /* Card dimensions - increased by 30% */
-  --ph-card-width: 156px;           /* 120px * 1.3 */
-  --ph-card-height: 218px;          /* 168px * 1.3 */
-  
-  /* Fan parameters */
-  --ph-fan-spread: 0.65;           /* Reduced for larger cards */
-  --ph-fan-arc-height: 30px;       /* Max height of arc */
-  --ph-fan-rotation-range: 25deg;  /* Total rotation range */
-  
-  /* Dynamic calculations */
-  --ph-card-scale: 1;              /* For size adjustment feature */
-  --ph-hover-scale: 1.1;
-  --ph-hover-lift: -20px;
-  --ph-transition: 0.2s ease-out;
-}
+/* Variables now in tokens.css */
 
 /* Reset container queries */
 .ph-wrapper,

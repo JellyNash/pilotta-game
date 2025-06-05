@@ -1,0 +1,41 @@
+/* Override Layer - Last resort !important rules */
+
+/* Announcement System - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-system * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Responsive - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Clean PlayerHand - Critical reset to prevent cascade issues */
+.ph-wrapper[data-position="south"] .ph-card-slot > .game-card {
+  position: relative !important;
+}
+
+/* App.css z-index overrides for modal elements */
+.z-header {
+  z-index: var(--z-header) !important;
+}
+
+.z-modal {
+  z-index: var(--z-modal) !important;
+}
+
+.z-ui-overlay {
+  z-index: var(--z-ui-overlay) !important;
+}
+
+.z-player-indicator {
+  z-index: var(--z-player-indicator) !important;
+}

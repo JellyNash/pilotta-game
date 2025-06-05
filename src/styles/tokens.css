@@ -1,0 +1,184 @@
+/* Design Tokens - Centralized CSS Custom Properties */
+:root {
+  /* Z-index System */
+  --z-card-base: 10;
+  --z-card-hover: 100;
+  --z-card-selected: 90;
+  --z-player-indicator: 20;
+  --z-ui-overlay: 50;
+  --z-modal: 100;
+  --z-header: 100;
+
+  /* Layout - Header */
+  --header-height: 5rem;
+
+  /* Spacing Scale */
+  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 2vw, 0.75rem);
+  --space-md: clamp(0.75rem, 3vw, 1.25rem);
+  --space-lg: clamp(1rem, 4vw, 2rem);
+  --space-xl: clamp(1.5rem, 5vw, 3rem);
+  --space-2xl: clamp(2rem, 6vw, 4rem);
+
+  /* Layout Spacing */
+  --edge-gap: clamp(0.5rem, 1vw, 2rem);
+  --badge-offset: 0.5rem;
+  --card-separation: clamp(3rem, 5vw, 5rem);
+  --grid-gap: clamp(1rem, 2vw, 3rem);
+  --dynamic-padding: clamp(1rem, 2vw, 3rem);
+
+  /* Typography Scale */
+  --text-xs: clamp(0.625rem, 1.5vw, 0.75rem);
+  --text-sm: clamp(0.75rem, 2vw, 0.875rem);
+  --text-base: clamp(0.875rem, 2.5vw, 1rem);
+  --text-lg: clamp(1rem, 3vw, 1.125rem);
+  --text-xl: clamp(1.125rem, 3.5vw, 1.25rem);
+  --text-2xl: clamp(1.25rem, 4vw, 1.5rem);
+  --text-3xl: clamp(1.5rem, 5vw, 2rem);
+  --text-player-label: clamp(0.875rem, 1.5vw, 1.125rem);
+  --text-badge: clamp(0.75rem, 1.2vw, 1rem);
+
+  /* Card Dimensions */
+  --card-base-width: 120px;
+  --card-base-height: 168px;
+  --card-width-base: 120px;
+  --card-height-base: 168px;
+  --card-width-responsive: clamp(80px, 6vw, 120px);
+  --card-height-responsive: clamp(112px, calc(6vw * 1.4), 168px);
+  --card-width-sm: clamp(3rem, 8vw, 4rem);
+  --card-width-md: clamp(4rem, 10vw, 5rem);
+  --card-width-lg: clamp(5rem, 12vw, 6.5rem);
+  --card-height-ratio: 1.4;
+  --card-width: clamp(6rem, 8vw, 8rem);
+  --card-height: calc(var(--card-width) * 1.4);
+  
+  /* Card Layout */
+  --card-gap: clamp(0.5rem, 1vw, 1rem);
+  --hand-offset: clamp(1rem, 2vw, 2rem);
+  --card-fan-overlap: 0.85;
+  --fan-arc-depth: 50px;
+  --fan-rotation-max: 15deg;
+  
+  /* Card Sizing Multipliers */
+  --card-size: 100;
+  --card-size-human: 1.0;
+  --card-size-ai: 1.0;
+  --card-spacing-factor: 0.85;
+  
+  /* Card Animation */
+  --card-transition-duration: 0.2s;
+  --card-hover-scale: 1.1;
+  --card-hover-lift: -20px;
+  
+  /* Animation Speed */
+  --animation-speed: 1;
+  --font-size: 100;
+
+  /* Table Layout */
+  --table-radius: clamp(15rem, 22vw, 26rem);
+  --trick-area-size: min(60vw, 60vh);
+  --trick-area-max: 40rem;
+
+  /* Bidding Interface */
+  --bid-modal-width: clamp(510px, 59.5vw, 850px);
+  --bid-button-width: clamp(102px, 12.75vw, 170px);
+  --suit-button-size: clamp(68px, 6.8vw, 102px);
+  --bid-card-scale: clamp(0.68, 0.85vw, 1.02);
+
+  /* Player Hand Specific (ph- prefix) */
+  --ph-card-width: 156px;
+  --ph-card-height: 218px;
+  --ph-fan-spread: 0.65;
+  --ph-fan-arc-height: 30px;
+  --ph-fan-rotation-range: 25deg;
+  --ph-card-scale: 1;
+  --ph-hover-scale: 1.1;
+  --ph-hover-lift: -20px;
+  --ph-transition: 0.2s ease-out;
+
+  /* Announcement System */
+  --announcement-min-width: 200px;
+  --announcement-padding-x: 2.5rem;
+  --announcement-padding-y: 1.25rem;
+  --announcement-font-size: 1.875rem;
+  --announcement-suit-size: 2.25rem;
+  --announcement-spacing: 80px;
+  --announcement-duration: 3500ms;
+  --announcement-offset-x: 0px;
+  --announcement-offset-y: 0px;
+  --announcement-enter-distance: 30px;
+}
+
+/* Responsive Overrides */
+@media (aspect-ratio: 16/9) {
+  :root {
+    --card-width-base: clamp(4rem, 5.5vw, 7.5rem);
+  }
+}
+
+@media (aspect-ratio: 16/10) {
+  :root {
+    --card-height-base: calc(var(--card-width-base) * 1.45);
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --edge-gap: clamp(1rem, 1.5vw, 3rem);
+    --grid-gap: clamp(2rem, 3vw, 4rem);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --space-xs: 0.25rem;
+    --space-sm: 0.375rem;
+    --space-md: 0.5rem;
+    --space-lg: 0.75rem;
+  }
+}
+
+/* Announcement System Responsive */
+@media (max-width: 640px) {
+  :root {
+    --announcement-min-width: 160px;
+    --announcement-padding-x: 1.5rem;
+    --announcement-padding-y: 1rem;
+    --announcement-font-size: 1.5rem;
+    --announcement-suit-size: 1.75rem;
+    --announcement-spacing: 60px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --announcement-min-width: 180px;
+    --announcement-padding-x: 2rem;
+    --announcement-padding-y: 1.125rem;
+    --announcement-font-size: 1.625rem;
+    --announcement-suit-size: 2rem;
+    --announcement-spacing: 70px;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  :root {
+    --announcement-min-width: 220px;
+    --announcement-padding-x: 2.75rem;
+    --announcement-padding-y: 1.375rem;
+    --announcement-font-size: 2rem;
+    --announcement-suit-size: 2.5rem;
+    --announcement-spacing: 85px;
+  }
+}
+
+@media (min-width: 1441px) {
+  :root {
+    --announcement-min-width: 240px;
+    --announcement-padding-x: 3rem;
+    --announcement-padding-y: 1.5rem;
+    --announcement-font-size: 2.25rem;
+    --announcement-suit-size: 2.75rem;
+    --announcement-spacing: 90px;
+  }
+}

@@ -1,18 +1,4 @@
-/* Announcement System Responsive Variables */
-.announcement-system {
-  --announcement-min-width: 200px;
-  --announcement-padding-x: 2.5rem;
-  --announcement-padding-y: 1.25rem;
-  --announcement-font-size: 1.875rem;
-  --announcement-suit-size: 2.25rem;
-  --announcement-spacing: 80px;
-  --announcement-duration: 3500ms;
-  
-  /* High-end positioning offsets */
-  --announcement-offset-x: 0px;
-  --announcement-offset-y: 0px;
-  --announcement-enter-distance: 30px;
-}
+/* Announcement System - Variables now in tokens.css */
 
 /* Ensure announcements don't interfere with game elements */
 .announcement-container {

@@ -1,6 +1,5 @@
-/* Import responsive system */
-@import './layouts/responsive-variables.css';
-@import './layouts/responsive.css';
+/* Import new layered CSS architecture */
+@import './styles/app.css';
 
 @tailwind base;
 @tailwind components;
@@ -92,9 +91,9 @@ body {
 
 /* Card visibility improvements */
 .playing-card[data-face-down="false"] {
-  background-color: white !important;
-  opacity: 1 !important;
-  visibility: visible !important;
+  background-color: white;
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Enhanced text visibility */
@@ -116,7 +115,7 @@ body {
 }
 
 .playing-card:hover {
-  z-index: 100 !important;
+  z-index: var(--z-card-hover);
   transform: translateY(-4px) translateZ(0);
 }
 
@@ -316,16 +315,7 @@ body {
   box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
 }
 
-/* ==================== Z-INDEX MANAGEMENT ==================== */
-:root {
-  --z-card-base: 10;
-  --z-card-hover: 100;
-  --z-card-selected: 90;
-  --z-player-indicator: 20;
-  --z-ui-overlay: 50;
-  --z-modal: 100;
-  --z-header: 100;
-}
+/* Z-index values now in tokens.css */
 
 /* Basic focus styles */
 .playing-card:focus-visible {
@@ -346,23 +336,18 @@ body {
 }
 
 
-/* ==================== CSS VARIABLES ==================== */
-:root {
-  --card-size: 100;
-  --font-size: 100;
-  --animation-speed: 1;
-}
+/* CSS variables now in tokens.css */
 
 /* Performance: Disable expensive effects on low-end devices */
 @media (max-width: 768px), (max-height: 600px) {
   .backdrop-blur-md {
     backdrop-filter: none;
-    background-color: rgba(30, 41, 59, 0.95) !important;
+    background-color: rgba(30, 41, 59, 0.95);
   }
   
   .backdrop-blur-lg {
     backdrop-filter: none;
-    background-color: rgba(30, 41, 59, 0.98) !important;
+    background-color: rgba(30, 41, 59, 0.98);
   }
   
   .shadow-2xl {
@@ -407,7 +392,7 @@ body {
   
   .game-header,
   button {
-    display: none !important;
+    display: none;
   }
   
   .playing-card {

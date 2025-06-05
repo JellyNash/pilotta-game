@@ -1,21 +1,6 @@
 /* Center-based layout system for Pilotta game table */
 
-:root {
-  /* Radius for player hand positioning */
-  --table-radius: clamp(15rem, 22vw, 26rem);
-  
-  /* Card dimensions */
-  --card-width: clamp(6rem, 8vw, 8rem);
-  --card-height: calc(var(--card-width) * 1.4);
-  
-  /* Spacing values */
-  --card-gap: clamp(0.5rem, 1vw, 1rem);
-  --hand-offset: clamp(1rem, 2vw, 2rem);
-  
-  /* Responsive font sizes */
-  --text-player-label: clamp(0.875rem, 1.5vw, 1.125rem);
-  --text-badge: clamp(0.75rem, 1.2vw, 1rem);
-}
+/* Variables now in tokens.css */
 
 /* Main table container - centers everything */
 .game-table {

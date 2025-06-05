@@ -1,0 +1,60 @@
+/* CSS Layer Architecture for Pilotta Game */
+@layer reset, base, tokens, tailwind, layout, components, states, utilities, overrides;
+
+/* Reset layer - Normalize styles */
+@layer reset {
+  /* Browser normalization will go here */
+}
+
+/* Base layer - Element defaults */
+@layer base {
+  body {
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Tokens layer - Design tokens */
+@layer tokens {
+  @import './tokens.css';
+}
+
+/* Tailwind layer - Utility framework */
+@layer tailwind {
+  /* Tailwind imports handled by main CSS */
+}
+
+/* Layout layer - Structural styles */
+@layer layout {
+  @import '../layouts/game-grid.css';
+  @import '../layouts/table-center.css';
+  @import '../layouts/responsive.css';
+}
+
+/* Components layer - Component styles */
+@layer components {
+  @import '../components/PlayerHandArcImproved.css';
+  @import '../components/PlayerHand-refactored.css';
+  @import '../components/AnnouncementSystem.css';
+  @import '../components/BiddingInterface.css';
+  @import '../components/ContractIndicator.css';
+  @import '../components/PlayerZone.css';
+  @import '../components/TrickArea.css';
+  @import '../components/TrickPileViewer.css';
+}
+
+/* States layer - Interactive states */
+@layer states {
+  /* Hover, focus, active states will go here */
+}
+
+/* Utilities layer - Helper classes */
+@layer utilities {
+  /* Utility classes will go here */
+}
+
+/* Overrides layer - Last resort !important rules */
+@layer overrides {
+  @import './overrides.css';
+}

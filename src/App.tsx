@@ -20,14 +20,6 @@ import DetailedScoreboard from './components/DetailedScoreboard';
 import DevTools from './components/DevTools';
 import AnnouncementDisplay from './components/AnnouncementDisplay';
 import './App.css';
-import './layouts/responsive-variables.css';
-import './layouts/game-grid.css';
-import './components/PlayerHand.css';
-import './components/PlayerZone.css';
-import './components/TrickArea.css';
-import './components/BiddingInterface.css';
-import './components/ContractIndicator.css';
-import './components/TrickPileViewer.css';
 
 // Detect if device supports touch
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
