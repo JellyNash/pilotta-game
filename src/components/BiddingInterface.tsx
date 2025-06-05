@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useAppSelector } from '../store/hooks';
 import { Suit, Player, BiddingEntry } from '../core/types';
 import { gameManager } from '../game/GameManager';
-import { useAccessibility } from '../accessibility';
 
 // Bidding History Table Component
 interface BiddingHistoryTableProps {
@@ -107,7 +106,6 @@ const BiddingHistoryTable: React.FC<BiddingHistoryTableProps> = ({
 };
 
 const BiddingInterface: React.FC = () => {
-  const { settings, announceToScreenReader } = useAccessibility();
   const currentPlayer = useAppSelector(state => state.game.players[state.game.currentPlayerIndex]);
   const contract = useAppSelector(state => state.game.contract);
   const biddingHistory = useAppSelector(state => state.game.biddingHistory);
@@ -144,12 +142,6 @@ const BiddingInterface: React.FC = () => {
   const canRedouble = contract && contract.doubled && !contract.redoubled && humanPlayer?.teamId === contract.team && isHumanTurn;
   const isDoubled = contract?.doubled || false;
 
-  // Announce turn to screen reader
-  useEffect(() => {
-    if (isHumanTurn) {
-      announceToScreenReader('Your turn to bid. Use arrow keys to navigate, space or enter to select.');
-    }
-  }, [isHumanTurn, announceToScreenReader]);
 
   // Cleanup intervals on unmount
   useEffect(() => {
@@ -161,76 +153,6 @@ const BiddingInterface: React.FC = () => {
     };
   }, []);
 
-  // Keyboard navigation
-  useEffect(() => {
-    if (!isHumanTurn || !settings.keyboard.enabled) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!containerRef.current?.contains(document.activeElement)) return;
-
-      switch (e.key) {
-        case 'ArrowLeft':
-        case 'ArrowRight':
-          e.preventDefault();
-          if (focusedElement === 'trump') {
-            const suits = Object.values(Suit);
-            const currentSuit = selectedTrump || suits[0];
-            const currentIndex = suits.indexOf(currentSuit);
-            const newIndex = e.key === 'ArrowRight' 
-              ? (currentIndex + 1) % suits.length
-              : (currentIndex - 1 + suits.length) % suits.length;
-            setSelectedTrump(suits[newIndex]);
-            announceToScreenReader(`Selected ${getSuitName(suits[newIndex])}`);
-          } else if (focusedElement === 'bid') {
-            const change = e.key === 'ArrowRight' ? 10 : -10;
-            const newBid = Math.max(minBid, Math.min(maxBid, selectedBid + change));
-            setSelectedBid(newBid);
-            announceToScreenReader(`Bid ${newBid}`);
-          }
-          break;
-        case 'ArrowUp':
-        case 'ArrowDown':
-          e.preventDefault();
-          const elements: ('bid' | 'trump' | 'actions')[] = ['bid', 'trump', 'actions'];
-          const currentIdx = elements.indexOf(focusedElement);
-          const newIdx = e.key === 'ArrowDown' 
-            ? (currentIdx + 1) % elements.length
-            : (currentIdx - 1 + elements.length) % elements.length;
-          setFocusedElement(elements[newIdx]);
-          announceToScreenReader(`Navigate to ${elements[newIdx]}`);
-          break;
-        case 'b':
-        case 'B':
-          if (!isDoubled) {
-            e.preventDefault();
-            handleBid();
-          }
-          break;
-        case 'p':
-        case 'P':
-          e.preventDefault();
-          handlePass();
-          break;
-        case 'd':
-        case 'D':
-          if (canDouble) {
-            e.preventDefault();
-            handleDouble();
-          }
-          break;
-        case 'r':
-        case 'R':
-          if (canRedouble) {
-            e.preventDefault();
-            handleRedouble();
-          }
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isHumanTurn, settings.keyboard.enabled, focusedElement, selectedBid, selectedTrump, isDoubled, canDouble, canRedouble, minBid, maxBid]);
 
   // Bid increment/decrement handlers
   const startIncrementing = () => {
@@ -238,7 +160,6 @@ const BiddingInterface: React.FC = () => {
     // Single increment
     const newBid = Math.min(maxBid, selectedBid + 10);
     setSelectedBid(newBid);
-    announceToScreenReader(`Bid ${newBid}`);
     
     // Start accelerating after 300ms
     incrementTimeoutRef.current = setTimeout(() => {
@@ -275,7 +196,6 @@ const BiddingInterface: React.FC = () => {
     // Single decrement
     const newBid = Math.max(minBid, selectedBid - 10);
     setSelectedBid(newBid);
-    announceToScreenReader(`Bid ${newBid}`);
     
     // Start accelerating after 300ms
     decrementTimeoutRef.current = setTimeout(() => {
@@ -310,28 +230,24 @@ const BiddingInterface: React.FC = () => {
   const handleBid = async () => {
     if (isHumanTurn && selectedBid && selectedTrump) {
       await gameManager.makeBid(selectedBid, selectedTrump);
-      announceToScreenReader(`You bid ${selectedBid} ${getSuitName(selectedTrump)}`);
     }
   };
 
   const handlePass = async () => {
     if (isHumanTurn) {
       await gameManager.makeBid('pass');
-      announceToScreenReader('You passed');
     }
   };
 
   const handleDouble = async () => {
     if (canDouble) {
       await gameManager.doubleBid();
-      announceToScreenReader('You doubled the bid');
     }
   };
 
   const handleRedouble = async () => {
     if (canRedouble) {
       await gameManager.redoubleBid();
-      announceToScreenReader('You redoubled the bid');
     }
   };
 
@@ -356,9 +272,6 @@ const BiddingInterface: React.FC = () => {
   };
 
   const getSuitColor = (suit: Suit) => {
-    if (settings.theme === 'colorblind-safe' || settings.colorblindMode !== 'none') {
-      return `suit-${suit.toLowerCase()}`;
-    }
     return suit === Suit.Hearts || suit === Suit.Diamonds ? 'text-red-500' : 'text-gray-900';
   };
 
@@ -391,17 +304,14 @@ const BiddingInterface: React.FC = () => {
       {/* Centered bidding card */}
       <div
         ref={containerRef}
-        className="relative bg-slate-800/75 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl pointer-events-auto max-w-4xl w-full mx-4"
-        role="region"
-        aria-label="Bidding controls"
-        aria-live="polite"
+        className="relative bg-slate-800/75 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl pointer-events-auto mx-4 bidding-container"
       >
         <div className="space-y-6">
           {/* Top Row - Suit Selection and Current Bid/Double */}
           <div className="flex items-start gap-4">
             {/* Left side: Suit Selection (2/3 width) */}
             <div className={`flex-grow flex-shrink-0 w-2/3 ${focusedElement === 'trump' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
-              <div className="flex justify-start space-x-6" role="radiogroup" aria-labelledby="trump-label">
+              <div className="flex justify-start space-x-6">
                 {Object.values(Suit).map((suit) => (
                   <motion.button
                     key={suit}
@@ -416,20 +326,16 @@ const BiddingInterface: React.FC = () => {
                     }}
                     onClick={() => {
                       setSelectedTrump(suit);
-                      announceToScreenReader(`Selected ${getSuitName(suit)} as trump`);
                     }}
                     style={{ transformStyle: "preserve-3d" }}
                     className={`
-                      relative px-6 py-4 sm:px-7 sm:py-5 rounded-xl transition-all duration-300 touch-target min-w-[100px] sm:min-w-[110px] transform perspective-1000
+                      relative px-6 py-4 sm:px-7 sm:py-5 rounded-xl transition-all duration-300 touch-target transform perspective-1000
                       ${selectedTrump === suit 
                         ? 'bg-gradient-to-br from-blue-500/90 to-blue-600/90 shadow-2xl' 
                         : 'bg-gradient-to-br from-slate-700/90 to-slate-800/90 hover:from-slate-600/90 hover:to-slate-700/90 shadow-lg hover:shadow-xl'
                       }
-                      border border-slate-500/30 backdrop-blur-sm overflow-hidden group
+                      border border-slate-500/30 backdrop-blur-sm overflow-hidden group suit-card-button
                     `}
-                    role="radio"
-                    aria-checked={selectedTrump === suit}
-                    aria-label={`${getSuitName(suit)} trump`}
                   >
                     {/* Floating particles effect */}
                     {selectedTrump === suit && (
@@ -464,7 +370,8 @@ const BiddingInterface: React.FC = () => {
                     
                     {/* Suit symbol with 3D effect */}
                     <motion.span 
-                      className={`relative text-7xl sm:text-8xl ${getSuitColor(suit)} ${settings.suitPatterns ? `suit-pattern-${suit.toLowerCase()}` : ''} z-10`}
+                      className={`relative ${getSuitColor(suit)} z-10`}
+                      style={{ fontSize: 'calc(var(--suit-button-size) * 0.6)' }}
                       animate={selectedTrump === suit ? {
                         filter: [
                           "drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))",
@@ -512,14 +419,14 @@ const BiddingInterface: React.FC = () => {
               <div className="flex flex-col items-center justify-between py-4 space-y-3 ml-auto mr-[15%]">
                 {/* Current Contract - always show to maintain height */}
                 <div className={`
-                  inline-flex items-center rounded-xl px-6 py-3 shadow-lg w-[200px] justify-center flex-1
+                  inline-flex items-center rounded-xl px-6 py-3 shadow-lg justify-center flex-1 bid-button
                   ${contract 
                     ? isHumanTeamWinning 
                       ? 'bg-green-900/30 border border-green-600/30' 
                       : 'bg-red-900/30 border border-red-600/30'
                     : 'bg-slate-700/30 border border-slate-600/30'
                   }
-                `} aria-label="Current contract">
+                `}>
                   {contract ? (
                     <>
                       <span className="text-2xl font-bold text-white mr-2">{contract.value}</span>
@@ -563,9 +470,8 @@ const BiddingInterface: React.FC = () => {
                           }
                         }}
                         onClick={handleDouble}
-                        className="relative px-8 py-3 bg-gradient-to-b from-red-500/90 to-red-600/90 hover:from-red-400/90 hover:to-red-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 w-[200px] mt-2 border border-red-400/30 overflow-hidden group"
-                        aria-label="Double the current bid"
-                        title="Keyboard shortcut: D"
+                        className="relative px-8 py-3 bg-gradient-to-b from-red-500/90 to-red-600/90 hover:from-red-400/90 hover:to-red-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 mt-2 border border-red-400/30 overflow-hidden group bid-button"
+                        title="Double the current bid"
                       >
                         <span className="relative z-10">DOUBLE ×2</span>
                         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -594,9 +500,8 @@ const BiddingInterface: React.FC = () => {
                           }
                         }}
                         onClick={handleRedouble}
-                        className="relative px-8 py-3 bg-gradient-to-b from-purple-500/90 to-purple-600/90 hover:from-purple-400/90 hover:to-purple-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 w-[200px] mt-2 border border-purple-400/30 overflow-hidden group"
-                        aria-label="Redouble the current bid"
-                        title="Keyboard shortcut: R"
+                        className="relative px-8 py-3 bg-gradient-to-b from-purple-500/90 to-purple-600/90 hover:from-purple-400/90 hover:to-purple-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 mt-2 border border-purple-400/30 overflow-hidden group bid-button"
+                        title="Redouble the current bid"
                       >
                         <span className="relative z-10">REDOUBLE ×4</span>
                         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -604,7 +509,7 @@ const BiddingInterface: React.FC = () => {
                     )}
                   </>
                 ) : (
-                  <div className="h-[52px] w-[200px] mt-2"></div>
+                  <div className="h-[52px] mt-2 bid-button"></div>
                 )}
               </div>
             </div>
@@ -624,9 +529,8 @@ const BiddingInterface: React.FC = () => {
                   boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)"
                 }}
                 onClick={handlePass}
-                className="relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 w-[200px] border border-slate-400/20 backdrop-blur-sm overflow-hidden group"
-                aria-label="Pass"
-                title="Keyboard shortcut: P"
+                className="relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 border border-slate-400/20 backdrop-blur-sm overflow-hidden group bid-button"
+                title="Pass"
               >
                 <span className="relative z-10">PASS</span>
                 <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -656,7 +560,6 @@ const BiddingInterface: React.FC = () => {
                   }
                   ${isDecrementing ? 'scale-95 shadow-inner bg-gradient-to-b from-slate-700/90 to-slate-800/90' : ''}
                 `}
-                aria-label="Decrease bid"
                 title="Hold to decrease faster"
               >
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -741,7 +644,6 @@ const BiddingInterface: React.FC = () => {
                   }
                   ${isIncrementing ? 'scale-95 shadow-inner bg-gradient-to-b from-slate-700/90 to-slate-800/90' : ''}
                 `}
-                aria-label="Increase bid"
                 title="Hold to increase faster"
               >
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -765,14 +667,13 @@ const BiddingInterface: React.FC = () => {
                   }}
                   onClick={handleBid}
                   className={`
-                    relative px-10 py-5 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 w-[200px] overflow-hidden group
+                    relative px-10 py-5 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden group bid-button
                     ${!selectedTrump 
                       ? 'bg-gradient-to-b from-slate-600/50 to-slate-700/50 cursor-not-allowed opacity-60' 
                       : 'bg-gradient-to-b from-emerald-500/90 to-green-600/90 hover:from-emerald-400/90 hover:to-green-500/90 border border-green-400/30 backdrop-blur-sm'
                     }
                   `}
-                  aria-label={`Bid ${selectedBid} ${selectedTrump ? getSuitName(selectedTrump) : ''}`}
-                  title="Keyboard shortcut: B"
+                  title="Place your bid"
                   disabled={!selectedTrump}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">

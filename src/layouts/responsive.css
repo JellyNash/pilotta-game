@@ -75,23 +75,25 @@
 
 /* Container queries for component-level responsiveness */
 @supports (container-type: size) {
-  .card-container {
+  /* Apply container query to game wrapper, not card container */
+  .game-table-wrapper {
     container-type: size;
   }
 
-  @container (max-width: 20rem) {
+  /* Card scaling based on game table size */
+  @container (max-width: 50rem) {
     .card-responsive {
       --card-scale: 0.7;
     }
   }
 
-  @container (min-width: 20rem) and (max-width: 30rem) {
+  @container (min-width: 50rem) and (max-width: 70rem) {
     .card-responsive {
       --card-scale: 0.85;
     }
   }
 
-  @container (min-width: 30rem) {
+  @container (min-width: 70rem) {
     .card-responsive {
       --card-scale: 1;
     }

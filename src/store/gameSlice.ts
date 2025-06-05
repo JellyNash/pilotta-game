@@ -66,7 +66,7 @@ const createInitialProfile = (): PlayerProfile => ({
 const createInitialState = (): GameState => {
   // Load saved settings
   const savedCardSize = localStorage.getItem('cardSize') as 'small' | 'medium' | 'large' | 'xlarge' | null;
-  // Create players
+  // Create players - counterclockwise order: South -> East -> North -> West
   const players: Player[] = [
     {
       id: uuidv4(),
@@ -78,12 +78,12 @@ const createInitialState = (): GameState => {
     },
     {
       id: uuidv4(),
-      name: 'AI Player 1',
+      name: 'AI Player 2',
       isAI: true,
       hand: [],
       teamId: 'B',
-      position: 'west',
-      aiPersonality: AIPersonality.Balanced,
+      position: 'east',
+      aiPersonality: AIPersonality.Aggressive,
       playerProfile: createInitialProfile()
     },
     {
@@ -98,12 +98,12 @@ const createInitialState = (): GameState => {
     },
     {
       id: uuidv4(),
-      name: 'AI Player 2',
+      name: 'AI Player 1',
       isAI: true,
       hand: [],
       teamId: 'B',
-      position: 'east',
-      aiPersonality: AIPersonality.Aggressive,
+      position: 'west',
+      aiPersonality: AIPersonality.Balanced,
       playerProfile: createInitialProfile()
     }
   ];
@@ -218,6 +218,7 @@ const gameSlice = createSlice({
     
     startBidding: (state) => {
       state.phase = GamePhase.Bidding;
+      // Counterclockwise: dealer + 1 in array order
       state.currentPlayerIndex = (state.dealerIndex + 1) % 4;
     },
     
@@ -258,7 +259,7 @@ const gameSlice = createSlice({
         }
       }
       
-      // Move to next player
+      // Move to next player counterclockwise
       state.currentPlayerIndex = (state.currentPlayerIndex + 1) % 4;
       
       // Check if bidding is complete (4 consecutive passes or 3 passes after a bid)

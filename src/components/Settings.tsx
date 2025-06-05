@@ -5,7 +5,6 @@ import { gameManager } from '../game/GameManager';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { updateSettings } from '../store/gameSlice';
-import { AccessibilitySettings } from '../accessibility';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -18,12 +17,11 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const { enabled: soundEnabled, setEnabled: setSoundEnabled, volume, setVolume } = useSoundSettings();
   const [animationSpeed, setAnimationSpeed] = useState<'fast' | 'normal' | 'slow'>('normal');
   const [advancedAI, setAdvancedAI] = useState(false);
-  const [cardSize, setCardSize] = useState<'small' | 'medium' | 'large' | 'xlarge'>(
-    (localStorage.getItem('cardSize') as 'small' | 'medium' | 'large' | 'xlarge') || 'large'  // Default to large for low vision
+  const [cardSize, setCardSize] = useState<number>(
+    parseFloat(localStorage.getItem('cardSize') || '1.0')  // Default to 1.0 (100%)
   );
   const [showTrickPilePoints, setShowTrickPilePoints] = useState(gameSettings?.showTrickPilePoints || false);
   const [rightClickZoom, setRightClickZoom] = useState(gameSettings?.rightClickZoom ?? true);
-  const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
 
   const handleAnimationSpeedChange = (speed: 'fast' | 'normal' | 'slow') => {
     setAnimationSpeed(speed);
@@ -35,9 +33,25 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     gameManager.enableAdvancedAI(enabled);
   };
   
-  const handleCardSizeChange = (size: 'small' | 'medium' | 'large' | 'xlarge') => {
+  const handleCardSizeChange = (size: number) => {
     setCardSize(size);
-    localStorage.setItem('cardSize', size);
+    localStorage.setItem('cardSize', size.toString());
+    
+    // Set CSS variables for card scaling
+    // Human player gets full 25% increments
+    document.documentElement.style.setProperty('--card-size-human', size.toString());
+    // AI players get 5% increments (20% of human scaling)
+    const aiScale = 1.0 + (size - 1.0) * 0.2;
+    document.documentElement.style.setProperty('--card-size-ai', aiScale.toString());
+    
+    // Map numeric scale to size categories for Redux (for backward compatibility)
+    let sizeCategory: 'small' | 'medium' | 'large' | 'xlarge' = 'medium';
+    if (size <= 1.25) sizeCategory = 'small';
+    else if (size <= 1.75) sizeCategory = 'medium';
+    else if (size <= 2.0) sizeCategory = 'large';
+    else sizeCategory = 'xlarge';
+    
+    dispatch(updateSettings({ cardSize: sizeCategory }));
     gameManager.setCardSize(size);
   };
 
@@ -89,54 +103,58 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="p-6 space-y-8">
-                {/* Accessibility Settings Button */}
-                <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        Accessibility
-                      </h3>
-                      <p className="text-sm text-white/90 mt-1">
-                        Visual, audio, and input customization options
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setShowAccessibilitySettings(true)}
-                      className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium transition-colors"
-                    >
-                      Open
-                    </button>
-                  </div>
-                </div>
                 {/* Card Size Settings */}
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-4">Card Size</h3>
                   
                   <div>
                     <label className="block text-sm text-slate-400 mb-3">Card Display Size</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {(['small', 'medium', 'large', 'xlarge'] as const).map((size) => (
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
                         <button
-                          key={size}
-                          onClick={() => handleCardSizeChange(size)}
-                          className={`
-                            py-2 px-4 rounded-lg font-medium capitalize transition-all
-                            ${cardSize === size
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                            }
-                          `}
+                          onClick={() => {
+                            const newSize = Math.max(1.0, cardSize - 0.25);
+                            handleCardSizeChange(newSize);
+                          }}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white transition-colors"
+                          disabled={cardSize <= 1.0}
                         >
-                          {size === 'xlarge' ? 'Extra Large' : size}
+                          <span className="text-lg font-bold">−</span>
                         </button>
-                      ))}
+                        <div className="relative flex-1">
+                          <input
+                            type="range"
+                            min="1.0"
+                            max="2.5"
+                            step="0.25"
+                            value={cardSize}
+                            onChange={(e) => handleCardSizeChange(parseFloat(e.target.value))}
+                            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                            style={{
+                              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((cardSize - 1.0) / 1.5) * 100}%, #475569 ${((cardSize - 1.0) / 1.5) * 100}%, #475569 100%)`
+                            }}
+                          />
+                          <div className="absolute -top-1 left-0 right-0 flex justify-between pointer-events-none">
+                            {[1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5].map((val) => (
+                              <div key={val} className="w-0.5 h-3 bg-slate-600" />
+                            ))}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const newSize = Math.min(2.5, cardSize + 0.25);
+                            handleCardSizeChange(newSize);
+                          }}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white transition-colors"
+                          disabled={cardSize >= 2.5}
+                        >
+                          <span className="text-lg font-bold">+</span>
+                        </button>
+                      </div>
+                      <div className="text-center">
+                        <span className="text-sm text-slate-400">Size: {Math.round(cardSize * 100)}%</span>
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-500 mt-2">
-                      Large or Extra Large recommended for low vision users
-                    </p>
                   </div>
                 </div>
                 
@@ -163,9 +181,6 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                         </button>
                       ))}
                     </div>
-                    <p className="text-xs text-slate-500 mt-2">
-                      Accessible style includes additional symbols for low vision users
-                    </p>
                   </div>
                 </div>
                 {/* Sound Settings */}
@@ -356,12 +371,6 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
           </motion.div>
-          
-          {/* Accessibility Settings Modal */}
-          <AccessibilitySettings 
-            isOpen={showAccessibilitySettings} 
-            onClose={() => setShowAccessibilitySettings(false)} 
-          />
         </>
       )}
     </AnimatePresence>

@@ -11,7 +11,7 @@ export const breakpoints = {
 // Type-safe breakpoint keys
 export type Breakpoint = keyof typeof breakpoints;
 
-// Responsive spacing scale (in rem units for better accessibility)
+// Responsive spacing scale (in rem units)
 export const spacing = {
   0: '0',
   1: '0.25rem',   // 4px

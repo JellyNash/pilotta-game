@@ -1,7 +1,5 @@
-/* Import accessibility styles - must come first */
-@import './accessibility/accessibility.css';
-
 /* Import responsive system */
+@import './layouts/responsive-variables.css';
 @import './layouts/responsive.css';
 
 @tailwind base;
@@ -307,11 +305,6 @@ body {
 /* ==================== BIDDING INTERFACE ==================== */
 /* Removed old positioning styles - bidding interface now handles its own centering */
 
-/* Touch target sizing for accessibility */
-.touch-target {
-  min-width: 44px;
-  min-height: 44px;
-}
 
 /* Smooth number transitions */
 .tabular-nums {
@@ -334,48 +327,10 @@ body {
   --z-header: 100;
 }
 
-/* ==================== ACCESSIBILITY ==================== */
-
-/* Focus styles */
+/* Basic focus styles */
 .playing-card:focus-visible {
-  outline: 3px solid #3b82f6;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .playing-card[data-face-down="false"] {
-    border: 2px solid WindowText;
-    background: Window;
-  }
-  
-  .playing-card[data-face-down="true"] {
-    background: WindowText;
-    border: 2px solid Window;
-  }
-  
-  .playing-card .text-red-600 {
-    color: WindowText;
-    font-weight: 900;
-  }
-  
-  .playing-card .text-gray-900 {
-    color: WindowText;
-    font-weight: 900;
-  }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .playing-card {
-    transition: none !important;
-  }
-  
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* Force hardware acceleration for smooth animations */
@@ -390,59 +345,6 @@ body {
   transform: translateZ(0);
 }
 
-/* ==================== COLORBLIND SUPPORT ==================== */
-.suit-hearts {
-  color: #e11d48;
-  font-weight: 900;
-}
-
-.suit-diamonds {
-  color: #f97316;
-  font-weight: 900;
-}
-
-.suit-clubs {
-  color: #059669;
-  font-weight: 900;
-}
-
-.suit-spades {
-  color: #1e40af;
-  font-weight: 900;
-}
-
-/* Pattern overlays for colorblind mode */
-.suit-pattern-hearts::after {
-  content: '♥';
-  position: absolute;
-  opacity: 0.1;
-  font-size: 2em;
-  transform: rotate(-15deg);
-}
-
-.suit-pattern-diamonds::after {
-  content: '♦';
-  position: absolute;
-  opacity: 0.1;
-  font-size: 2em;
-  transform: rotate(15deg);
-}
-
-.suit-pattern-clubs::after {
-  content: '♣';
-  position: absolute;
-  opacity: 0.1;
-  font-size: 2em;
-  transform: rotate(-15deg);
-}
-
-.suit-pattern-spades::after {
-  content: '♠';
-  position: absolute;
-  opacity: 0.1;
-  font-size: 2em;
-  transform: rotate(15deg);
-}
 
 /* ==================== CSS VARIABLES ==================== */
 :root {
@@ -469,22 +371,6 @@ body {
 }
 
 /* ==================== UTILITY CLASSES ==================== */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  z-index: 999;
-  padding: 1rem;
-  background-color: #1e40af;
-  color: white;
-  text-decoration: none;
-}
-
-.skip-link:focus {
-  left: 50%;
-  transform: translateX(-50%);
-  top: 1rem;
-}
-
 /* Prevent text selection during gameplay */
 .game-content {
   user-select: none;
@@ -520,7 +406,6 @@ body {
   }
   
   .game-header,
-  .skip-link,
   button {
     display: none !important;
   }
@@ -529,4 +414,63 @@ body {
     break-inside: avoid;
     page-break-inside: avoid;
   }
+}
+
+/* Custom slider styles for card size control */
+input[type="range"].slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+input[type="range"].slider-thumb:hover {
+  opacity: 1;
+}
+
+input[type="range"].slider-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #1e40af;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider-thumb::-webkit-slider-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"].slider-thumb::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #1e40af;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider-thumb::-moz-range-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Disabled button styles for card size controls */
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: inherit;
 }

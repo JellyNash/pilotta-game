@@ -47,8 +47,19 @@ export class GameManager {
     store.dispatch(updateSettings({ animationSpeed: speed }));
   }
   
-  setCardSize(size: 'small' | 'medium' | 'large' | 'xlarge') {
-    store.dispatch(updateSettings({ cardSize: size }));
+  setCardSize(size: number) {
+    // Convert numeric scale to old size categories for Redux store compatibility
+    let sizeCategory: 'small' | 'medium' | 'large' | 'xlarge';
+    if (size < 0.7) {
+      sizeCategory = 'small';
+    } else if (size < 0.9) {
+      sizeCategory = 'medium';
+    } else if (size < 1.1) {
+      sizeCategory = 'large';
+    } else {
+      sizeCategory = 'xlarge';
+    }
+    store.dispatch(updateSettings({ cardSize: sizeCategory }));
   }
 
   // Player actions

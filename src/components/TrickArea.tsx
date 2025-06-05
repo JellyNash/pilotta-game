@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { TrickCard } from '../core/types';
 import Card from './Card';
 import { useAppSelector } from '../store/hooks';
-import { useAccessibility } from '../accessibility';
 
 interface TrickAreaProps {
   currentTrick: TrickCard[];
@@ -12,28 +11,9 @@ interface TrickAreaProps {
 }
 
 const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trickWinner }) => {
-  const { settings, announceToScreenReader } = useAccessibility();
   const cardSize = useAppSelector(state => state.game.settings?.cardSize || 'medium');
   
-  // Announce cards played to screen reader
-  useEffect(() => {
-    if (currentTrick.length > 0) {
-      const lastCard = currentTrick[currentTrick.length - 1];
-      announceToScreenReader(
-        `${lastCard.player.name} played ${lastCard.card.rank} of ${lastCard.card.suit}`
-      );
-    }
-  }, [currentTrick, announceToScreenReader]);
   
-  // Announce trick winner
-  useEffect(() => {
-    if (trickWinner && currentTrick.length === 4) {
-      const winner = currentTrick.find(tc => tc.player.position === trickWinner);
-      if (winner) {
-        announceToScreenReader(`${winner.player.name} wins the trick`);
-      }
-    }
-  }, [trickWinner, currentTrick, announceToScreenReader]);
   
   // Get initial position based on player position
   const getInitialPosition = (position: string) => {
@@ -88,10 +68,6 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
   return (
     <div 
       className="relative w-48 h-48 flex items-center justify-center"
-      role="region"
-      aria-label="Current trick"
-      aria-live="polite"
-      aria-relevant="additions"
     >
       {/* Drop zone indicator */}
       <motion.div
@@ -143,34 +119,29 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
                 ...getExitPosition(),
                 opacity: 0,
                 transition: { 
-                  duration: settings.animations.enabled ? 0.8 : 0.01,
+                  duration: 0.8,
                   ease: "easeInOut",
-                  delay: settings.animations.enabled ? index * 0.05 : 0
+                  delay: index * 0.05
                 }
               }}
               transition={{
                 type: "spring",
                 stiffness: 200,
                 damping: 20,
-                delay: settings.animations.enabled ? index * 0.1 : 0,
-                duration: settings.animations.speed === 0.5 ? 0.6 :
-                         settings.animations.speed === 2 ? 0.2 : 0.4
+                delay: index * 0.1,
+                duration: 0.4
               }}
-              role="listitem"
-              aria-label={`${trickCard.player.name} played ${trickCard.card.rank} of ${trickCard.card.suit}`}
             >
               <Card
                 card={trickCard.card}
                 size={cardSize as 'small' | 'medium' | 'large' | 'xlarge'}
                 className="shadow-2xl"
-                tabIndex={-1}
               />
               
               {/* Player indicator */}
               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
                 <div 
                   className="bg-slate-800/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap"
-                  aria-hidden="true"
                 >
                   {trickCard.player.name}
                 </div>
@@ -187,20 +158,12 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
           animate={{ opacity: 1 }}
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
         >
-          <p className="text-green-400 font-medium" role="status">
+          <p className="text-green-400 font-medium">
             Drop card here
           </p>
         </motion.div>
       )}
       
-      {/* Screen reader announcements */}
-      <div className="sr-only" role="status" aria-live="assertive">
-        {currentTrick.length === 0 && "No cards played yet"}
-        {currentTrick.length === 1 && "One card played"}
-        {currentTrick.length === 2 && "Two cards played"}
-        {currentTrick.length === 3 && "Three cards played"}
-        {currentTrick.length === 4 && "Trick complete"}
-      </div>
     </div>
   );
 };

@@ -1,0 +1,373 @@
+/* PlayerHand Arc CSS - Improved curve with limited extremes */
+@import '../layouts/responsive-variables.css';
+
+/* 
+ * Improved Arc System with gentler curve
+ * Uses modified parabolic curve to limit extreme elevations
+ */
+
+:root {
+  /* Card dimensions - increased by 30% */
+  --ph-card-width: 156px;           /* 120px * 1.3 */
+  --ph-card-height: 218px;          /* 168px * 1.3 */
+  
+  /* Fan parameters */
+  --ph-fan-spread: 0.65;           /* Reduced for larger cards */
+  --ph-fan-arc-height: 30px;       /* Max height of arc */
+  --ph-fan-rotation-range: 25deg;  /* Total rotation range */
+  
+  /* Dynamic calculations */
+  --ph-card-scale: 1;              /* For size adjustment feature */
+  --ph-hover-scale: 1.1;
+  --ph-hover-lift: -20px;
+  --ph-transition: 0.2s ease-out;
+}
+
+/* Reset container queries */
+.ph-wrapper,
+.ph-wrapper * {
+  container-type: normal;
+}
+
+/* Base wrapper */
+.ph-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  isolation: isolate;
+}
+
+/* Container */
+.ph-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Card slot base */
+.ph-card-slot {
+  position: absolute;
+  width: calc(var(--ph-card-width) * var(--ph-card-scale));
+  height: calc(var(--ph-card-height) * var(--ph-card-scale));
+  transition: all var(--ph-transition);
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+}
+
+/* Prevent child positioning issues */
+.ph-card-slot > * {
+  position: static;
+}
+
+/* SOUTH PLAYER - Improved Arc with limited extremes */
+.ph-wrapper[data-position="south"] .ph-container {
+  --card-count: 8;
+  width: calc(var(--ph-card-width) * var(--card-count) * var(--ph-fan-spread) * var(--ph-card-scale));
+  height: calc((var(--ph-card-height) + var(--ph-fan-arc-height)) * var(--ph-card-scale));
+  padding-bottom: 2rem;
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot {
+  left: 50%;
+  bottom: 0;
+  transform-origin: center bottom;
+}
+
+/* 
+ * Improved Arc Formula:
+ * Uses a modified curve that reduces extreme elevations
+ * Y = arcHeight * (|normalizedPos|^1.5) for smoother distribution
+ */
+
+/* Card 1 - leftmost */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(1) { 
+  --normalized-pos: -0.875;
+  --abs-pos: 0.875;
+  /* Using power of 1.5 instead of 2 for gentler curve */
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.61 instead of 0.765 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-3.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Card 2 */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(2) { 
+  --normalized-pos: -0.625;
+  --abs-pos: 0.625;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.31 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-2.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Card 3 */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(3) { 
+  --normalized-pos: -0.375;
+  --abs-pos: 0.375;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.11 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-1.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Card 4 */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(4) { 
+  --normalized-pos: -0.125;
+  --abs-pos: 0.125;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.0125 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-0.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Card 5 */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(5) { 
+  --normalized-pos: 0.125;
+  --abs-pos: 0.125;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.0125 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(0.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Card 6 */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(6) { 
+  --normalized-pos: 0.375;
+  --abs-pos: 0.375;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.11 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(1.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Card 7 */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(7) { 
+  --normalized-pos: 0.625;
+  --abs-pos: 0.625;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.31 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(2.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Card 8 - rightmost */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(8) { 
+  --normalized-pos: 0.875;
+  --abs-pos: 0.875;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8); /* ~0.61 instead of 0.765 */
+  transform: 
+    translateX(-50%) 
+    translateX(calc(3.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation)));
+}
+
+/* Hover states maintain the arc but lift up */
+.ph-wrapper[data-position="south"] .ph-card-slot:hover { 
+  z-index: 30; 
+}
+
+/* Hover states - same elevation calculation */
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(1):hover {
+  --normalized-pos: -0.875;
+  --abs-pos: 0.875;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-3.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(2):hover {
+  --normalized-pos: -0.625;
+  --abs-pos: 0.625;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-2.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(3):hover {
+  --normalized-pos: -0.375;
+  --abs-pos: 0.375;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-1.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(4):hover {
+  --normalized-pos: -0.125;
+  --abs-pos: 0.125;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(-0.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(5):hover {
+  --normalized-pos: 0.125;
+  --abs-pos: 0.125;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(0.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(6):hover {
+  --normalized-pos: 0.375;
+  --abs-pos: 0.375;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(1.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(7):hover {
+  --normalized-pos: 0.625;
+  --abs-pos: 0.625;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(2.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+.ph-wrapper[data-position="south"] .ph-card-slot:nth-child(8):hover {
+  --normalized-pos: 0.875;
+  --abs-pos: 0.875;
+  --elevation: calc(var(--abs-pos) * var(--abs-pos) * 0.8);
+  transform: 
+    translateX(-50%) 
+    translateX(calc(3.5 * var(--ph-card-width) * var(--ph-fan-spread) * var(--ph-card-scale)))
+    rotate(calc(var(--ph-fan-rotation-range) * var(--normalized-pos)))
+    translateY(calc(var(--ph-fan-arc-height) * var(--elevation) + var(--ph-hover-lift)))
+    scale(var(--ph-hover-scale));
+}
+
+/* NORTH PLAYER - Keep existing */
+.ph-wrapper[data-position="north"] .ph-container {
+  width: calc(var(--ph-card-width) * 8 * 0.4 * var(--ph-card-scale));
+  height: calc(var(--ph-card-height) * var(--ph-card-scale));
+}
+
+.ph-wrapper[data-position="north"] .ph-card-slot {
+  left: 50%;
+  top: 50%;
+}
+
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(1) { transform: translate(-50%, -50%) translateX(calc(-3.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(2) { transform: translate(-50%, -50%) translateX(calc(-2.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(3) { transform: translate(-50%, -50%) translateX(calc(-1.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(4) { transform: translate(-50%, -50%) translateX(calc(-0.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(5) { transform: translate(-50%, -50%) translateX(calc(0.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(6) { transform: translate(-50%, -50%) translateX(calc(1.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(7) { transform: translate(-50%, -50%) translateX(calc(2.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="north"] .ph-card-slot:nth-child(8) { transform: translate(-50%, -50%) translateX(calc(3.5 * var(--ph-card-width) * 0.4 * var(--ph-card-scale))); }
+
+/* EAST PLAYER - 90deg rotation */
+.ph-wrapper[data-position="east"] .ph-container {
+  width: calc(var(--ph-card-height) * 8 * 0.3 * var(--ph-card-scale));
+  height: calc(var(--ph-card-width) * var(--ph-card-scale));
+  flex-direction: column;
+}
+
+.ph-wrapper[data-position="east"] .ph-card-slot {
+  left: 50%;
+  top: 50%;
+}
+
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(1) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-3.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-2.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-1.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(4) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-0.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(5) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(0.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(6) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(1.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(7) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(2.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="east"] .ph-card-slot:nth-child(8) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(3.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+
+/* WEST PLAYER - -90deg rotation */
+.ph-wrapper[data-position="west"] .ph-container {
+  width: calc(var(--ph-card-height) * 8 * 0.3 * var(--ph-card-scale));
+  height: calc(var(--ph-card-width) * var(--ph-card-scale));
+  flex-direction: column;
+}
+
+.ph-wrapper[data-position="west"] .ph-card-slot {
+  left: 50%;
+  top: 50%;
+}
+
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(1) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(3.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(2) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(2.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(3) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(1.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(4) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(0.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(5) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-0.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(6) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-1.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(7) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-2.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+.ph-wrapper[data-position="west"] .ph-card-slot:nth-child(8) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-3.5 * var(--ph-card-height) * 0.3 * var(--ph-card-scale))); }
+
+/* Z-index management */
+.ph-card-slot {
+  z-index: calc(var(--card-index, 0) + 1);
+}
+
+.ph-card-slot.ph-selected {
+  z-index: 20;
+}
+
+.ph-card-slot:hover {
+  z-index: 30;
+}
+
+/* Hover transitions */
+.ph-wrapper[data-hovering="true"] .ph-card-slot {
+  transition: all 0.15s ease-out;
+}
+
+/* Card size controls from Settings - using CSS variable */
+.ph-wrapper {
+  --ph-card-scale: var(--card-size-scale, 1.0);
+}

@@ -1,0 +1,63 @@
+:root {
+  /* Header height for calculations */
+  --header-height: 5rem;
+  
+  /* Spacing values */
+  --edge-gap: clamp(0.5rem, 1vw, 2rem);
+  --badge-offset: 0.5rem;
+  --card-separation: clamp(3rem, 5vw, 5rem);
+  --grid-gap: clamp(1rem, 2vw, 3rem);
+  --dynamic-padding: clamp(1rem, 2vw, 3rem);
+  
+  /* Card dimensions - with specific pixel values for better browser support */
+  --card-width-base: 120px;
+  --card-height-base: 168px;
+  
+  /* Responsive card sizing */
+  --card-width-responsive: clamp(80px, 6vw, 120px);
+  --card-height-responsive: clamp(112px, calc(6vw * 1.4), 168px);
+  
+  /* Human player fan specific */
+  --card-fan-overlap: 0.85; /* Maintain exact current overlap */
+  --fan-arc-depth: 50px;
+  --fan-rotation-max: 15deg; /* Max rotation for edge cards */
+  
+  /* Table dimensions */
+  --trick-area-size: min(60vw, 60vh);
+  --trick-area-max: 40rem;
+  
+  /* Responsive font sizes */
+  --text-xs: clamp(0.625rem, 1.5vw, 0.75rem);
+  --text-sm: clamp(0.75rem, 2vw, 0.875rem);
+  --text-base: clamp(0.875rem, 2.5vw, 1rem);
+  --text-lg: clamp(1rem, 3vw, 1.125rem);
+  --text-xl: clamp(1.125rem, 3.5vw, 1.25rem);
+  --text-2xl: clamp(1.25rem, 4vw, 1.5rem);
+  
+  /* Bidding interface specific */
+  --bid-modal-width: clamp(510px, 59.5vw, 850px);
+  --bid-button-width: clamp(102px, 12.75vw, 170px);
+  --suit-button-size: clamp(68px, 6.8vw, 102px);
+  --bid-card-scale: clamp(0.68, 0.85vw, 1.02);
+}
+
+/* Aspect ratio adjustments */
+@media (aspect-ratio: 16/9) {
+  :root {
+    --card-width-base: clamp(4rem, 5.5vw, 7.5rem);
+  }
+}
+
+@media (aspect-ratio: 16/10) {
+  :root {
+    --card-height-base: calc(var(--card-width-base) * 1.45);
+  }
+}
+
+/* High resolution adjustments */
+@media (min-width: 2560px) {
+  :root {
+    --edge-gap: clamp(1rem, 1.5vw, 3rem);
+    --grid-gap: clamp(2rem, 3vw, 4rem);
+  }
+}

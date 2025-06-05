@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from 'react';
 import { Card as CardType, Suit, Rank } from '../core/types';
 import { useDrag } from 'react-dnd';
 import classNames from 'classnames';
-import { useAccessibility } from '../accessibility';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { toggleCardZoom } from '../store/gameSlice';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,7 +18,6 @@ interface CardProps {
   className?: string;
   isHovered?: boolean;
   otherCardsHovered?: boolean;
-  tabIndex?: number;
   teamId?: 'team1' | 'team2';
   // New props for responsive sizing
   width?: number;
@@ -38,12 +36,10 @@ const Card: React.FC<CardProps> = ({
   className,
   isHovered = false,
   otherCardsHovered = false,
-  tabIndex = -1,
   teamId,
   width,
   height
 }) => {
-  const { settings, announceToScreenReader } = useAccessibility();
   const dispatch = useAppDispatch();
   const cardRef = useRef<HTMLDivElement>(null);
   const cardStyle = useAppSelector(state => state.game.settings?.cardStyle || 'classic');
@@ -82,36 +78,9 @@ const Card: React.FC<CardProps> = ({
     return displayMap[rank] || rank;
   };
   
-  // Get accessibility symbols for cards (like in screenshots)
-  const getAccessibilitySymbol = (rank: Rank) => {
-    const symbolMap: Partial<Record<Rank, string>> = {
-      [Rank.Jack]: 'I',
-      [Rank.Queen]: 'II',
-      [Rank.King]: 'III',
-      [Rank.Ace]: 'IV',
-      [Rank.Ten]: '10',
-      [Rank.Nine]: '9',
-      [Rank.Eight]: '8',
-      [Rank.Seven]: '7'
-    };
-    return symbolMap[rank] || '';
-  };
 
-  const getSuitName = (suit: Suit) => {
-    const names: Record<Suit, string> = {
-      [Suit.Hearts]: 'Hearts',
-      [Suit.Diamonds]: 'Diamonds',
-      [Suit.Clubs]: 'Clubs',
-      [Suit.Spades]: 'Spades'
-    };
-    return names[suit];
-  };
 
   const getSuitColor = (suit: Suit) => {
-    if (settings?.theme === 'colorblind-safe' || settings?.colorblindMode !== 'none') {
-      return `suit-${suit.toLowerCase()}`;
-    }
-    
     // Modern color palette based on card style
     if (cardStyle === 'modern' || cardStyle === 'minimalist') {
       return suit === Suit.Hearts || suit === Suit.Diamonds 
@@ -122,22 +91,19 @@ const Card: React.FC<CardProps> = ({
     return suit === Suit.Hearts || suit === Suit.Diamonds ? 'text-red-600 font-black' : 'text-gray-900 font-black';
   };
 
-  const getSuitPattern = (suit: Suit) => {
-    if (!settings?.suitPatterns) return '';
-    
-    const patterns: Record<Suit, string> = {
-      [Suit.Hearts]: 'suit-pattern-hearts',
-      [Suit.Diamonds]: 'suit-pattern-diamonds',
-      [Suit.Clubs]: 'suit-pattern-clubs',
-      [Suit.Spades]: 'suit-pattern-spades'
-    };
-    return patterns[suit];
-  };
 
   // Calculate card dimensions
   const getCardDimensions = () => {
     if (width && height) {
       return { width, height };
+    }
+
+    // Use CSS variables for responsive sizing when size is "responsive"
+    if (size === 'responsive') {
+      return {
+        width: 'var(--card-width-base)',
+        height: 'var(--card-height-base)'
+      };
     }
 
     const viewportWidth = window.innerWidth;
@@ -161,39 +127,32 @@ const Card: React.FC<CardProps> = ({
       xlarge: { 
         width: isTinyScreen ? 140 : isSmallScreen ? 150 : 160, 
         height: isTinyScreen ? 196 : isSmallScreen ? 210 : 224
-      },
-      responsive: {
-        width: 120,
-        height: 168
       }
     };
     
-    return baseSizes[size];
+    return baseSizes[size] || baseSizes.medium;
   };
 
-  const cardSizeMultiplier = (settings?.cardSize || 100) / 100;
-  const fontSizeMultiplier = (settings?.fontSize || 100) / 100;
+  const cardSizeMultiplier = 1.0;
+  const fontSizeMultiplier = 1.0;
   
   const dimensions = getCardDimensions();
-  const actualWidth = Math.round(dimensions.width * cardSizeMultiplier);
-  const actualHeight = Math.round(dimensions.height * cardSizeMultiplier);
-
+  
+  // Handle CSS variable dimensions for responsive sizing
   const cardStyleProps: React.CSSProperties = {
-    width: `${actualWidth}px`,
-    height: `${actualHeight}px`,
-    minWidth: `${actualWidth}px`,
-    minHeight: `${actualHeight}px`,
-    position: 'relative',
+    width: typeof dimensions.width === 'string' ? dimensions.width : `${Math.round((dimensions?.width || 120) * cardSizeMultiplier)}px`,
+    height: typeof dimensions.height === 'string' ? dimensions.height : `${Math.round((dimensions?.height || 168) * cardSizeMultiplier)}px`,
     display: 'flex',
     flexDirection: 'column'
   };
+  
+  // For font size calculations, we need numeric values
+  const actualWidth = typeof dimensions.width === 'string' ? 120 : Math.round((dimensions?.width || 120) * cardSizeMultiplier);
+  const actualHeight = typeof dimensions.height === 'string' ? 168 : Math.round((dimensions?.height || 168) * cardSizeMultiplier);
 
   const handleClick = () => {
     if (onClick && !isFaceDown) {
       onClick(card);
-      if (isValid) {
-        announceToScreenReader(`Playing ${card.rank} of ${getSuitName(card.suit)}`);
-      }
     }
   };
 
@@ -204,27 +163,6 @@ const Card: React.FC<CardProps> = ({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.key === 'Enter' || e.key === ' ') && onClick && !isFaceDown) {
-      e.preventDefault();
-      handleClick();
-    }
-  };
-
-  const getAriaLabel = () => {
-    if (isFaceDown) return 'Face down card';
-    
-    const parts = [
-      `${card.rank} of ${getSuitName(card.suit)}`,
-      `${card.value} points`
-    ];
-    
-    if (isTrump) parts.push('Trump suit');
-    if (isValid) parts.push('Playable');
-    if (isSelected) parts.push('Selected');
-    
-    return parts.join(', ');
-  };
 
   const cardClasses = classNames(
     'playing-card rounded-lg shadow-xl select-none',
@@ -236,9 +174,8 @@ const Card: React.FC<CardProps> = ({
       'ring-4 ring-green-400': isValid && !isSelected,
       'ring-4 ring-blue-400 scale-105': isSelected,
       'ring-4 ring-yellow-400': isTrump && !isSelected && !isValid,
-      'hover:shadow-2xl': !isFaceDown && !settings?.animations?.reducedMotion,
-      'cursor-pointer': isValid || onClick,
-      'focus-visible:ring-4 focus-visible:ring-blue-500': true
+      'hover:shadow-2xl': !isFaceDown,
+      'cursor-pointer': isValid || onClick
     },
     className
   );
@@ -263,11 +200,6 @@ const Card: React.FC<CardProps> = ({
         style={cardStyleProps}
         onClick={handleClick}
         onContextMenu={handleRightClick}
-        onKeyDown={handleKeyDown}
-        role={onClick ? "button" : "img"}
-        aria-label={getAriaLabel()}
-        aria-disabled={!isValid && !!onClick}
-        tabIndex={onClick ? (isValid ? tabIndex : -1) : -1}
         data-card-value={card.value}
         data-card-suit={card.suit}
         data-card-rank={card.rank}
@@ -289,7 +221,7 @@ const Card: React.FC<CardProps> = ({
                 {getDisplayRank(card.rank)}
               </div>
               <div 
-                className={`leading-none ${getSuitColor(card.suit)} ${getSuitPattern(card.suit)}`}
+                className={`leading-none ${getSuitColor(card.suit)}`}
                 style={{ 
                   fontSize: `${cornerSuitSize * fontSizeMultiplier}px`, 
                   fontWeight: '900',
@@ -329,7 +261,7 @@ const Card: React.FC<CardProps> = ({
                   {getDisplayRank(card.rank)}
                 </div>
                 <div 
-                  className={`${getSuitColor(card.suit)} ${getSuitPattern(card.suit)} leading-none`}
+                  className={`${getSuitColor(card.suit)} leading-none`}
                   style={{ 
                     fontSize: `${mainSuitSize * fontSizeMultiplier}px`,
                     textShadow: cardStyle === 'minimalist' ? 'none' : '2px 2px 3px rgba(0,0,0,0.3)',
@@ -340,49 +272,15 @@ const Card: React.FC<CardProps> = ({
                   {getSuitSymbol(card.suit)}
                 </div>
                 
-                {/* Accessibility symbol for accessible/modern styles */}
-                {(cardStyle === 'accessible' || cardStyle === 'modern') && getAccessibilitySymbol(card.rank) && (
-                  <div 
-                    className="mt-2 text-slate-600 font-bold"
-                    style={{ 
-                      fontSize: `${(mainFontSize * 0.5) * fontSizeMultiplier}px`,
-                      letterSpacing: '0.1em'
-                    }}
-                  >
-                    = {getAccessibilitySymbol(card.rank)}
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Accessibility features */}
-            {settings?.indicators?.cardLabels && (
-              <div 
-                className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-2 py-0.5 rounded text-xs font-bold" 
-                aria-hidden="true"
-              >
-                {getDisplayRank(card.rank)}{getSuitSymbol(card.suit)}
-              </div>
-            )}
 
             {/* Trump indicator */}
             {isTrump && (
               <div 
                 className="absolute top-1 right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse shadow-lg" 
-                aria-label="Trump indicator"
               />
-            )}
-
-            {/* Play hint */}
-            {settings?.cognitive?.playHints && isValid && (
-              <div 
-                className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                aria-hidden="true"
-              >
-                <div className="bg-green-500/20 rounded-lg p-2 animate-pulse">
-                  <span className="text-green-800 font-bold text-xs">PLAY</span>
-                </div>
-              </div>
             )}
           </div>
         </>
@@ -478,7 +376,7 @@ const Card: React.FC<CardProps> = ({
                       {getDisplayRank(card.rank)}
                     </div>
                     <div 
-                      className={`leading-none ${getSuitColor(card.suit)} ${getSuitPattern(card.suit)}`}
+                      className={`leading-none ${getSuitColor(card.suit)}`}
                       style={{ 
                         fontSize: `${cornerSuitSize * fontSizeMultiplier}px`, 
                         fontWeight: '900',
@@ -519,7 +417,7 @@ const Card: React.FC<CardProps> = ({
                         {getDisplayRank(card.rank)}
                       </div>
                       <div 
-                        className={`${getSuitColor(card.suit)} ${getSuitPattern(card.suit)}`}
+                        className={`${getSuitColor(card.suit)}`}
                         style={{ 
                           fontSize: `${mainSuitSize * fontSizeMultiplier}px`, 
                           marginTop: '-5px',
@@ -530,23 +428,6 @@ const Card: React.FC<CardProps> = ({
                         {getSuitSymbol(card.suit)}
                       </div>
                       
-                      {/* Accessibility info */}
-                      {cardStyle === 'accessible' && (
-                        <div className="mt-2">
-                          <div 
-                            className={`font-semibold ${getSuitColor(card.suit)}`}
-                            style={{ fontSize: `${(cornerFontSize * 0.8) * fontSizeMultiplier}px` }}
-                          >
-                            {getAccessibilitySymbol(card.rank)}
-                          </div>
-                          <div 
-                            className="text-gray-600 mt-1"
-                            style={{ fontSize: `${(cornerFontSize * 0.6) * fontSizeMultiplier}px` }}
-                          >
-                            {card.value} pts
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

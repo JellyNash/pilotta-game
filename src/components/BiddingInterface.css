@@ -1,0 +1,30 @@
+.bidding-interface-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.bidding-container {
+  width: var(--bid-modal-width);
+  max-width: 90vw;
+  padding: var(--dynamic-padding);
+  background: rgba(30, 41, 59, 0.75);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.bid-button {
+  width: var(--bid-button-width);
+  min-width: var(--bid-button-width);
+  font-size: var(--text-lg);
+}
+
+.suit-card-button {
+  width: var(--suit-button-size);
+  height: calc(var(--suit-button-size) * 1.4);
+  font-size: calc(var(--suit-button-size) * 0.6);
+}

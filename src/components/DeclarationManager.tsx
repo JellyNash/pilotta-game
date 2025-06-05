@@ -4,7 +4,6 @@ import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { Declaration, GamePhase, Card as CardType } from '../core/types';
 import Card from './Card';
 import { markPlayerDeclared, markPlayerShown } from '../store/gameSlice';
-import UnifiedAnnouncement from './UnifiedAnnouncement';
 import { GameButtonPositioner } from '../layouts/UIPositioner';
 
 interface DeclarationManagerProps {
@@ -29,7 +28,6 @@ const DeclarationManager: React.FC<DeclarationManagerProps> = ({ playerId, posit
   
   const [showDeclarationButton, setShowDeclarationButton] = useState(false);
   const [showingCards, setShowingCards] = useState(false);
-  const [showDeclarationAnnouncement, setShowDeclarationAnnouncement] = useState(false);
   
   // Check if player has potential declarations
   const hasPotentialDeclarations = playerDeclarations.length > 0;
@@ -57,12 +55,6 @@ const DeclarationManager: React.FC<DeclarationManagerProps> = ({ playerId, posit
     }
   }, [gamePhase, trickNumber, isCurrentPlayer, hasPotentialDeclarations, playerTracking]);
   
-  // Show declaration announcement when player declares
-  useEffect(() => {
-    if (playerTracking.hasDeclared && !playerTracking.hasShown) {
-      setShowDeclarationAnnouncement(true);
-    }
-  }, [playerTracking.hasDeclared, playerTracking.hasShown]);
   
   const handleDeclare = () => {
     dispatch(markPlayerDeclared({ playerId }));
@@ -113,14 +105,6 @@ const DeclarationManager: React.FC<DeclarationManagerProps> = ({ playerId, posit
         </button>
       </GameButtonPositioner>
       
-      {/* Declaration Announcement - Shows after declaring */}
-      <UnifiedAnnouncement
-        type="declaration"
-        message={String(getTotalDeclarationPoints())}
-        position={position}
-        isVisible={showDeclarationAnnouncement && !playerTracking.hasShown}
-        declarationValue={getTotalDeclarationPoints()}
-      />
       
       {/* Show Declaration Cards with improved design */}
       <AnimatePresence>

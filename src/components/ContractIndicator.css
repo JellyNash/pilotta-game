@@ -1,0 +1,44 @@
+.contract-indicator {
+  position: absolute;
+  top: var(--edge-gap);
+  right: var(--edge-gap);
+  min-width: calc(var(--card-width-base) * 1.5);
+  max-width: calc(var(--card-width-base) * 2);
+  padding: var(--badge-offset);
+  background: rgba(30, 41, 59, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  z-index: 30;
+}
+
+.contract-value {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+}
+
+.contract-suit {
+  font-size: var(--text-xl);
+  margin-left: 0.5rem;
+}
+
+.contract-multiplier {
+  font-size: var(--text-sm);
+  margin-left: 0.5rem;
+  color: #fbbf24;
+}
+
+@media (max-width: 768px) {
+  .contract-indicator {
+    min-width: calc(var(--card-width-base) * 1.2);
+    max-width: calc(var(--card-width-base) * 1.5);
+  }
+  
+  .contract-value {
+    font-size: var(--text-xl);
+  }
+  
+  .contract-suit {
+    font-size: var(--text-lg);
+  }
+}

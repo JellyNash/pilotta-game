@@ -5,7 +5,6 @@ import { TouchBackend } from 'react-dnd-touch-backend';
 import { useAppSelector } from './store/hooks';
 import { GamePhase } from './core/types';
 import { gameManager } from './game/GameManager';
-import { AccessibilityProvider } from './accessibility';
 import GameTable from './components/GameTable';
 import StartScreen from './components/StartScreen';
 import GameOverScreen from './components/GameOverScreen';
@@ -19,17 +18,22 @@ import Tutorial from './components/Tutorial';
 import VictoryCelebration from './components/VictoryCelebration';
 import DetailedScoreboard from './components/DetailedScoreboard';
 import DevTools from './components/DevTools';
-import { KeyboardHelp } from './accessibility/KeyboardHelp';
-import { useKeyboardNavigation } from './accessibility/KeyboardManager';
-import { AccessibilitySettings } from './accessibility/AccessibilitySettings';
 import AnnouncementDisplay from './components/AnnouncementDisplay';
 import './App.css';
+import './layouts/responsive-variables.css';
+import './layouts/game-grid.css';
+import './components/PlayerHand.css';
+import './components/PlayerZone.css';
+import './components/TrickArea.css';
+import './components/BiddingInterface.css';
+import './components/ContractIndicator.css';
+import './components/TrickPileViewer.css';
 
 // Detect if device supports touch
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 const DndBackend = isTouchDevice ? TouchBackend : HTML5Backend;
 
-// Inner component that uses accessibility hooks
+// Inner component with game logic
 function GameContent() {
   const gamePhase = useAppSelector(state => state.game.phase);
   const round = useAppSelector(state => state.game.round);
@@ -66,11 +70,6 @@ function GameContent() {
   const [showRoundTransition, setShowRoundTransition] = useState(false);
   const [showDetailedScoreboard, setShowDetailedScoreboard] = useState(false);
   const [showVictoryCelebration, setShowVictoryCelebration] = useState<'victory' | 'defeat' | 'contract-made' | null>(null);
-  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
-  const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
-  
-  // Initialize keyboard navigation - now inside the provider
-  useKeyboardNavigation();
 
   // Prevent right-click context menu globally
   useEffect(() => {
@@ -96,21 +95,16 @@ function GameContent() {
     // Initialize game manager on mount
     gameManager.setAnimationSpeed('normal');
     
-    // Listen for keyboard help request
-    const handleShowKeyboardHelp = () => setShowKeyboardHelp(true);
     const handleCloseModals = () => {
       setShowSettings(false);
       setShowTutorial(false);
       setShowScoreBreakdown(false);
       setShowDetailedScoreboard(false);
-      setShowKeyboardHelp(false);
     };
     
-    window.addEventListener('show-keyboard-help', handleShowKeyboardHelp);
     window.addEventListener('close-modals', handleCloseModals);
     
     return () => {
-      window.removeEventListener('show-keyboard-help', handleShowKeyboardHelp);
       window.removeEventListener('close-modals', handleCloseModals);
     };
   }, []);
@@ -144,12 +138,6 @@ function GameContent() {
 
   return (
     <div className="app">
-        {/* Skip navigation links for screen readers */}
-        <a href="#hand" className="skip-link">Skip to your hand</a>
-        <a href="#table" className="skip-link">Skip to game table</a>
-        <a href="#score" className="skip-link">Skip to scoreboard</a>
-        <a href="#bidding" className="skip-link">Skip to bidding</a>
-        
         <DndProvider backend={DndBackend}>
         <div className="game-header">
           <ScoreBoard />
@@ -184,15 +172,6 @@ function GameContent() {
               </svg>
             </button>
             <button
-              onClick={() => setShowAccessibilitySettings(true)}
-              className="p-2 bg-blue-700 hover:bg-blue-600 rounded-lg transition-colors"
-              title="Accessibility Settings"
-            >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </button>
-            <button
               onClick={() => setShowSettings(true)}
               className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
               title="Settings"
@@ -205,14 +184,14 @@ function GameContent() {
           </div>
         </div>
         
-        <main className="game-content" role="main">
+        <main className="game-content">
           <GameTable />
           
           {/* Announcement Display for Belote/Rebelote */}
           <AnnouncementDisplay />
           
           {gamePhase === GamePhase.Bidding && (
-            <div id="bidding" role="region" aria-label="Bidding controls">
+            <div id="bidding">
               <BiddingInterface />
               <DoubleRedoubleButtons />
             </div>
@@ -237,12 +216,6 @@ function GameContent() {
           type={showVictoryCelebration || 'victory'} 
         />
         
-        {/* Keyboard Help */}
-        <KeyboardHelp isOpen={showKeyboardHelp} onClose={() => setShowKeyboardHelp(false)} />
-        
-        {/* Accessibility Settings */}
-        <AccessibilitySettings isOpen={showAccessibilitySettings} onClose={() => setShowAccessibilitySettings(false)} />
-        
         {/* Development tools - only show in development mode */}
         {process.env.NODE_ENV === 'development' && <DevTools />}
         </DndProvider>
@@ -250,25 +223,21 @@ function GameContent() {
   );
 }
 
-// Main App component that provides the accessibility context
+// Main App component
 function App() {
-  const gamePhase = useAppSelector(state => state.game.phase);
-  const round = useAppSelector(state => state.game.round);
-  const gameStarted = gamePhase !== GamePhase.GameOver && gamePhase !== GamePhase.Dealing || round > 1;
+  // Initialize card size from localStorage on mount
+  useEffect(() => {
+    const savedCardSize = localStorage.getItem('cardSize');
+    const size = savedCardSize ? parseFloat(savedCardSize) : 1.0;
+    
+    // Set CSS variables for card scaling
+    document.documentElement.style.setProperty('--card-size-human', size.toString());
+    // AI players get 5% increments (20% of human scaling)
+    const aiScale = 1.0 + (size - 1.0) * 0.2;
+    document.documentElement.style.setProperty('--card-size-ai', aiScale.toString());
+  }, []);
 
-  if (!gameStarted && gamePhase === GamePhase.Dealing) {
-    return <StartScreen />;
-  }
-
-  if (gamePhase === GamePhase.GameOver) {
-    return <GameOverScreen />;
-  }
-
-  return (
-    <AccessibilityProvider>
-      <GameContent />
-    </AccessibilityProvider>
-  );
+  return <GameContent />;
 }
 
 export default App;

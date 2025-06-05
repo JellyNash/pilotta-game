@@ -1,0 +1,55 @@
+.trick-area-centered {
+  position: relative;
+  width: var(--trick-area-size);
+  max-width: var(--trick-area-max);
+  height: var(--trick-area-size);
+  max-height: var(--trick-area-max);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trick-card-slot {
+  position: absolute;
+  width: var(--card-width-base);
+  height: var(--card-height-base);
+}
+
+
+/* Card positions in trick area */
+.trick-card-north {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.trick-card-south {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.trick-card-east {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.trick-card-west {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Override card dimensions in trick area based on who played them */
+.trick-card-south {
+  --card-width-base: calc(120px * var(--card-size-human, 1));
+  --card-height-base: calc(168px * var(--card-size-human, 1));
+}
+
+.trick-card-north,
+.trick-card-east,
+.trick-card-west {
+  --card-width-base: calc(120px * var(--card-size-ai, 1));
+  --card-height-base: calc(168px * var(--card-size-ai, 1));
+}

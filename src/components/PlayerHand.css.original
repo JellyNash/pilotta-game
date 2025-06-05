@@ -1,0 +1,203 @@
+/* Import responsive variables */
+@import '../layouts/responsive-variables.css';
+
+.player-hand-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card container for all players */
+.card-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* HUMAN PLAYER (SOUTH) - Preserve exact fan style */
+.player-hand-wrapper[data-position="south"] .card-container {
+  /* Container sized to fit fanned cards */
+  width: calc(120px * 8 * 0.85);
+  height: calc(168px + 50px);
+  padding-bottom: 2rem; /* Space for arc */
+  position: relative;
+}
+
+.player-hand-wrapper[data-position="south"] .card-slot {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 0 !important;
+  transform-origin: center bottom !important;
+  transition: all 0.2s ease-out;
+  /* Ensure width and height are set */
+  width: 120px !important;
+  height: 168px !important;
+}
+
+/* Fan calculations for exact spacing - maintains current behavior */
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(1) { 
+  transform: translateX(-50%) translateX(calc(-3.5 * 120px * 0.85)) rotate(-15deg) translateY(35px) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(2) { 
+  transform: translateX(-50%) translateX(calc(-2.5 * 120px * 0.85)) rotate(-10deg) translateY(20px) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(3) { 
+  transform: translateX(-50%) translateX(calc(-1.5 * 120px * 0.85)) rotate(-5deg) translateY(7.5px) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(4) { 
+  transform: translateX(-50%) translateX(calc(-0.5 * 120px * 0.85)) rotate(0deg) translateY(0) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(5) { 
+  transform: translateX(-50%) translateX(calc(0.5 * 120px * 0.85)) rotate(5deg) translateY(7.5px) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(6) { 
+  transform: translateX(-50%) translateX(calc(1.5 * 120px * 0.85)) rotate(10deg) translateY(20px) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(7) { 
+  transform: translateX(-50%) translateX(calc(2.5 * 120px * 0.85)) rotate(15deg) translateY(35px) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(8) { 
+  transform: translateX(-50%) translateX(calc(3.5 * 120px * 0.85)) rotate(20deg) translateY(50px) !important;
+}
+
+/* Hover effect for human player - using the same calculation as static position but with lift */
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(1):hover { 
+  transform: translateX(-50%) translateX(calc(-3.5 * 120px * 0.85)) rotate(-15deg) translateY(calc(35px - 20px)) scale(1.1) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(2):hover { 
+  transform: translateX(-50%) translateX(calc(-2.5 * 120px * 0.85)) rotate(-10deg) translateY(calc(20px - 20px)) scale(1.1) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(3):hover { 
+  transform: translateX(-50%) translateX(calc(-1.5 * 120px * 0.85)) rotate(-5deg) translateY(calc(7.5px - 20px)) scale(1.1) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(4):hover { 
+  transform: translateX(-50%) translateX(calc(-0.5 * 120px * 0.85)) rotate(0deg) translateY(calc(0px - 20px)) scale(1.1) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(5):hover { 
+  transform: translateX(-50%) translateX(calc(0.5 * 120px * 0.85)) rotate(5deg) translateY(calc(7.5px - 20px)) scale(1.1) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(6):hover { 
+  transform: translateX(-50%) translateX(calc(1.5 * 120px * 0.85)) rotate(10deg) translateY(calc(20px - 20px)) scale(1.1) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(7):hover { 
+  transform: translateX(-50%) translateX(calc(2.5 * 120px * 0.85)) rotate(15deg) translateY(calc(35px - 20px)) scale(1.1) !important;
+}
+.player-hand-wrapper[data-position="south"] .card-slot:nth-child(8):hover { 
+  transform: translateX(-50%) translateX(calc(3.5 * 120px * 0.85)) rotate(20deg) translateY(calc(50px - 20px)) scale(1.1) !important;
+}
+
+/* Hover spread effect - cards to the right move when hovering */
+.player-hand-wrapper[data-position="south"][data-hovering="true"] .card-slot {
+  transition: all 0.15s ease-out;
+}
+
+/* OPPONENT CARDS - Horizontal orientation (long side on horizontal axis) */
+/* North player - horizontal spread */
+.player-hand-wrapper[data-position="north"] .card-container {
+  width: calc(120px * 8 * 0.4);
+  height: 168px;
+  position: relative;
+}
+
+.player-hand-wrapper[data-position="north"] .card-slot {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 120px !important;
+  height: 168px !important;
+}
+
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(1) { transform: translate(-50%, -50%) translateX(calc(-3.5 * 120px * 0.4)) !important; }
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(2) { transform: translate(-50%, -50%) translateX(calc(-2.5 * 120px * 0.4)) !important; }
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(3) { transform: translate(-50%, -50%) translateX(calc(-1.5 * 120px * 0.4)) !important; }
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(4) { transform: translate(-50%, -50%) translateX(calc(-0.5 * 120px * 0.4)) !important; }
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(5) { transform: translate(-50%, -50%) translateX(calc(0.5 * 120px * 0.4)) !important; }
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(6) { transform: translate(-50%, -50%) translateX(calc(1.5 * 120px * 0.4)) !important; }
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(7) { transform: translate(-50%, -50%) translateX(calc(2.5 * 120px * 0.4)) !important; }
+.player-hand-wrapper[data-position="north"] .card-slot:nth-child(8) { transform: translate(-50%, -50%) translateX(calc(3.5 * 120px * 0.4)) !important; }
+
+/* East player - cards rotated to face right */
+.player-hand-wrapper[data-position="east"] .card-container {
+  width: calc(168px * 8 * 0.3);
+  height: 120px;
+  flex-direction: column;
+  position: relative;
+}
+
+.player-hand-wrapper[data-position="east"] .card-slot {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 120px !important;
+  height: 168px !important;
+}
+
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(1) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-3.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-2.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-1.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(4) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(-0.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(5) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(0.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(6) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(1.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(7) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(2.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="east"] .card-slot:nth-child(8) { transform: translate(-50%, -50%) rotate(90deg) translateX(calc(3.5 * 168px * 0.3)) !important; }
+
+/* West player - cards rotated to face left */
+.player-hand-wrapper[data-position="west"] .card-container {
+  width: calc(168px * 8 * 0.3);
+  height: 120px;
+  flex-direction: column;
+  position: relative;
+}
+
+.player-hand-wrapper[data-position="west"] .card-slot {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 120px !important;
+  height: 168px !important;
+}
+
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(1) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(3.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(2) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(2.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(3) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(1.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(4) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(0.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(5) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-0.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(6) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-1.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(7) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-2.5 * 168px * 0.3)) !important; }
+.player-hand-wrapper[data-position="west"] .card-slot:nth-child(8) { transform: translate(-50%, -50%) rotate(-90deg) translateX(calc(-3.5 * 168px * 0.3)) !important; }
+
+/* Card size based on responsive variables */
+.card-slot {
+  width: var(--card-width-base, 120px);
+  height: var(--card-height-base, 168px);
+  position: absolute;
+}
+
+/* Z-index management */
+.card-slot {
+  z-index: calc(var(--card-index, 0) + 1);
+}
+
+.card-slot.selected {
+  z-index: 20 !important;
+}
+
+.card-slot:hover {
+  z-index: 30 !important;
+}
+
+/* Fallback positions for cards if CSS variables fail */
+.player-hand-wrapper[data-position="north"] .card-slot,
+.player-hand-wrapper[data-position="east"] .card-slot,
+.player-hand-wrapper[data-position="west"] .card-slot {
+  position: absolute;
+}

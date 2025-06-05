@@ -39,119 +39,165 @@ const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClo
   
   const totalPoints = tricks.reduce((sum, trick) => sum + trick.points, 0);
   
+  // Find who played first (lead player) and human player
+  const leadPlayer = lastTrick.cards[0]?.player;
+  const humanCard = lastTrick.cards.find(tc => !tc.player.isAI);
+  const humanPlayer = humanCard?.player;
+  
+  // Reorganize cards for display - human always at bottom
+  const getCardPosition = (trickCard: typeof lastTrick.cards[0]) => {
+    if (trickCard.player.id === humanPlayer?.id) {
+      return 'bottom'; // Human always at bottom
+    }
+    
+    // If human is in the trick, arrange others relative to human
+    if (humanPlayer) {
+      const humanTeamId = humanPlayer.teamId;
+      const cardTeamId = trickCard.player.teamId;
+      
+      // Partner goes to top
+      if (cardTeamId === humanTeamId) {
+        return 'top';
+      }
+      
+      // Opponents go to sides based on their position relative to human
+      const humanPos = humanPlayer.position;
+      const cardPos = trickCard.player.position;
+      
+      // Simple position mapping
+      const positionMap: Record<string, Record<string, string>> = {
+        'south': { 'north': 'top', 'east': 'right', 'west': 'left' },
+        'north': { 'south': 'top', 'west': 'right', 'east': 'left' },
+        'east': { 'west': 'top', 'south': 'right', 'north': 'left' },
+        'west': { 'east': 'top', 'north': 'right', 'south': 'left' }
+      };
+      
+      return positionMap[humanPos]?.[cardPos] || 'top';
+    }
+    
+    // Fallback to original positions if no human player
+    const position = trickCard.player.position;
+    return position === 'south' ? 'bottom' : 
+           position === 'north' ? 'top' : 
+           position === 'east' ? 'right' : 'left';
+  };
+  
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="tpv-overlay"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl border border-slate-700/50 max-w-5xl w-full"
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="tpv-modal"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className={`${
-          teamId === 'A' ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gradient-to-r from-red-600 to-red-700'
-        } px-6 py-4 flex justify-between items-center rounded-t-3xl`}>
-          <h2 className="text-2xl font-bold text-white">
-            {isLastTrickPile ? 'Previous Trick' : `Last Trick Won by Team ${teamId}`}
-          </h2>
-          <div className="flex items-center gap-4">
-            <div className="text-white">
-              <span className="text-sm opacity-80">Total Points:</span>
-              <span className="text-2xl font-bold ml-2">{totalPoints}</span>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-white/80 hover:text-white transition-colors"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+        {/* Minimal header */}
+        <div className="tpv-header">
+          <div className="tpv-title">
+            <span className={`tpv-team-indicator ${teamId === 'A' ? 'team-a' : 'team-b'}`}>
+              Team {teamId}
+            </span>
+            <span className="tpv-points">{lastTrick.points} pts</span>
+            <span className="tpv-total">Total: {totalPoints}</span>
           </div>
+          <button
+            onClick={onClose}
+            className="tpv-close"
+            aria-label="Close"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M15 5L5 15M5 5l10 10" />
+            </svg>
+          </button>
         </div>
         
-        {/* Cards display in cross layout */}
-        <div className="p-8">
-          <div className="trick-viewer-container">
-            {/* Table background circle */}
-            <div className="trick-table-circle" />
+        {/* Main content */}
+        <div className="tpv-body">
+          {/* Cross layout container */}
+          <div className="tpv-cross-container">
+            {/* Center table decoration */}
+            <div className="tpv-table-center">
+              <div className="tpv-table-circle" />
+              <div className="tpv-center-info">
+                <span className={`tpv-suit ${lastTrick.leadSuit === Suit.Hearts || lastTrick.leadSuit === Suit.Diamonds ? 'red' : 'black'}`}>
+                  {getSuitSymbol(lastTrick.leadSuit)}
+                </span>
+              </div>
+            </div>
             
-            {/* Cards positioned using center-based layout */}
+            {/* Cards in cross formation */}
             {lastTrick.cards.map((trickCard, index) => {
               const isWinner = trickCard.player.id === lastTrick.winner?.id;
-              const playerPosition = trickCard.player.position;
+              const position = getCardPosition(trickCard);
               
               return (
                 <motion.div
-                  key={index}
-                  className={`trick-card-position ${playerPosition}`}
+                  key={trickCard.player.id}
+                  className={`tpv-card-position tpv-${position}`}
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ 
+                    delay: index * 0.08,
+                    type: "spring",
+                    damping: 20,
+                    stiffness: 300
+                  }}
                 >
-                  <div className="trick-card-wrapper">
-                    {/* Player name */}
-                    <div className={`text-sm font-medium ${isWinner ? 'text-yellow-400' : 'text-slate-400'}`}>
-                      {trickCard.player.name}
-                    </div>
+                  {/* Card container */}
+                  <div className={`tpv-card-container ${isWinner ? 'winner' : ''}`}>
+                    {/* Play order number */}
+                    <div className="tpv-play-order">{index + 1}</div>
                     
-                    {/* Card with winner glow */}
-                    <div className={`relative ${isWinner ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900 rounded-lg' : ''}`}>
+                    {/* Winner glow effect */}
+                    {isWinner && (
+                      <motion.div
+                        className="tpv-winner-glow"
+                        animate={{ 
+                          opacity: [0.4, 0.7, 0.4]
+                        }}
+                        transition={{ 
+                          duration: 2, 
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      />
+                    )}
+                    
+                    {/* The card */}
+                    <div className="tpv-card">
                       <Card
                         card={trickCard.card}
                         faceDown={false}
-                        size="large"
+                        size="medium"
                       />
-                      {isWinner && (
-                        <motion.div
-                          className="absolute -inset-2 bg-yellow-400/20 rounded-lg -z-10"
-                          animate={{ opacity: [0.5, 0.8, 0.5] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        />
-                      )}
                     </div>
                     
-                    {/* Winner badge */}
+                    {/* Minimal winner indicator */}
                     {isWinner && (
                       <motion.div 
-                        className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full"
+                        className="tpv-winner-indicator"
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        transition={{ delay: 0.5, type: "spring" }}
+                        transition={{ 
+                          delay: 0.3,
+                          type: "spring",
+                          damping: 15
+                        }}
                       >
-                        WINNER
+                        W
                       </motion.div>
                     )}
                   </div>
                 </motion.div>
               );
             })}
-            
-            {/* Center info */}
-            <div className="trick-viewer-center">
-              <div className="trick-center-info">
-                <div className="text-sm text-slate-400 mb-1">Lead Suit</div>
-                <div className={`text-4xl mb-2 ${
-                  lastTrick.leadSuit === Suit.Hearts || lastTrick.leadSuit === Suit.Diamonds 
-                    ? 'text-red-500' 
-                    : 'text-gray-900'
-                }`}>
-                  {getSuitSymbol(lastTrick.leadSuit)}
-                </div>
-                <div className={`text-2xl font-bold ${
-                  teamId === 'A' ? 'text-blue-400' : 'text-red-400'
-                }`}>
-                  {lastTrick.points} pts
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </motion.div>

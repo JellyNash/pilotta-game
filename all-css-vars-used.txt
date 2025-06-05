@@ -1,0 +1,56 @@
+abs-pos
+announcement-font-size
+announcement-min-width
+announcement-padding-x
+announcement-padding-y
+announcement-suit-size
+badge-offset
+bid-button-width
+bid-modal-width
+card-base-height
+card-base-width
+card-count
+card-height
+card-height-base
+card-height-base, 168px
+card-height-responsive
+card-index, 0
+card-size-ai
+card-size-ai, 1
+card-size-human
+card-size-human, 1
+card-size-scale, 1.0
+card-spacing-factor
+card-width
+card-width-base
+card-width-base, 120px
+card-width-responsive
+dynamic-padding
+edge-gap
+elevation
+hand-offset
+header-height, 5rem
+normalized-pos
+ph-card-height
+ph-card-scale
+ph-card-width
+ph-fan-arc-height
+ph-fan-rotation-range
+ph-fan-spread
+ph-hover-lift
+ph-hover-scale
+ph-transition
+space-lg
+space-md
+space-sm
+space-xs
+suit-button-size
+table-radius
+text-2xl
+text-badge
+text-lg
+text-player-label
+text-sm
+text-xl
+trick-area-max
+trick-area-size
