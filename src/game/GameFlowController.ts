@@ -11,6 +11,7 @@ import {
   markPlayerDeclared,
   markPlayerShown,
   updateDeclarationRights,
+  enableBothTeamsToShow,
   enableThirdTrickShowing,
   completeTrick,
   completeRound,
@@ -210,6 +211,9 @@ export class GameFlowController {
           this.dispatch(updateDeclarationRights({ 
             winningTeam: winner
           }));
+        } else {
+          // Tie - both teams can show (they will cancel out and get 0 points)
+          this.dispatch(enableBothTeamsToShow());
         }
       }
     }
@@ -279,8 +283,29 @@ export class GameFlowController {
     // Update valid moves for UI
     this.dispatch(setValidMoves(legalMoves));
     
-    // If human player, wait for input
+    // If human player, check for auto-play of last card
     if (!currentPlayer.isAI) {
+      // Auto-play if only one card left and it's the only legal move
+      if (currentPlayer.hand.length === 1 && legalMoves.length === 1) {
+        // Add a small delay for better UX
+        await this.delay(300);
+        
+        // Play the last card automatically
+        const lastCard = legalMoves[0];
+        this.dispatch(playCard({ 
+          playerId: currentPlayer.id, 
+          card: lastCard 
+        }));
+        
+        // Play card sound
+        soundManager.play('cardPlay');
+        
+        // Continue game flow
+        await this.runGameFlow();
+        return;
+      }
+      
+      // Otherwise, wait for input
       return;
     }
     
@@ -523,6 +548,13 @@ export class GameFlowController {
     
     this.dispatch(completeTrick({ winner, points }));
     
+    // Check if contract is mathematically lost
+    const updatedState = this.getState().game;
+    if (this.checkEarlyTermination(updatedState)) {
+      await this.handleEarlyTermination();
+      return;
+    }
+    
     // Continue playing or move to scoring
     await this.runGameFlow();
   }
@@ -714,6 +746,17 @@ export class GameFlowController {
     if (state.contract) {
       const contractTeam = state.contract.team;
       const contractValue = state.contract.value;
+      
+      // Check if contract team has won at least one trick (to avoid reverse capot)
+      const contractTeamWonTrick = state.completedTricks.some(trick => 
+        trick.winner.teamId === contractTeam
+      );
+      
+      if (!contractTeamWonTrick) {
+        // Don't terminate early if contract team hasn't won any tricks yet
+        // They need to avoid reverse capot (losing all tricks)
+        return false;
+      }
       
       if (contractTeam === 'A') {
         // Team A has the contract

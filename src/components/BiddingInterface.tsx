@@ -309,10 +309,10 @@ const BiddingInterface: React.FC = () => {
       >
         <div className="space-y-6">
           {/* Top Row - Suit Selection and Current Bid/Double */}
-          <div className="flex items-start gap-4">
-            {/* Left side: Suit Selection (2/3 width) */}
-            <div className={`flex-grow flex-shrink-0 w-2/3 ${focusedElement === 'trump' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
-              <div className="flex justify-start space-x-6">
+          <div className="bid-content-grid">
+            {/* Left side: Suit Selection */}
+            <div className={`bid-suits-section ${focusedElement === 'trump' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
+              <div className="suit-selection flex justify-start space-x-6">
                 {Object.values(Suit).map((suit) => (
                   <motion.button
                     key={suit}
@@ -328,6 +328,8 @@ const BiddingInterface: React.FC = () => {
                     onClick={() => {
                       setSelectedTrump(suit);
                     }}
+                    aria-label={`Select ${suit} as trump suit`}
+                    aria-pressed={selectedTrump === suit}
                     style={{ transformStyle: "preserve-3d" }}
                     className={`
                       relative px-6 py-4 sm:px-7 sm:py-5 rounded-xl transition-all duration-300 touch-target transform perspective-1000
@@ -418,8 +420,8 @@ const BiddingInterface: React.FC = () => {
               </div>
             </div>
             
-            {/* Right side: Current Bid + Double/Redouble (1/3 width) */}
-            <div className="flex-shrink-0 w-1/3 flex items-stretch">
+            {/* Right side: Current Bid + Double/Redouble */}
+            <div className="bid-current-section flex items-stretch">
               <div className="flex flex-col items-center justify-between py-4 space-y-3 ml-auto mr-[15%]">
                 {/* Current Contract - always show to maintain height */}
                 <div className={`
@@ -476,6 +478,7 @@ const BiddingInterface: React.FC = () => {
                         onClick={handleDouble}
                         className="relative px-8 py-3 bg-gradient-to-b from-red-500/90 to-red-600/90 hover:from-red-400/90 hover:to-red-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 mt-2 border border-red-400/30 overflow-hidden group bid-button"
                         title="Double the current bid"
+                        aria-label="Double the current bid (multiply by 2)"
                       >
                         <span className="relative z-10">DOUBLE ×2</span>
                         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -535,6 +538,7 @@ const BiddingInterface: React.FC = () => {
                 onClick={handlePass}
                 className="relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 border border-slate-400/20 backdrop-blur-sm overflow-hidden group bid-button"
                 title="Pass"
+                aria-label="Pass (skip bidding)"
               >
                 <span className="relative z-10">PASS</span>
                 <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -556,6 +560,8 @@ const BiddingInterface: React.FC = () => {
                 onTouchStart={startDecrementing}
                 onTouchEnd={stopDecrementing}
                 disabled={selectedBid <= minBid}
+                aria-label="Decrease bid value"
+                aria-disabled={selectedBid <= minBid}
                 className={`
                   relative w-16 h-16 rounded-full transition-all duration-300 touch-target flex items-center justify-center
                   ${selectedBid <= minBid 
@@ -640,6 +646,8 @@ const BiddingInterface: React.FC = () => {
                 onTouchStart={startIncrementing}
                 onTouchEnd={stopIncrementing}
                 disabled={selectedBid >= maxBid}
+                aria-label="Increase bid value"
+                aria-disabled={selectedBid >= maxBid}
                 className={`
                   relative w-16 h-16 rounded-full transition-all duration-300 touch-target flex items-center justify-center
                   ${selectedBid >= maxBid 
@@ -670,6 +678,8 @@ const BiddingInterface: React.FC = () => {
                     boxShadow: "0 4px 20px rgba(34, 197, 94, 0.3)"
                   }}
                   onClick={handleBid}
+                  aria-label={`Bid ${selectedBid} with ${selectedTrump || 'no trump selected'}`}
+                  aria-disabled={!selectedTrump}
                   className={`
                     relative px-10 py-5 text-white text-xl font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden group bid-button
                     ${!selectedTrump 

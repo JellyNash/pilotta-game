@@ -1,7 +1,9 @@
 /* Announcement System - Variables now in tokens.css */
 
-/* Ensure announcements don't interfere with game elements */
+/* Announcement container with position and performance optimizations */
 .announcement-container {
+  position: fixed;
+  pointer-events: auto;
   will-change: transform, opacity, filter;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
@@ -11,8 +13,8 @@
 
 /* Professional glass morphism effect with depth */
 .announcement-card {
-  backdrop-filter: blur(20px) saturate(200%) brightness(1.1);
-  -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.1);
+  backdrop-filter: var(--glass-effect-lg);
+  -webkit-backdrop-filter: var(--glass-effect-lg);
   background-color: rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
@@ -27,7 +29,7 @@
   inset: -4px;
   background: inherit;
   border-radius: inherit;
-  filter: blur(25px);
+  filter: blur(var(--blur-lg));
   opacity: 0.6;
   z-index: -2;
   transform: translateZ(-10px);
@@ -45,7 +47,7 @@
     rgba(255, 255, 255, 0.05) 40%,
     transparent 100%);
   pointer-events: none;
-  z-index: 1;
+  z-index: var(--z-base);
 }
 
 /* Enhanced hover effects */
@@ -54,64 +56,14 @@
 }
 
 .announcement-container:hover .announcement-card::before {
-  filter: blur(35px);
+  filter: blur(var(--blur-xl));
   opacity: 0.8;
   transform: translateZ(-15px) scale(1.05);
 }
 
-/* Small screens (mobile) */
-@media (max-width: 640px) {
-  .announcement-system {
-    --announcement-min-width: 160px;
-    --announcement-padding-x: 1.5rem;
-    --announcement-padding-y: 1rem;
-    --announcement-font-size: 1.5rem;
-    --announcement-suit-size: 1.75rem;
-    --announcement-spacing: 60px;
-  }
-}
-
-/* Medium screens (tablets) */
-@media (min-width: 641px) and (max-width: 1024px) {
-  .announcement-system {
-    --announcement-min-width: 180px;
-    --announcement-padding-x: 2rem;
-    --announcement-padding-y: 1.125rem;
-    --announcement-font-size: 1.625rem;
-    --announcement-suit-size: 2rem;
-    --announcement-spacing: 70px;
-  }
-}
-
-/* Large screens (desktop) */
-@media (min-width: 1025px) and (max-width: 1440px) {
-  .announcement-system {
-    --announcement-min-width: 220px;
-    --announcement-padding-x: 2.75rem;
-    --announcement-padding-y: 1.375rem;
-    --announcement-font-size: 2rem;
-    --announcement-suit-size: 2.5rem;
-    --announcement-spacing: 85px;
-  }
-}
-
-/* Extra large screens */
-@media (min-width: 1441px) {
-  .announcement-system {
-    --announcement-min-width: 240px;
-    --announcement-padding-x: 3rem;
-    --announcement-padding-y: 1.5rem;
-    --announcement-font-size: 2.25rem;
-    --announcement-suit-size: 2.75rem;
-    --announcement-spacing: 90px;
-  }
-}
+/* Responsive values are now handled by clamp() in tokens.css */
 
 /* Position-based announcement placement relative to player zones */
-.announcement-container {
-  position: fixed;
-  pointer-events: auto;
-}
 
 /* North player - center top */
 .announcement-position-north {
@@ -134,38 +86,19 @@
 
 /* East player - right side */
 .announcement-position-east {
-  left: 78vw;
+  left: clamp(76vw, 78vw, 80vw);
   top: 50%;
   transform: translateY(-50%);
 }
 
 /* West player - left side */
 .announcement-position-west {
-  left: 8vw;
+  left: clamp(6vw, 8vw, 10vw);
   top: 50%;
   transform: translateY(-50%);
 }
 
-/* Responsive adjustments for player positions */
-@media (max-width: 1024px) {
-  .announcement-position-west {
-    left: 10vw;
-  }
-  
-  .announcement-position-east {
-    left: 76vw;
-  }
-}
-
-@media (min-width: 1440px) {
-  .announcement-position-west {
-    left: 6vw;
-  }
-  
-  .announcement-position-east {
-    left: 80vw;
-  }
-}
+/* Position adjustments now handled by clamp() in base rules above */
 
 /* Animation enhancements */
 @keyframes announcement-pulse {
@@ -200,7 +133,7 @@
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .announcement-system {
-    --announcement-border-width: 3px;
+    --announcement-border-width: var(--border-medium);
   }
 }
 
@@ -235,7 +168,7 @@
   }
   
   .announcement-content {
-    font-size: 0.875rem;
-    padding: 0.5rem 0.75rem;
+    font-size: var(--fs-sm);
+    padding: var(--space-xs) var(--space-sm);
   }
 }

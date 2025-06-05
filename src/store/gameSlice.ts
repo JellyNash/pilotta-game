@@ -524,6 +524,7 @@ const gameSlice = createSlice({
       // Update total scores
       state.teams.A.score += action.payload.teamAScore;
       state.teams.B.score += action.payload.teamBScore;
+      // IMPORTANT: Maintain consistent mapping - Team A = team1, Team B = team2
       state.scores.team1 = state.teams.A.score;
       state.scores.team2 = state.teams.B.score;
       
@@ -646,6 +647,18 @@ const gameSlice = createSlice({
       }
     },
     
+    enableBothTeamsToShow: (state) => {
+      // Enable showing for all players who have declared but not shown (used for tied declarations)
+      if (state.declarationTracking) {
+        state.players.forEach(player => {
+          const tracking = state.declarationTracking[player.id];
+          if (tracking && tracking.hasDeclared && !tracking.hasShown) {
+            tracking.canShow = true;
+          }
+        });
+      }
+    },
+    
     enableThirdTrickShowing: (state, action: PayloadAction<{ playerIds: string[] }>) => {
       // Enable showing for third trick fallback
       if (!state.declarationTracking) {
@@ -712,6 +725,7 @@ export const {
   markPlayerDeclared,
   markPlayerShown,
   updateDeclarationRights,
+  enableBothTeamsToShow,
   enableThirdTrickShowing,
   setEarlyTermination,
   setPhase,

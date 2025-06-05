@@ -2,13 +2,15 @@
   position: absolute;
   top: var(--edge-gap);
   right: var(--edge-gap);
-  min-width: calc(var(--card-width-base) * 1.5);
-  max-width: calc(var(--card-width-base) * 2);
-  padding: var(--badge-offset);
+  /* Responsive width using clamp() */
+  min-width: clamp(70px, calc(var(--card-width-base) * 1.2), calc(var(--card-width-base) * 1.5));
+  max-width: clamp(120px, calc(var(--card-width-base) * 1.5), calc(var(--card-width-base) * 2));
+  /* Responsive padding */
+  padding: clamp(0.375rem, 1vw, var(--badge-offset));
   background: rgba(30, 41, 59, 0.9);
-  backdrop-filter: blur(8px);
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  backdrop-filter: var(--glass-effect-sm);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-drop-lg);
   z-index: var(--z-ui-overlay);
 }
 
@@ -19,7 +21,7 @@
 
 .contract-suit {
   font-size: var(--text-xl);
-  margin-left: 0.5rem;
+  margin-left: clamp(var(--space-2xs), 1vw, 0.5rem);
 }
 
 .contract-multiplier {
@@ -28,22 +30,7 @@
   color: #fbbf24;
 }
 
-@media (max-width: 768px) {
-  .contract-indicator {
-    min-width: calc(var(--card-width-base) * 1.2);
-    max-width: calc(var(--card-width-base) * 1.5);
-  }
-  
-  .contract-value {
-    font-size: var(--text-xl);
-  }
-  
-  .contract-suit {
-    font-size: var(--text-lg);
-  }
-}
-
-/* Mobile optimizations */
+/* Structural changes for mobile positioning */
 @media (max-width: 480px) {
   .contract-indicator {
     position: fixed; /* Change from absolute to fixed */
@@ -55,23 +42,17 @@
   }
   
   .contract-value {
-    font-size: 1.125rem; /* 18px */
+    font-size: var(--fs-lg);
   }
   
   .contract-suit {
-    font-size: 1rem;
-    margin-left: 0.25rem;
+    font-size: var(--fs-base);
+    margin-left: var(--space-2xs);
   }
   
   .contract-multiplier {
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
   }
 }
 
-/* Extreme mobile */
-@media (max-width: 360px) {
-  .contract-indicator {
-    min-width: 70px;
-    padding: 0.375rem;
-  }
-}
+/* All sizing now handled by clamp() in base rules */

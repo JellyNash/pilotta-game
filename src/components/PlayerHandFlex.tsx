@@ -3,6 +3,7 @@ import { Player, Card as CardType, Suit } from '../core/types';
 import Card from './Card';
 import { sortHumanPlayerCards } from '../utils/cardSorting';
 import { sortCards } from '../utils/cardSortUtils';
+import { useKeyboardNavigation } from '../accessibility';
 import './PlayerHandFlex.css';
 
 interface PlayerHandFlexProps {
@@ -31,6 +32,7 @@ const PlayerHandFlex: React.FC<PlayerHandFlexProps> = ({
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { selectedCardIndex, isKeyboardNavigationActive } = useKeyboardNavigation();
   
   // Sort cards based on player type - MAINTAIN EXACT CURRENT BEHAVIOR
   const sortedCards = useMemo(() => {
@@ -50,6 +52,7 @@ const PlayerHandFlex: React.FC<PlayerHandFlexProps> = ({
       className="ph-flex-wrapper"
       data-position={position}
       data-hovering={hoveredIndex !== null}
+      data-card-count={sortedCards.length}
       ref={containerRef}
     >
       <div className="ph-flex-container">
@@ -58,6 +61,7 @@ const PlayerHandFlex: React.FC<PlayerHandFlexProps> = ({
           const isSelected = selectedCard?.id === card.id;
           const isTrump = trumpSuit === card.suit;
           const isHovered = hoveredCardId === card.id;
+          const isKeyboardSelected = position === 'south' && isKeyboardNavigationActive && selectedCardIndex === index;
           
           // Only pass the card index for z-index calculation
           const cardStyle = {
@@ -67,7 +71,7 @@ const PlayerHandFlex: React.FC<PlayerHandFlexProps> = ({
           return (
             <div
               key={card.id}
-              className={`ph-flex-card ${isSelected ? 'ph-selected' : ''} ${isHovered ? 'ph-hovered' : ''}`}
+              className={`ph-flex-card ${isSelected ? 'ph-selected' : ''} ${isHovered ? 'ph-hovered' : ''} ${isKeyboardSelected ? 'ph-keyboard-selected' : ''}`}
               style={cardStyle}
               onMouseEnter={() => {
                 if (showCards) {
@@ -86,6 +90,7 @@ const PlayerHandFlex: React.FC<PlayerHandFlexProps> = ({
                 card={card}
                 isValid={showCards && isValid}
                 isSelected={isSelected}
+                isKeyboardSelected={isKeyboardSelected}
                 isTrump={isTrump}
                 teamId={player.teamId as 'team1' | 'team2' | undefined}
                 onClick={showCards ? () => {

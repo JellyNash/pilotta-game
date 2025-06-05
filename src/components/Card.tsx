@@ -6,11 +6,13 @@ import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { toggleCardZoom } from '../store/gameSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSuitColorValue, CardStyle } from '../utils/suitColors';
+import './Card.css';
 
 interface CardProps {
   card: CardType;
   isValid?: boolean;
   isSelected?: boolean;
+  isKeyboardSelected?: boolean;
   isTrump?: boolean;
   onClick?: (card: CardType) => void;
   isDraggable?: boolean;
@@ -29,6 +31,7 @@ const Card: React.FC<CardProps> = ({
   card,
   isValid = false,
   isSelected = false,
+  isKeyboardSelected = false,
   isTrump = false,
   onClick,
   isDraggable = false,
@@ -86,63 +89,28 @@ const Card: React.FC<CardProps> = ({
   };
 
 
-  // Calculate card dimensions
+  // Calculate card dimensions using CSS tokens
   const getCardDimensions = () => {
     if (width && height) {
       return { width, height };
     }
 
-    // Use CSS variables for responsive sizing when size is "responsive"
-    if (size === 'responsive') {
-      return {
-        width: 'var(--card-width-base)',
-        height: 'var(--card-height-base)'
-      };
-    }
-
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const isSmallScreen = viewportWidth < 768;
-    const isTinyScreen = viewportWidth < 480;
-    
-    const baseSizes = {
-      small: { 
-        width: isTinyScreen ? 80 : isSmallScreen ? 90 : 100, 
-        height: isTinyScreen ? 112 : isSmallScreen ? 126 : 140
-      },
-      medium: { 
-        width: isTinyScreen ? 100 : isSmallScreen ? 110 : 120, 
-        height: isTinyScreen ? 140 : isSmallScreen ? 154 : 168
-      },
-      large: { 
-        width: isTinyScreen ? 120 : isSmallScreen ? 130 : 140, 
-        height: isTinyScreen ? 168 : isSmallScreen ? 182 : 196
-      },
-      xlarge: { 
-        width: isTinyScreen ? 140 : isSmallScreen ? 150 : 160, 
-        height: isTinyScreen ? 196 : isSmallScreen ? 210 : 224
-      }
+    // Always use CSS variables for responsive sizing
+    return {
+      width: 'var(--card-width)',
+      height: 'var(--card-height)'
     };
-    
-    return baseSizes[size] || baseSizes.medium;
   };
 
-  const cardSizeMultiplier = 1.0;
-  const fontSizeMultiplier = 1.0;
-  
   const dimensions = getCardDimensions();
   
   // Handle CSS variable dimensions for responsive sizing
   const cardStyleProps: React.CSSProperties = {
-    width: typeof dimensions.width === 'string' ? dimensions.width : `${Math.round((dimensions?.width || 120) * cardSizeMultiplier)}px`,
-    height: typeof dimensions.height === 'string' ? dimensions.height : `${Math.round((dimensions?.height || 168) * cardSizeMultiplier)}px`,
+    width: typeof dimensions.width === 'string' ? dimensions.width : `${dimensions.width}px`,
+    height: typeof dimensions.height === 'string' ? dimensions.height : `${dimensions.height}px`,
     display: 'flex',
     flexDirection: 'column'
   };
-  
-  // For font size calculations, we need numeric values
-  const actualWidth = typeof dimensions.width === 'string' ? 120 : Math.round((dimensions?.width || 120) * cardSizeMultiplier);
-  const actualHeight = typeof dimensions.height === 'string' ? 168 : Math.round((dimensions?.height || 168) * cardSizeMultiplier);
 
   const handleClick = () => {
     if (onClick && !isFaceDown) {
@@ -153,6 +121,17 @@ const Card: React.FC<CardProps> = ({
   const handleRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isFaceDown && rightClickZoomEnabled) {
+      dispatch(toggleCardZoom(card.id));
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (onClick && !isFaceDown && !isDragging) {
+        onClick(card);
+      }
+    } else if (e.key === 'Escape' && isZoomed) {
       dispatch(toggleCardZoom(card.id));
     }
   };
@@ -168,6 +147,7 @@ const Card: React.FC<CardProps> = ({
       'ring-4 ring-green-400': isValid && !isSelected,
       'ring-4 ring-blue-400 scale-105': isSelected,
       'ring-4 ring-yellow-400': isTrump && !isSelected && !isValid,
+      'ring-4 ring-orange-500 shadow-orange-500/50': isKeyboardSelected,
       'hover:shadow-2xl': !isFaceDown,
       'cursor-pointer': isValid || onClick
     },
@@ -180,11 +160,18 @@ const Card: React.FC<CardProps> = ({
     }
   }, [isDraggable, drag]);
 
-  // Calculate font sizes based on card dimensions
-  const mainFontSize = actualHeight * 0.30; // Increased for better visibility
-  const mainSuitSize = actualHeight * 0.33; // Increased proportionally
-  const cornerFontSize = actualHeight * 0.18; // Increased significantly for better visibility
-  const cornerSuitSize = actualHeight * 0.18; // Increased to match
+  // Font sizes use CSS custom properties
+  const fontClasses = {
+    main: 'card-main-text',
+    mainSuit: 'card-main-suit',
+    corner: 'card-corner-text',
+    cornerSuit: 'card-corner-suit'
+  };
+
+  // Create ARIA label for screen readers
+  const ariaLabel = isFaceDown 
+    ? 'Face down card' 
+    : `${card.rank} of ${card.suit}${isTrump ? ', trump suit' : ''}${isValid ? ', playable' : ''}${isSelected ? ', selected' : ''}`;
 
   return (
     <>
@@ -194,6 +181,13 @@ const Card: React.FC<CardProps> = ({
         style={cardStyleProps}
         onClick={handleClick}
         onContextMenu={handleRightClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={isValid || onClick ? 0 : -1}
+        role="button"
+        aria-label={ariaLabel}
+        aria-selected={isSelected}
+        aria-disabled={!isValid && !onClick}
+        aria-pressed={isKeyboardSelected}
         data-card-value={card.value}
         data-card-suit={card.suit}
         data-card-rank={card.rank}
@@ -205,9 +199,8 @@ const Card: React.FC<CardProps> = ({
             {/* Corner indicators - TOP LEFT (Enlarged) */}
             <div className="absolute top-3 left-3 text-center">
               <div 
-                className="font-bold leading-none"
+                className={`font-bold leading-none ${fontClasses.corner}`}
                 style={{ 
-                  fontSize: `${cornerFontSize * fontSizeMultiplier}px`, 
                   fontWeight: '900',
                   fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
                   color: getSuitColor(card.suit)
@@ -216,9 +209,8 @@ const Card: React.FC<CardProps> = ({
                 {getDisplayRank(card.rank)}
               </div>
               <div 
-                className="leading-none"
+                className={`leading-none ${fontClasses.cornerSuit}`}
                 style={{ 
-                  fontSize: `${cornerSuitSize * fontSizeMultiplier}px`, 
                   fontWeight: '900',
                   marginTop: '0px',
                   color: getSuitColor(card.suit)
@@ -230,9 +222,8 @@ const Card: React.FC<CardProps> = ({
               {/* Extra suit indicator for accessible style */}
               {cardStyle === 'accessible' && (
                 <div 
-                  className="leading-none mt-1"
+                  className="leading-none mt-1 card-corner-suit-small"
                   style={{ 
-                    fontSize: `${(cornerSuitSize * 0.7) * fontSizeMultiplier}px`, 
                     fontWeight: '700',
                     color: getSuitColor(card.suit)
                   }}
@@ -244,12 +235,11 @@ const Card: React.FC<CardProps> = ({
             
 
             {/* Main Rank Display - Offset slightly to bottom-right */}
-            <div className="flex-1 flex items-center justify-center p-4" style={{ paddingLeft: '15%', paddingTop: '15%' }}>
+            <div className="flex-1 flex items-center justify-center p-4 card-main-content">
               <div className="text-center">
                 <div 
-                  className="font-black leading-none"
+                  className={`font-black leading-none ${fontClasses.main}`}
                   style={{ 
-                    fontSize: `${mainFontSize * fontSizeMultiplier}px`,
                     textShadow: cardStyle === 'minimalist' ? 'none' : '2px 2px 3px rgba(0,0,0,0.3)',
                     fontWeight: '900',
                     fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
@@ -259,9 +249,8 @@ const Card: React.FC<CardProps> = ({
                   {getDisplayRank(card.rank)}
                 </div>
                 <div 
-                  className="leading-none"
+                  className={`leading-none ${fontClasses.mainSuit}`}
                   style={{ 
-                    fontSize: `${mainSuitSize * fontSizeMultiplier}px`,
                     textShadow: cardStyle === 'minimalist' ? 'none' : '2px 2px 3px rgba(0,0,0,0.3)',
                     fontWeight: '900',
                     marginTop: '-2px',
@@ -337,12 +326,7 @@ const Card: React.FC<CardProps> = ({
                 duration: 0.2, 
                 ease: [0.16, 1, 0.3, 1] // Custom easing for snappy animation
               }}
-              className="relative pointer-events-auto"
-              style={{
-                width: `${actualWidth}px`,
-                height: `${actualHeight}px`,
-                zIndex: 10000
-              }}
+              className="relative pointer-events-auto card-zoomed-container"
             >
               <div
                 className={cardClasses + ' shadow-2xl'}
@@ -365,9 +349,8 @@ const Card: React.FC<CardProps> = ({
                   {/* Corner indicators - TOP LEFT (Enlarged) */}
                   <div className="absolute top-3 left-3 text-center">
                     <div 
-                      className="font-bold leading-none"
+                      className={`font-bold leading-none ${fontClasses.corner}`}
                       style={{ 
-                        fontSize: `${cornerFontSize * fontSizeMultiplier}px`, 
                         fontWeight: '900',
                         fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
                         color: getSuitColor(card.suit)
@@ -376,9 +359,8 @@ const Card: React.FC<CardProps> = ({
                       {getDisplayRank(card.rank)}
                     </div>
                     <div 
-                      className="leading-none"
+                      className={`leading-none ${fontClasses.cornerSuit}`}
                       style={{ 
-                        fontSize: `${cornerSuitSize * fontSizeMultiplier}px`, 
                         fontWeight: '900',
                         marginTop: '0px',
                         color: getSuitColor(card.suit)
@@ -390,9 +372,8 @@ const Card: React.FC<CardProps> = ({
                     {/* Extra suit indicator for accessible style */}
                     {cardStyle === 'accessible' && (
                       <div 
-                        className="leading-none mt-1"
+                        className="leading-none mt-1 card-corner-suit-small"
                         style={{ 
-                          fontSize: `${(cornerSuitSize * 0.7) * fontSizeMultiplier}px`, 
                           fontWeight: '700',
                           color: getSuitColor(card.suit)
                         }}
@@ -403,35 +384,30 @@ const Card: React.FC<CardProps> = ({
                   </div>
 
                   {/* Main content */}
-                  <div className="flex-1 flex items-center justify-center">
+                  <div className="flex-1 flex items-center justify-center p-4 card-main-content">
                     <div className="text-center">
                       <div 
-                        className="font-bold"
+                        className={`font-black leading-none ${fontClasses.main}`}
                         style={{ 
-                          fontSize: `${mainFontSize * fontSizeMultiplier}px`, 
-                          lineHeight: '1',
+                          textShadow: cardStyle === 'minimalist' ? 'none' : '2px 2px 3px rgba(0,0,0,0.3)',
                           fontWeight: '900',
                           fontFamily: cardStyle === 'modern' ? 'system-ui, -apple-system, sans-serif' : 'inherit',
-                          marginLeft: `${actualWidth * 0.07}px`,
-                          marginTop: `${actualHeight * 0.05}px`,
                           color: getSuitColor(card.suit)
                         }}
                       >
                         {getDisplayRank(card.rank)}
                       </div>
                       <div 
-                        className=""
+                        className={`leading-none ${fontClasses.mainSuit}`}
                         style={{ 
-                          fontSize: `${mainSuitSize * fontSizeMultiplier}px`, 
-                          marginTop: '-5px',
+                          textShadow: cardStyle === 'minimalist' ? 'none' : '2px 2px 3px rgba(0,0,0,0.3)',
                           fontWeight: '900',
-                          marginLeft: `${actualWidth * 0.07}px`,
+                          marginTop: '-2px',
                           color: getSuitColor(card.suit)
                         }}
                       >
                         {getSuitSymbol(card.suit)}
                       </div>
-                      
                     </div>
                   </div>
                 </div>

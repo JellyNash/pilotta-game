@@ -32,6 +32,7 @@ body {
   min-height: 100vh;
 }
 
+.root-container,
 #root {
   /* Remove fixed dimensions - be responsive */
   width: 100%;
@@ -69,6 +70,7 @@ body {
 }
 
 /* Game table must contain all elements */
+.game-table,
 #table {
   width: 100%;
   height: 100%;
@@ -89,50 +91,9 @@ body {
 }
 
 /* ==================== ENHANCED CARD STYLES ==================== */
-.playing-card {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  contain: style layout;
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  z-index: inherit;
-}
+/* Card styles moved to src/components/Card.css to avoid duplicates */
 
-/* Card visibility improvements */
-.playing-card[data-face-down="false"] {
-  background-color: white;
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Enhanced text visibility */
-.playing-card .text-red-600 {
-  color: #dc2626;
-  font-weight: 900;
-  text-shadow: 0 0 1px rgba(220, 38, 38, 0.3);
-}
-
-.playing-card .text-gray-900 {
-  color: #111827;
-  font-weight: 900;
-  text-shadow: 0 0 1px rgba(17, 24, 39, 0.3);
-}
-
-/* Card selection and hover states */
-.playing-card.ring-4 {
-  box-shadow: 0 0 0 4px currentColor, 0 10px 15px rgba(0, 0, 0, 0.2);
-}
-
-.playing-card:hover {
-  z-index: var(--z-card-hover);
-  transform: translateY(-4px) translateZ(0);
-}
+/* Card-specific styles moved to src/components/Card.css */
 
 /* Performance optimizations */
 .card-wrapper {
@@ -366,7 +327,7 @@ body {
   }
   
   .shadow-2xl {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-drop-md);
   }
 }
 

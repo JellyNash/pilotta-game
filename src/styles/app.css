@@ -5,7 +5,8 @@
 @import '../layouts/game-grid.css';
 @import '../layouts/table-center.css';
 @import '../layouts/responsive.css';
-@import '../components/PlayerHandArcImproved.css';
+@import '../components/Card.css';
+@import '../components/PlayerHandFlex.css';
 @import '../components/AnnouncementSystem.css';
 @import '../components/BiddingInterface.css';
 @import '../components/ContractIndicator.css';
@@ -14,7 +15,7 @@
 @import '../components/TrickPileViewer.css';
 @import './containment.css';
 @import './responsive-fixes.css';
-@import './overrides.css';
+@import './scoped-overrides.css';
 
 /* Define layer order */
 @layer reset, base, tokens, tailwind, layout, components, states, utilities, overrides;

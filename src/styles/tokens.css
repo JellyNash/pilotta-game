@@ -1,216 +1,305 @@
 /* Design Tokens - Centralized CSS Custom Properties */
+/* Modern Clamp-First Responsive System */
 :root {
-  /* Z-index System - Properly layered to prevent conflicts */
+  /* ===== TYPOGRAPHY SCALE ===== */
+  /* 9 sizes using clamp() for smooth scaling */
+  --fs-3xs: clamp(0.5rem, 1.5vw, 0.625rem);    /* 8px -> 10px */
+  --fs-2xs: clamp(0.625rem, 1.75vw, 0.75rem);  /* 10px -> 12px */
+  --fs-xs: clamp(0.75rem, 2vw, 0.875rem);      /* 12px -> 14px */
+  --fs-sm: clamp(0.875rem, 2.25vw, 1rem);      /* 14px -> 16px */
+  --fs-base: clamp(1rem, 2.5vw, 1.125rem);     /* 16px -> 18px */
+  --fs-lg: clamp(1.125rem, 3vw, 1.25rem);      /* 18px -> 20px */
+  --fs-xl: clamp(1.25rem, 3.5vw, 1.5rem);      /* 20px -> 24px */
+  --fs-2xl: clamp(1.5rem, 4vw, 2rem);          /* 24px -> 32px */
+  --fs-3xl: clamp(2rem, 5vw, 3rem);            /* 32px -> 48px */
+
+  /* ===== SPACING SCALE ===== */
+  /* 10 sizes for consistent spacing rhythm */
+  --space-3xs: clamp(0.125rem, 0.5vw, 0.25rem);   /* 2px -> 4px */
+  --space-2xs: clamp(0.25rem, 0.75vw, 0.375rem);  /* 4px -> 6px */
+  --space-xs: clamp(0.375rem, 1vw, 0.5rem);       /* 6px -> 8px */
+  --space-sm: clamp(0.5rem, 1.5vw, 0.75rem);      /* 8px -> 12px */
+  --space-md: clamp(0.75rem, 2vw, 1rem);          /* 12px -> 16px */
+  --space-lg: clamp(1rem, 2.5vw, 1.5rem);         /* 16px -> 24px */
+  --space-xl: clamp(1.5rem, 3vw, 2rem);           /* 24px -> 32px */
+  --space-2xl: clamp(2rem, 4vw, 3rem);            /* 32px -> 48px */
+  --space-3xl: clamp(3rem, 5vw, 4rem);            /* 48px -> 64px */
+  --space-4xl: clamp(4rem, 6vw, 6rem);            /* 64px -> 96px */
+
+  /* ===== COMPONENT DIMENSIONS ===== */
+  /* Card dimensions with responsive scaling */
+  --card-width: clamp(60px, 10vw, 120px);
+  --card-height: clamp(84px, 14vw, 168px);
+  --card-corner-radius: clamp(4px, 0.8vw, 12px);
+  --card-shadow-blur: clamp(8px, 1vw, 16px);
+  
+  /* Button dimensions */
+  --button-height: clamp(2rem, 5vw, 3rem);
+  --button-padding-x: clamp(1rem, 2vw, 1.5rem);
+  --button-padding-y: clamp(0.5rem, 1vw, 0.75rem);
+  --button-border-radius: clamp(4px, 0.5vw, 8px);
+  
+  /* Modal dimensions */
+  --modal-width: clamp(280px, 80vw, 600px);
+  --modal-padding: clamp(1rem, 3vw, 2rem);
+  --modal-border-radius: clamp(8px, 1vw, 16px);
+  
+  /* Input dimensions */
+  --input-height: clamp(2.5rem, 6vw, 3rem);
+  --input-padding-x: clamp(0.75rem, 1.5vw, 1rem);
+  --input-border-width: clamp(1px, 0.2vw, 2px);
+
+  /* ===== VISUAL EFFECTS ===== */
+  /* Blur effects */
+  --blur-xs: clamp(2px, 0.25vw, 4px);
+  --blur-sm: clamp(4px, 0.5vw, 8px);
+  --blur-md: clamp(8px, 1vw, 16px);
+  --blur-lg: clamp(16px, 2vw, 32px);
+  --blur-xl: clamp(32px, 4vw, 64px);
+  
+  /* Shadow spreads */
+  --shadow-xs: clamp(2px, 0.3vw, 4px);
+  --shadow-sm: clamp(4px, 0.5vw, 8px);
+  --shadow-md: clamp(8px, 1vw, 16px);
+  --shadow-lg: clamp(16px, 2vw, 32px);
+  --shadow-xl: clamp(24px, 3vw, 48px);
+  
+  /* Shadow definitions */
+  --shadow-glow-sm: 0 0 var(--shadow-sm) currentColor;
+  --shadow-glow-md: 0 0 var(--shadow-md) currentColor;
+  --shadow-glow-lg: 0 0 var(--shadow-lg) currentColor;
+  --shadow-drop-sm: 0 var(--shadow-xs) var(--shadow-sm) rgba(0, 0, 0, 0.2);
+  --shadow-drop-md: 0 var(--shadow-sm) var(--shadow-md) rgba(0, 0, 0, 0.3);
+  --shadow-drop-lg: 0 var(--shadow-md) var(--shadow-lg) rgba(0, 0, 0, 0.5);
+  --shadow-drop-xl: 0 var(--shadow-lg) var(--shadow-xl) rgba(0, 0, 0, 0.5);
+  --shadow-inset-sm: inset 0 var(--shadow-xs) var(--shadow-sm) 0 rgba(0, 0, 0, 0.06);
+  
+  /* Glass morphism effects */
+  --glass-effect-sm: blur(var(--blur-sm)) saturate(180%) brightness(1.05);
+  --glass-effect-md: blur(var(--blur-md)) saturate(200%) brightness(1.1);
+  --glass-effect-lg: blur(var(--blur-lg)) saturate(200%) brightness(1.1);
+  
+  /* Border widths */
+  --border-thin: clamp(1px, 0.15vw, 2px);
+  --border-medium: clamp(2px, 0.25vw, 4px);
+  --border-thick: clamp(4px, 0.5vw, 8px);
+  
+  /* Border radii */
+  --radius-xs: clamp(2px, 0.25vw, 4px);
+  --radius-sm: clamp(4px, 0.5vw, 8px);
+  --radius-md: clamp(8px, 1vw, 16px);
+  --radius-lg: clamp(16px, 2vw, 32px);
+  --radius-xl: clamp(24px, 3vw, 48px);
+  --radius-full: 9999px;
+
+  /* ===== ANIMATION TOKENS ===== */
+  /* Durations */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 800ms;
+  
+  /* Easing functions */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ===== Z-INDEX SYSTEM ===== */
+  /* Properly layered to prevent conflicts */
   --z-base: 1;
-  --z-card-base: 10;
-  --z-trick-cards: 20;
-  --z-south-player: 25; /* Between trick and hover */
+  --z-table-surface: 1;      /* Table decorations, center circle */
+  --z-card-base: 10;         /* All player cards start here */
+  --z-trick-cards: 20;       /* Cards in trick area */
+  --z-south-player: 25;      /* Human player priority */
   --z-player-indicator: 30;
-  --z-card-hover: 35; /* Changed from 30 to avoid conflict */
-  --z-card-selected: 40;
-  --z-ui-overlay: 50;
-  --z-trick-pile: 60;
-  --z-announcement: 70;
-  --z-bidding-interface: 80;
-  --z-modal-backdrop: 90;
-  --z-modal: 100;
-  --z-header: 110;
-  --z-notification: 120;
-  --z-tooltip: 130;
+  --z-card-hover: 40;        /* Hovered cards */
+  --z-card-selected: 50;
+  --z-ui-overlay: 60;
+  --z-trick-pile: 70;
+  --z-announcement: 80;
+  --z-bidding-interface: 90;
+  --z-modal-backdrop: 100;
+  --z-modal: 110;            /* Changed from 100 to avoid conflict */
+  --z-header: 120;
+  --z-notification: 150;     /* Increased from 120 */
+  --z-tooltip: 200;
   
-  /* Responsive breakpoints */
-  --breakpoint-mobile: 640px;
-  --breakpoint-tablet: 768px;
-  --breakpoint-laptop: 1024px;
-  --breakpoint-desktop: 1440px;
-  --breakpoint-wide: 1920px;
-  --breakpoint-ultrawide: 3440px;
+  /* ===== RESPONSIVE BREAKPOINTS ===== */
+  /* Minimal set for structural changes only */
+  --breakpoint-xs: 375px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1440px;
+  --breakpoint-2xl: 1920px;
+  --breakpoint-4k: 2560px;
   
-  /* Grid proportions - can be adjusted via media queries */
+  /* ===== LAYOUT SYSTEM ===== */
+  /* Grid proportions for game layout */
   --grid-side-ratio: 1;
   --grid-center-ratio: 2;
   --grid-top-ratio: 1;
   --grid-middle-ratio: 2;
   --grid-bottom-ratio: 1;
-
-  /* Layout - Header */
-  --header-height: 5rem;
-
-  /* Spacing Scale */
-  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
-  --space-sm: clamp(0.5rem, 2vw, 0.75rem);
-  --space-md: clamp(0.75rem, 3vw, 1.25rem);
-  --space-lg: clamp(1rem, 4vw, 2rem);
-  --space-xl: clamp(1.5rem, 5vw, 3rem);
-  --space-2xl: clamp(2rem, 6vw, 4rem);
-
-  /* Layout Spacing */
-  --edge-gap: clamp(0.5rem, 1vw, 2rem);
-  --badge-offset: 0.5rem;
-  --card-separation: clamp(3rem, 5vw, 5rem);
+  
+  /* Grid gaps and spacing */
   --grid-gap: clamp(1rem, 2vw, 3rem);
-  --dynamic-padding: clamp(1rem, 2vw, 3rem);
-
-  /* Typography Scale */
-  --text-xs: clamp(0.625rem, 1.5vw, 0.75rem);
-  --text-sm: clamp(0.75rem, 2vw, 0.875rem);
-  --text-base: clamp(0.875rem, 2.5vw, 1rem);
-  --text-lg: clamp(1rem, 3vw, 1.125rem);
-  --text-xl: clamp(1.125rem, 3.5vw, 1.25rem);
-  --text-2xl: clamp(1.25rem, 4vw, 1.5rem);
-  --text-3xl: clamp(1.5rem, 5vw, 2rem);
-  --text-player-label: clamp(0.875rem, 1.5vw, 1.125rem);
-  --text-badge: clamp(0.75rem, 1.2vw, 1rem);
-
-  /* Card Dimensions - Consolidated */
-  --card-base-width: 120px;
-  --card-base-height: 168px;
-  --card-height-ratio: 1.4;
-  --card-width-responsive: clamp(80px, 6vw, 120px);
-  --card-height-responsive: calc(var(--card-width-responsive) * var(--card-height-ratio));
-  --card-width-sm: clamp(3rem, 8vw, 4rem);
-  --card-width-md: clamp(4rem, 10vw, 5rem);
-  --card-width-lg: clamp(5rem, 12vw, 6.5rem);
-  --card-width: var(--card-base-width);
-  --card-height: var(--card-base-height);
-  --card-width-base: var(--card-base-width);
-  --card-height-base: var(--card-base-height);
+  --edge-gap: clamp(0.5rem, 1vw, 2rem);
+  --container-padding: clamp(1rem, 2vw, 3rem);
   
-  /* Card Layout */
-  --card-gap: clamp(0.5rem, 1vw, 1rem);
-  --hand-offset: clamp(1rem, 2vw, 2rem);
-  --card-fan-overlap: 0.85;
-  --fan-arc-depth: 50px;
-  --fan-rotation-max: 15deg;
+  /* Header and navigation */
+  --header-height: clamp(3rem, 8vw, 5rem);
+  --nav-height: clamp(2.5rem, 6vw, 4rem);
   
-  /* Card Sizing Multipliers */
-  --card-size: 100;
-  --card-size-human: 1.0;
-  --card-size-ai: 1.0;
-  --card-spacing-factor: 0.85;
-  
-  /* Card Animation */
-  --card-transition-duration: 0.2s;
-  --card-hover-scale: 1.1;
-  --card-hover-lift: -20px;
-  
-  /* Animation Speed */
-  --animation-speed: 1;
-  --font-size: 100;
-
-  /* Table Layout */
-  --table-radius: clamp(15rem, 22vw, 26rem);
+  /* ===== GAME-SPECIFIC DIMENSIONS ===== */
+  /* Table and play area */
+  --table-radius-max: min(
+    calc((var(--game-area-width) - var(--card-width)) / 2),
+    calc((var(--game-area-height) - var(--card-height)) / 2)
+  );
+  --table-radius: clamp(10rem, 30vh, var(--table-radius-max));
   --trick-area-size: min(60vw, 60vh);
   --trick-area-max: 40rem;
+  --card-separation: clamp(3rem, 5vw, 5rem);
+  
+  /* Player zones */
+  --player-zone-padding: clamp(0.5rem, 1vw, 1rem);
+  --player-label-offset: clamp(0.5rem, 1vw, 1rem);
+  --badge-size: clamp(1.5rem, 3vw, 2rem);
+  --badge-offset: clamp(0.25rem, 0.5vw, 0.5rem);
+  
+  /* Announcement system */
+  --announcement-width: clamp(160px, 30vw, 240px);
+  --announcement-padding-x: clamp(1.5rem, 3vw, 3rem);
+  --announcement-padding-y: clamp(1rem, 2vw, 1.5rem);
+  --announcement-font-size: clamp(1.5rem, 4vw, 2.25rem);
+  --announcement-icon-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  --announcement-spacing: clamp(60px, 8vw, 90px);
+  --announcement-offset: clamp(20px, 3vw, 30px);
 
-  /* Bidding Interface */
+  /* ===== CARD SYSTEM ===== */
+  /* Card layout approach */
+  --card-fan-overlap: clamp(0.55, 0.08vw, 0.85);
+  --card-fan-arc-height: clamp(20px, 3vw, 30px);
+  --card-fan-rotation: clamp(15deg, 2vw, 25deg);
+  --card-hover-scale: 1.1;
+  --card-hover-lift: clamp(-15px, -2vw, -20px);
+  --card-gap: clamp(0.5rem, 1vw, 1rem);
+  --hand-offset: clamp(1rem, 2vw, 2rem);
+  
+  /* Card animations */
+  --card-transition: var(--duration-fast) var(--ease-out);
+  --card-hover-transition: var(--duration-instant) var(--ease-out);
+  
+  /* ===== BIDDING INTERFACE ===== */
   --bid-modal-width: clamp(280px, 85vw, 850px);
-  --bid-button-width: clamp(102px, 12.75vw, 170px);
-  --suit-button-size: clamp(68px, 6.8vw, 102px);
-  --bid-card-scale: clamp(0.68, 0.85vw, 1.02);
-
-  /* Player Hand Specific (ph- prefix) */
-  --ph-card-width: clamp(100px, 12vw, 156px);
-  --ph-card-height: clamp(140px, 16.8vw, 218px);
-  --ph-fan-spread: 0.65;
-  --ph-fan-arc-height: clamp(20px, 3vw, 30px);
-  --ph-fan-rotation-range: 25deg;
-  --ph-card-scale: 1;
-  --ph-hover-scale: 1.1;
-  --ph-hover-lift: -20px;
-  --ph-transition: 0.2s ease-out;
-
-  /* Announcement System */
-  --announcement-min-width: 200px;
-  --announcement-padding-x: 2.5rem;
-  --announcement-padding-y: 1.25rem;
-  --announcement-font-size: 1.875rem;
-  --announcement-suit-size: 2.25rem;
-  --announcement-spacing: 80px;
-  --announcement-duration: 3500ms;
-  --announcement-offset-x: 0px;
-  --announcement-offset-y: 0px;
-  --announcement-enter-distance: 30px;
-
-  /* PlayerHandArcImproved Local Variables */
-  /* These are dynamically set per card position but need defaults */
-  --abs-pos: 0;
-  --normalized-pos: 0;
-  --elevation: 0;
-  --card-count: 8;
+  --bid-button-width: clamp(80px, 20vw, 170px);
+  --bid-button-height: clamp(2.5rem, 6vw, 3.5rem);
+  --suit-button-size: clamp(50px, 12vw, 102px);
+  --bid-card-scale: clamp(0.6, 0.1vw, 1.1);
+  --bid-spacing: clamp(0.5rem, 1vw, 1rem);
+  --bid-button-size: clamp(2.5rem, 5vw, 4rem);
+  --bid-section-min: 180px;
+  --bid-breakpoint: 640px;
+  
+  /* ===== TRICK PILE VIEWER ===== */
+  --trick-pile-width: clamp(200px, 40vw, 400px);
+  --trick-pile-card-size: clamp(60px, 8vw, 100px);
+  --trick-pile-padding: clamp(1rem, 2vw, 2rem);
+  --trick-pile-gap: clamp(0.5rem, 1vw, 1rem);
+  
+  /* ===== SCOREBOARD ===== */
+  --score-font-size: clamp(1.5rem, 3vw, 2.5rem);
+  --score-padding: clamp(0.75rem, 1.5vw, 1.5rem);
+  --score-width: clamp(200px, 30vw, 300px);
+  --score-height: clamp(80px, 15vw, 120px);
+  
+  /* ===== MODALS AND OVERLAYS ===== */
+  --overlay-blur: var(--blur-lg);
+  --modal-shadow: 0 var(--shadow-lg) var(--shadow-xl) rgba(0, 0, 0, 0.3);
+  --modal-max-width: clamp(320px, 90vw, 800px);
+  --modal-max-height: clamp(400px, 80vh, 600px);
+  
+  /* ===== MISC GAME ELEMENTS ===== */
+  --contract-indicator-size: clamp(2rem, 4vw, 3rem);
+  --dealer-badge-size: clamp(1.5rem, 3vw, 2rem);
+  --turn-indicator-size: clamp(3px, 0.5vw, 5px);
+  --declaration-glow: 0 0 clamp(10px, 2vw, 20px) rgba(255, 215, 0, 0.6);
+  
+  /* Safe Area Insets for notched devices */
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  
+  /* ===== CARD OVERLAP RATIOS ===== */
+  --card-overlap-minimal: 0.2;
+  --card-overlap-normal: 0.35;
+  --card-overlap-compact: 0.5;
+  --card-overlap-tight: 0.55;
+  
+  /* ===== RESPONSIVE CONTAINER LIMITS ===== */
+  --hand-container-width: clamp(200px, 60vw, 600px);
+  --hand-container-height: clamp(100px, 20vh, 200px);
+  
+  /* ===== ZOOM CONSTRAINTS ===== */
+  --zoom-scale-max: 2;
+  --zoom-viewport-padding: clamp(10px, 5vw, 40px);
+  
+  /* Zoom requires 2x card dimensions */
+  --zoom-reserve-x: var(--card-width);  /* Reserve 1 card width on each side */
+  --zoom-reserve-y: var(--card-height); /* Reserve 1 card height top/bottom */
+  
+  /* Game area bounds with zoom reservation */
+  --game-area-width: calc(100vw - 2 * var(--zoom-reserve-x));
+  --game-area-height: calc(100vh - 2 * var(--zoom-reserve-y));
+  
+  /* ===== DECLARATION CARDS POSITIONING ===== */
+  /* Declaration cards offset - can overlap since temporary */
+  --declaration-offset-v: clamp(
+    calc(var(--card-height) * 1.2),    /* Min: 120% of card height */
+    15vh,                               /* Preferred: 15% of viewport */
+    calc(var(--card-height) * 1.8)     /* Max: 180% of card height */
+  );
+  --declaration-offset-h: clamp(
+    calc(var(--card-width) * 1.2),     /* Min: 120% of card width */
+    15vw,                              /* Preferred: 15% of viewport */
+    calc(var(--card-width) * 1.8)      /* Max: 180% of card width */
+  );
+  
+  /* ===== LEGACY ALIASES ===== */
+  /* For backward compatibility - will be removed in Phase 3 */
+  --card-width-base: var(--card-width);
+  --card-height-base: var(--card-height);
+  --card-width-responsive: var(--card-width);
+  --card-height-responsive: var(--card-height);
+  --text-xs: var(--fs-xs);
+  --text-sm: var(--fs-sm);
+  --text-base: var(--fs-base);
+  --text-lg: var(--fs-lg);
+  --text-xl: var(--fs-xl);
+  --text-2xl: var(--fs-2xl);
+  --text-3xl: var(--fs-3xl);
 }
 
-/* Responsive Overrides */
-@media (aspect-ratio: 16/9) {
-  :root {
-    --card-base-width: clamp(4rem, 5.5vw, 7.5rem);
-    --card-base-height: calc(var(--card-base-width) * var(--card-height-ratio));
-  }
-}
+/* ===== STRUCTURAL MEDIA QUERIES ONLY ===== */
+/* For layout changes that can't be achieved with clamp() */
 
-@media (aspect-ratio: 16/10) {
-  :root {
-    --card-height-ratio: 1.45;
-  }
-}
-
-@media (min-width: 2560px) {
-  :root {
-    --edge-gap: clamp(1rem, 1.5vw, 3rem);
-    --grid-gap: clamp(2rem, 3vw, 4rem);
-  }
-}
-
-@media (orientation: landscape) and (max-height: 500px) {
-  :root {
-    --space-xs: 0.25rem;
-    --space-sm: 0.375rem;
-    --space-md: 0.5rem;
-    --space-lg: 0.75rem;
-  }
-}
-
-/* Announcement System Responsive */
+/* Hide side players on very small screens */
 @media (max-width: 640px) {
   :root {
-    --announcement-min-width: 160px;
-    --announcement-padding-x: 1.5rem;
-    --announcement-padding-y: 1rem;
-    --announcement-font-size: 1.5rem;
-    --announcement-suit-size: 1.75rem;
-    --announcement-spacing: 60px;
+    --grid-side-ratio: 0;
+    --grid-center-ratio: 1;
   }
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
+/* Adjust grid for landscape orientation with limited height */
+@media (orientation: landscape) and (max-height: 500px) {
   :root {
-    --announcement-min-width: 180px;
-    --announcement-padding-x: 2rem;
-    --announcement-padding-y: 1.125rem;
-    --announcement-font-size: 1.625rem;
-    --announcement-suit-size: 2rem;
-    --announcement-spacing: 70px;
-  }
-}
-
-@media (min-width: 1025px) and (max-width: 1440px) {
-  :root {
-    --announcement-min-width: 220px;
-    --announcement-padding-x: 2.75rem;
-    --announcement-padding-y: 1.375rem;
-    --announcement-font-size: 2rem;
-    --announcement-suit-size: 2.5rem;
-    --announcement-spacing: 85px;
-  }
-}
-
-@media (min-width: 1441px) {
-  :root {
-    --announcement-min-width: 240px;
-    --announcement-padding-x: 3rem;
-    --announcement-padding-y: 1.5rem;
-    --announcement-font-size: 2.25rem;
-    --announcement-suit-size: 2.75rem;
-    --announcement-spacing: 90px;
+    --grid-top-ratio: 0.5;
+    --grid-middle-ratio: 3;
+    --grid-bottom-ratio: 0.5;
   }
 }

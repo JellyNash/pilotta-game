@@ -19,6 +19,8 @@ import VictoryCelebration from './components/VictoryCelebration';
 import DetailedScoreboard from './components/DetailedScoreboard';
 import DevTools from './components/DevTools';
 import AnnouncementDisplay from './components/AnnouncementDisplay';
+import PotpieAnalyzer from './components/PotpieAnalyzer';
+import { AccessibilityProvider, KeyboardHelp, AccessibilitySettings } from './accessibility';
 import './App.css';
 
 // Detect if device supports touch
@@ -46,6 +48,8 @@ function GameContent() {
   const [showRoundTransition, setShowRoundTransition] = useState(false);
   const [showDetailedScoreboard, setShowDetailedScoreboard] = useState(false);
   const [showVictoryCelebration, setShowVictoryCelebration] = useState<'victory' | 'defeat' | 'contract-made' | null>(null);
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
 
   // Prevent right-click context menu globally
   useEffect(() => {
@@ -76,12 +80,25 @@ function GameContent() {
       setShowTutorial(false);
       setShowScoreBreakdown(false);
       setShowDetailedScoreboard(false);
+      setShowKeyboardHelp(false);
+      setShowAccessibilitySettings(false);
     };
     
     window.addEventListener('close-modals', handleCloseModals);
     
+    // Keyboard shortcut for help
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '?' && e.shiftKey) {
+        e.preventDefault();
+        setShowKeyboardHelp(true);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
     return () => {
       window.removeEventListener('close-modals', handleCloseModals);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -113,7 +130,7 @@ function GameContent() {
   }
 
   return (
-    <div className="app">
+    <div className="app pilotta-game">
         <DndProvider backend={DndBackend}>
         <div className="game-header">
           <ScoreBoard />
@@ -145,6 +162,24 @@ function GameContent() {
             >
               <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setShowKeyboardHelp(true)}
+              className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+              title="Keyboard Shortcuts (Shift+?)"
+            >
+              <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setShowAccessibilitySettings(true)}
+              className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+              title="Accessibility Settings"
+            >
+              <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </button>
             <button
@@ -192,8 +227,15 @@ function GameContent() {
           type={showVictoryCelebration || 'victory'} 
         />
         
+        {/* Accessibility modals */}
+        <KeyboardHelp isOpen={showKeyboardHelp} onClose={() => setShowKeyboardHelp(false)} />
+        <AccessibilitySettings isOpen={showAccessibilitySettings} onClose={() => setShowAccessibilitySettings(false)} />
+        
         {/* Development tools - only show in development mode */}
         {process.env.NODE_ENV === 'development' && <DevTools />}
+        
+        {/* Potpie Analyzer - AI-powered code analysis */}
+        <PotpieAnalyzer />
         </DndProvider>
     </div>
   );
@@ -213,7 +255,11 @@ function App() {
     document.documentElement.style.setProperty('--card-size-ai', aiScale.toString());
   }, []);
 
-  return <GameContent />;
+  return (
+    <AccessibilityProvider>
+      <GameContent />
+    </AccessibilityProvider>
+  );
 }
 
 export default App;

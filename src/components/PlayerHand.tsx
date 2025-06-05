@@ -5,7 +5,8 @@ import Card from './Card';
 import { sortHumanPlayerCards } from '../utils/cardSorting';
 import { sortCards } from '../utils/cardSortUtils';
 import { useAppSelector } from '../store/hooks';
-import './PlayerHandArcImproved.css';
+import { useKeyboardNavigation } from '../accessibility';
+/* PlayerHandArcImproved.css removed - using PlayerHandFlex component instead */
 
 interface PlayerHandProps {
   player: Player;
@@ -33,6 +34,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { selectedCardIndex, isKeyboardNavigationActive } = useKeyboardNavigation();
   
   // Sort cards based on player type - MAINTAIN EXACT CURRENT BEHAVIOR
   const sortedCards = useMemo(() => {
@@ -60,6 +62,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
           const isSelected = selectedCard?.id === card.id;
           const isTrump = trumpSuit === card.suit;
           const isHovered = hoveredCardId === card.id;
+          const isKeyboardSelected = position === 'south' && isKeyboardNavigationActive && selectedCardIndex === index;
           
           // Only pass the card index for z-index calculation
           const cardStyle = {
@@ -69,7 +72,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
           return (
             <div
               key={card.id}
-              className={`ph-card-slot ${isSelected ? 'ph-selected' : ''} ${isHovered ? 'ph-hovered' : ''}`}
+              className={`ph-card-slot ${isSelected ? 'ph-selected' : ''} ${isHovered ? 'ph-hovered' : ''} ${isKeyboardSelected ? 'ph-keyboard-selected' : ''}`}
               style={cardStyle}
               onMouseEnter={() => {
                 if (showCards) {
@@ -88,6 +91,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({
                 card={card}
                 isValid={showCards && isValid}
                 isSelected={isSelected}
+                isKeyboardSelected={isKeyboardSelected}
                 isTrump={isTrump}
                 teamId={player.teamId as 'team1' | 'team2' | undefined}
                 onClick={showCards ? () => {

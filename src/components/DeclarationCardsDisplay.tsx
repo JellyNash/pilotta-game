@@ -39,37 +39,38 @@ const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
   const getContainerStyle = () => {
     const baseStyle: React.CSSProperties = {
       position: 'absolute',
-      zIndex: 25, // Above cards but below modals
+      zIndex: 'calc(var(--z-modal) - 10)', // Just below modals
       pointerEvents: 'none'
     };
 
     // Position declarations in front of player's hand
+    // Using responsive clamp() based offsets
     switch (position) {
       case 'south':
         return {
           ...baseStyle,
-          bottom: 'calc(var(--card-height-responsive) * 2.5)',
-          left: '45%',
+          bottom: 'var(--declaration-offset-v)',
+          left: '50%',
           transform: 'translateX(-50%)'
         };
       case 'north':
         return {
           ...baseStyle,
-          top: 'calc(var(--edge-gap) + var(--card-height-responsive) * 0.7)',
-          left: '45%',
+          top: 'var(--declaration-offset-v)',
+          left: '50%',
           transform: 'translateX(-50%)'
         };
       case 'east':
         return {
           ...baseStyle,
-          right: 'calc(var(--card-width-responsive) * 1.8)',
+          right: 'var(--declaration-offset-h)',
           top: '50%',
           transform: 'translateY(-50%)'
         };
       case 'west':
         return {
           ...baseStyle,
-          left: 'calc(var(--card-width-responsive) * 1.8)',
+          left: 'var(--declaration-offset-h)',
           top: '50%',
           transform: 'translateY(-50%)'
         };
@@ -80,6 +81,7 @@ const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
     <AnimatePresence mode="wait">
       {isVisible && declarations.length > 0 && (
         <motion.div
+          className="declaration-cards-container"
           initial={{ opacity: 0, scale: 0.6, filter: 'blur(10px)' }}
           animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
           exit={{ opacity: 0, scale: 0.6, filter: 'blur(10px)' }}
@@ -103,7 +105,7 @@ const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
                   ease: [0.4, 0, 0.2, 1]
                 }}
               >
-                <div className="relative flex -space-x-10">
+                <div className="relative flex -space-x-6"> {/* Reduced overlap from -10 to -6 for better visibility */}
                   {declaration.cards.map((card, cardIndex) => {
                     // Calculate fan rotation for cards
                     const fanAngle = (cardIndex - (declaration.cards.length - 1) / 2) * 5;
@@ -160,15 +162,9 @@ const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
                         
                         <Card
                           card={card}
-                          size="medium"
-                          style="modern"
+                          size="small" // Changed from medium to small for better fit
                           onClick={() => {}}
-                          disabled={true}
                           className="shadow-xl"
-                          style={{
-                            border: '2px solid rgba(251, 191, 36, 0.4)',
-                            borderRadius: '12px'
-                          }}
                         />
                       </motion.div>
                     );

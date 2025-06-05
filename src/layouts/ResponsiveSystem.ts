@@ -1,15 +1,5 @@
-// Responsive breakpoint system following mobile-first approach
-export const breakpoints = {
-  xs: 0,      // Mobile portrait
-  sm: 640,    // Mobile landscape
-  md: 768,    // Tablet portrait
-  lg: 1024,   // Tablet landscape / Small desktop
-  xl: 1280,   // Desktop
-  '2xl': 1536 // Large desktop
-} as const;
-
-// Type-safe breakpoint keys
-export type Breakpoint = keyof typeof breakpoints;
+// Re-export from unified breakpoint system
+export { BREAKPOINTS as breakpoints, type BreakpointKey as Breakpoint } from '../styles/breakpoints';
 
 // Responsive spacing scale (in rem units)
 export const spacing = {

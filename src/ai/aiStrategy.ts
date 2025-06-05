@@ -253,21 +253,50 @@ function decideLeadCard(
   personality: AIPersonality,
   gameState: GameState
 ): PlayDecision {
-  // Simple strategy for leading
+  // Analyze contract situation for leading
+  const contractSituation = analyzeContractSituation(gameState, player, []);
   
-  // If we have high trumps and need points, lead trump
-  if (trumpSuit && contract && player.teamId === contract.team) {
+  // If we have the contract and need specific points
+  if (contractSituation.isContractTeam && trumpSuit) {
     const trumps = getCardsOfSuit(legalPlays, trumpSuit);
     const highTrumps = trumps.filter(c => 
       c.rank === Rank.Jack || c.rank === Rank.Nine || c.rank === Rank.Ace
     );
     
-    if (highTrumps.length > 0) {
-      // Lead with a high trump to draw out opponent trumps
+    // If we're close to making contract, lead high trumps to secure it
+    if (contractSituation.pointsNeeded <= 30 && highTrumps.length > 0) {
       const card = highTrumps[0];
       return {
         card,
-        reasoning: 'Leading high trump to control',
+        reasoning: `Leading high trump, need ${contractSituation.pointsNeeded} points for contract`,
+        confidence: 0.95
+      };
+    }
+    
+    // If we need many points, save high trumps for capturing opponent's high cards
+    if (contractSituation.pointsNeeded > 50 && trumps.length > 0) {
+      // Lead low trump to see who has what
+      const sorted = sortCards(trumps, trumpSuit);
+      return {
+        card: sorted[sorted.length - 1],
+        reasoning: 'Leading low trump to probe',
+        confidence: 0.7
+      };
+    }
+  }
+  
+  // If defending and contract team is close to making it
+  if (!contractSituation.isContractTeam && contractSituation.pointsNeeded <= 20) {
+    // Lead our high cards to take points
+    const highCards = legalPlays.filter(c => 
+      c.rank === Rank.Ace || c.rank === Rank.Ten || 
+      (c.suit === trumpSuit && (c.rank === Rank.Jack || c.rank === Rank.Nine))
+    );
+    
+    if (highCards.length > 0) {
+      return {
+        card: highCards[0],
+        reasoning: 'Leading high card to deny points',
         confidence: 0.9
       };
     }
@@ -323,6 +352,84 @@ function decideLeadCard(
   };
 }
 
+// Calculate contract points situation
+function analyzeContractSituation(
+  gameState: GameState,
+  player: Player,
+  currentTrick: TrickCard[]
+): {
+  isContractTeam: boolean;
+  currentTeamPoints: number;
+  opponentPoints: number;
+  pointsNeeded: number;
+  pointsRemaining: number;
+  mustWinTrick: boolean;
+  canAffordToLose: boolean;
+} {
+  const contract = gameState.contract;
+  if (!contract) {
+    return {
+      isContractTeam: false,
+      currentTeamPoints: 0,
+      opponentPoints: 0,
+      pointsNeeded: 0,
+      pointsRemaining: 152,
+      mustWinTrick: false,
+      canAffordToLose: true
+    };
+  }
+
+  const isContractTeam = player.teamId === contract.team;
+  const teamPoints = gameState.teams[player.teamId].roundScore;
+  const opponentTeamId = player.teamId === 'A' ? 'B' : 'A';
+  const opponentPoints = gameState.teams[opponentTeamId].roundScore;
+  
+  // Calculate points already in the current trick
+  let trickPoints = 0;
+  for (const tc of currentTrick) {
+    trickPoints += countCardPoints([tc.card], gameState.trumpSuit);
+  }
+  
+  // Calculate remaining points in play
+  const totalPointsPlayed = teamPoints + opponentPoints + trickPoints;
+  const pointsRemaining = 152 - totalPointsPlayed + 10; // +10 for last trick
+  
+  let pointsNeeded = 0;
+  let mustWinTrick = false;
+  let canAffordToLose = true;
+  
+  if (isContractTeam) {
+    // We have the contract - calculate what we need
+    pointsNeeded = contract.value - teamPoints;
+    
+    // Check if we must win this trick
+    const remainingTricks = 8 - gameState.completedTricks.length;
+    const maxPointsIfWeLoseThis = pointsRemaining - trickPoints - (remainingTricks > 1 ? 10 : 0);
+    
+    mustWinTrick = teamPoints + maxPointsIfWeLoseThis < contract.value;
+    canAffordToLose = teamPoints + trickPoints >= contract.value || 
+                      teamPoints + pointsRemaining >= contract.value + 20; // 20 point buffer
+  } else {
+    // We're defending - calculate what we need to prevent
+    const contractTeamPoints = gameState.teams[contract.team].roundScore;
+    pointsNeeded = contract.value - contractTeamPoints;
+    
+    // We should try to win high-value tricks to deny points
+    mustWinTrick = trickPoints >= 10 && pointsNeeded <= pointsRemaining;
+    canAffordToLose = contractTeamPoints + pointsRemaining < contract.value;
+  }
+  
+  return {
+    isContractTeam,
+    currentTeamPoints: teamPoints,
+    opponentPoints,
+    pointsNeeded,
+    pointsRemaining,
+    mustWinTrick,
+    canAffordToLose
+  };
+}
+
 // Decide which card to play when following
 function decideFollowCard(
   legalPlays: Card[],
@@ -363,8 +470,35 @@ function decideFollowCard(
   const currentWinner = trickSoFar[currentWinnerIndex].player;
   const partnerWinning = currentWinner.teamId === player.teamId;
   
-  // If partner is winning and we're last to play, play low
+  // Analyze contract situation
+  const contractSituation = analyzeContractSituation(gameState, player, currentTrick);
+  
+  // Calculate current trick value
+  let trickValue = 0;
+  for (const tc of currentTrick) {
+    trickValue += countCardPoints([tc.card], trumpSuit);
+  }
+  
+  // If partner is winning and we're last to play
   if (partnerWinning && currentTrick.length === 3) {
+    // Check if we should throw a high value card to help make contract
+    if (contractSituation.isContractTeam && contractSituation.pointsNeeded > 0) {
+      // We need points - consider throwing high cards
+      const highValueCards = legalPlays.filter(c => 
+        countCardPoints([c], trumpSuit) >= 10
+      );
+      
+      if (highValueCards.length > 0 && 
+          trickValue + countCardPoints([highValueCards[0]], trumpSuit) <= contractSituation.pointsNeeded) {
+        return {
+          card: highValueCards[0],
+          reasoning: `Partner winning, adding ${countCardPoints([highValueCards[0]], trumpSuit)} points for contract`,
+          confidence: 0.95
+        };
+      }
+    }
+    
+    // Otherwise play low
     const sorted = sortCards(legalPlays, trumpSuit);
     return {
       card: sorted[sorted.length - 1],
@@ -386,6 +520,27 @@ function decideFollowCard(
     });
     
     if (winningCards.length > 0) {
+      // If we must win this trick for contract reasons
+      if (contractSituation.mustWinTrick) {
+        // Play a strong winning card
+        const sorted = sortCards(winningCards, trumpSuit);
+        return {
+          card: sorted[0],
+          reasoning: 'Must win trick for contract',
+          confidence: 0.95
+        };
+      }
+      
+      // If defending and trick has high value, win it
+      if (!contractSituation.isContractTeam && trickValue >= 10) {
+        const sorted = sortCards(winningCards, trumpSuit);
+        return {
+          card: sorted[sorted.length - 1],
+          reasoning: `Denying ${trickValue} points to contract team`,
+          confidence: 0.9
+        };
+      }
+      
       // Play lowest winning card
       const sorted = sortCards(winningCards, trumpSuit);
       return {
@@ -396,8 +551,21 @@ function decideFollowCard(
     }
   }
   
-  // Can't win or don't need to - play low
+  // Can't win - decide what to throw away based on contract situation
   const sorted = sortCards(legalPlays, trumpSuit);
+  
+  // If we're defending and opponent is winning a high-value trick
+  if (!contractSituation.isContractTeam && !partnerWinning && trickValue >= 15) {
+    // Don't give them more points - play lowest value card
+    const sortedByValue = [...legalPlays].sort((a, b) => 
+      countCardPoints([a], trumpSuit) - countCardPoints([b], trumpSuit)
+    );
+    return {
+      card: sortedByValue[0],
+      reasoning: `Minimizing points given (trick worth ${trickValue})`,
+      confidence: 0.85
+    };
+  }
   
   // If we must trump but can't win, play lowest trump
   if (legalPlays[0].suit === trumpSuit && leadSuit !== trumpSuit) {
@@ -408,7 +576,17 @@ function decideFollowCard(
     };
   }
   
-  // Play lowest card
+  // If we have the contract and desperately need points
+  if (contractSituation.isContractTeam && contractSituation.mustWinTrick) {
+    // Throw our lowest card to save high cards for later
+    return {
+      card: sorted[sorted.length - 1],
+      reasoning: 'Saving high cards for must-win tricks',
+      confidence: 0.8
+    };
+  }
+  
+  // Default - play lowest card
   return {
     card: sorted[sorted.length - 1],
     reasoning: 'Cannot win, playing low',

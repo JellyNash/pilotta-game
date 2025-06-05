@@ -1,0 +1,84 @@
+/* Scoped Overrides - Properly scoped rules without !important */
+
+/* ==================== Accessibility Overrides ==================== */
+/* These are acceptable uses of !important for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pilotta-game *,
+  .pilotta-game *::before,
+  .pilotta-game *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==================== Game Table Layout ==================== */
+/* Use more specific selectors instead of !important */
+.pilotta-game .game-table-grid {
+  overflow: visible;
+  /* Cards need to extend beyond grid boundaries */
+}
+
+.pilotta-game .game-table-grid .player-area-north,
+.pilotta-game .game-table-grid .player-area-east,
+.pilotta-game .game-table-grid .player-area-south,
+.pilotta-game .game-table-grid .player-area-west {
+  overflow: visible;
+  /* Allow cards to extend beyond grid cells */
+}
+
+/* ==================== Card Stacking Context ==================== */
+/* Properly scoped 3D context for cards */
+.pilotta-game .ph-flex-wrapper,
+.pilotta-game .ph-flex-container,
+.pilotta-game .ph-flex-card {
+  transform-style: preserve-3d;
+  /* Maintain 3D context for proper z-ordering */
+}
+
+/* ==================== Player Z-Index Hierarchy ==================== */
+/* Use CSS custom properties and calc() for dynamic z-index */
+.pilotta-game .player-area-south .ph-flex-wrapper {
+  z-index: var(--z-south-player);
+  /* Human player needs highest priority */
+}
+
+.pilotta-game .player-area-north .ph-flex-wrapper,
+.pilotta-game .player-area-east .ph-flex-wrapper,
+.pilotta-game .player-area-west .ph-flex-wrapper {
+  z-index: calc(var(--z-card-base) + 10);
+  /* AI players below human but above table */
+}
+
+/* ==================== Modal Z-Index ==================== */
+/* Use higher specificity for modal elements */
+.pilotta-game .bidding-interface-modal {
+  z-index: var(--z-modal);
+}
+
+.pilotta-game .settings-modal,
+.pilotta-game .score-modal {
+  z-index: var(--z-modal);
+}
+
+.pilotta-game .game-header {
+  z-index: var(--z-header);
+}
+
+/* ==================== Utility Classes ==================== */
+/* Scoped utility classes that need to override component styles */
+.pilotta-game .z-header {
+  z-index: var(--z-header);
+}
+
+.pilotta-game .z-modal {
+  z-index: var(--z-modal);
+}
+
+.pilotta-game .z-ui-overlay {
+  z-index: var(--z-ui-overlay);
+}
+
+.pilotta-game .z-player-indicator {
+  z-index: var(--z-player-indicator);
+}

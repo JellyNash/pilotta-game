@@ -7,6 +7,13 @@
   height: calc(100vh - var(--header-height, 5rem));
   overflow: visible;
   position: relative;
+  isolation: isolate; /* Create new stacking context */
+  
+  /* Apply safe area insets */
+  padding-top: var(--safe-area-inset-top);
+  padding-right: var(--safe-area-inset-right);
+  padding-bottom: var(--safe-area-inset-bottom);
+  padding-left: var(--safe-area-inset-left);
   
   /* Responsive grid with fr units for flexibility */
   grid-template-columns: 
@@ -44,11 +51,11 @@
   overflow: visible;
   z-index: calc(var(--z-card-base) + 10);
   position: relative;
-  min-width: 0;
-  min-height: 0;
   /* Allow content to determine size */
   width: auto;
   height: auto;
+  /* Add proper containment */
+  contain: layout style;
 }
 
 .player-area-east { 
@@ -60,10 +67,9 @@
   overflow: visible;
   z-index: calc(var(--z-card-base) + 10);
   position: relative;
-  min-width: 0;
-  min-height: 0;
   width: auto;
   height: auto;
+  contain: layout style;
 }
 
 .player-area-south { 
@@ -75,10 +81,9 @@
   overflow: visible;
   z-index: calc(var(--z-card-base) + 15);
   position: relative;
-  min-width: 0;
-  min-height: 0;
   width: auto;
   height: auto;
+  contain: layout style;
 }
 
 .player-area-west { 
@@ -90,10 +95,9 @@
   overflow: visible;
   z-index: calc(var(--z-card-base) + 10);
   position: relative;
-  min-width: 0;
-  min-height: 0;
   width: auto;
   height: auto;
+  contain: layout style;
 }
 
 .game-center { 
@@ -102,7 +106,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base);
 }
 
 /* Base mobile layout - single column for very small screens */

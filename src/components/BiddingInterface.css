@@ -12,9 +12,29 @@
   max-width: 90vw;
   padding: var(--dynamic-padding);
   background: rgba(30, 41, 59, 0.75);
-  backdrop-filter: blur(12px);
-  border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  backdrop-filter: var(--glass-effect-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-drop-xl);
+}
+
+/* Content grid for responsive layout */
+.bid-content-grid {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-lg);
+  align-items: flex-start;
+}
+
+/* Suits section - responsive flex */
+.bid-suits-section {
+  flex: 1 1 clamp(180px, 60%, 500px);
+  min-width: 0;
+}
+
+/* Current bid section - responsive flex */
+.bid-current-section {
+  flex: 0 1 clamp(120px, 35%, 300px);
+  min-width: 0;
 }
 
 .bid-button {
@@ -24,41 +44,58 @@
 }
 
 .suit-card-button {
-  width: var(--suit-button-size);
-  height: calc(var(--suit-button-size) * 1.4);
-  font-size: calc(var(--suit-button-size) * 0.6);
+  width: clamp(2.5rem, 5vw, 4rem);
+  height: clamp(3.5rem, 7vw, 5.6rem);
+  font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
-/* Mobile optimizations */
+/* Responsive properties using clamp() */
+.suit-selection {
+  gap: clamp(0.5rem, 1vw, 1rem);
+}
+
+.bid-actions {
+  gap: clamp(0.5rem, 1vw, 1rem);
+}
+
+.bid-button {
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  /* font-size already uses var(--text-lg) which has clamp() */
+}
+
+/* Mobile breakpoint for vertical stacking */
+@media (max-width: 640px) {
+  .bid-content-grid {
+    flex-direction: column;
+  }
+  
+  .bid-suits-section,
+  .bid-current-section {
+    flex: 1 1 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  /* Stack suit buttons 2x2 on mobile */
+  .suit-selection {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+  
+  /* Center current bid section content */
+  .bid-current-section {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* Structural changes that still need media queries */
 @media (max-width: 480px) {
   .bidding-container {
-    padding: 1rem;
     max-height: 90vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-  }
-  
-  .bid-amount-display {
-    font-size: 2rem; /* Reduce from 3rem */
-  }
-  
-  .suit-selection {
-    gap: 0.5rem; /* Reduce gap between suit buttons */
-  }
-  
-  .suit-card-button {
-    width: 3rem;
-    height: 4.2rem;
-    font-size: 1.8rem;
-  }
-  
-  .bid-actions {
-    gap: 0.5rem;
-  }
-  
-  .bid-button {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
   }
 }
 

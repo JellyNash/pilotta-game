@@ -9,6 +9,8 @@
   width: auto;
   height: auto;
   position: relative;
+  z-index: var(--z-card-base);
+  overflow: visible;
 }
 
 /* Player name positioning */

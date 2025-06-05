@@ -19,6 +19,8 @@ export const PlayerZone: React.FC<PlayerZoneProps> = ({
       style={{ position: 'relative', width: '100%', height: '100%' }}
       data-player-id={player.id}
       data-position={position}
+      role="region"
+      aria-label={`${player.name}'s play area`}
     >
       {/* Player name label */}
       <div 

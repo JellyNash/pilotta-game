@@ -5,8 +5,11 @@
 /* Main table container - centers everything */
 .game-table {
   position: relative;
-  width: 100%;
-  height: calc(100vh - 8rem); /* Leave room for header */
+  width: var(--game-area-width);
+  height: calc(var(--game-area-height) - 8rem); /* Header space */
+  max-width: var(--game-area-width);
+  max-height: calc(var(--game-area-height) - 8rem);
+  margin: var(--zoom-reserve-y) var(--zoom-reserve-x);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,6 +32,7 @@
   left: 50%;
   top: 50%;
   transform-origin: center;
+  z-index: var(--z-card-base); /* Ensure player seats are above table elements */
 }
 
 /* Position each seat on the radius */
@@ -54,7 +58,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10;
+  z-index: var(--z-trick-cards); /* Changed from z-card-base to z-trick-cards (20) */
 }
 
 /* Center circle decoration */
@@ -67,6 +71,7 @@
   height: 12rem;
   border-radius: 50%;
   pointer-events: none;
+  z-index: var(--z-base); /* Added z-index: 1 - lowest layer */
 }
 
 /* Trick pile positioning - relative to seats */
@@ -96,6 +101,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: var(--z-card-base); /* Ensure cards are above table elements */
 }
 
 /* Card fan layout for horizontal hands (north/south) */

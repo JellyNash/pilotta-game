@@ -5,8 +5,8 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 50;
+  backdrop-filter: blur(var(--blur-xs));
+  z-index: var(--z-ui-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,38 +16,37 @@
 /* Modal */
 .tpv-modal {
   background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 1rem;
-  width: 90vw;
-  max-width: 800px;
-  max-height: 85vh;
+  backdrop-filter: blur(var(--blur-lg));
+  border-radius: var(--radius-md);
+  width: clamp(320px, 90vw, 800px);
+  max-height: clamp(70vh, 85vh, 90vh);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-drop-lg);
+  border: var(--border-thin) solid rgba(255, 255, 255, 0.05);
 }
 
 /* Header - Minimal */
 .tpv-header {
-  padding: 1rem 1.5rem;
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: var(--border-thin) solid rgba(255, 255, 255, 0.05);
 }
 
 .tpv-title {
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  font-size: 0.875rem;
+  font-size: var(--fs-sm);
   color: #94a3b8;
 }
 
 .tpv-team-indicator {
   font-weight: 600;
   padding: 0.25rem 0.75rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -64,20 +63,20 @@
 .tpv-points {
   font-weight: 700;
   color: #e2e8f0;
-  font-size: 1rem;
+  font-size: var(--fs-base);
 }
 
 .tpv-total {
-  font-size: 0.75rem;
+  font-size: var(--fs-xs);
   color: #64748b;
 }
 
 .tpv-close {
   width: 2rem;
   height: 2rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: var(--border-thin) solid rgba(255, 255, 255, 0.1);
   color: #64748b;
   cursor: pointer;
   display: flex;
@@ -95,7 +94,7 @@
 /* Body */
 .tpv-body {
   flex: 1;
-  padding: 2rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
   overflow-y: auto;
   display: flex;
   align-items: center;
@@ -106,12 +105,12 @@
 .tpv-cross-container {
   position: relative;
   width: 100%;
-  max-width: 500px;
-  height: 500px;
+  max-width: clamp(320px, 80vw, 500px);
+  height: clamp(320px, 80vw, 500px);
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: 1fr auto 1fr;
-  gap: 1.5rem;
+  gap: clamp(1rem, 2vw, 1.5rem);
   grid-template-areas:
     ". top ."
     "left center right"
@@ -145,8 +144,8 @@
 .tpv-table-center {
   grid-area: center;
   position: relative;
-  width: 140px;
-  height: 140px;
+  width: clamp(100px, 20vw, 140px);
+  height: clamp(100px, 20vw, 140px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,16 +156,16 @@
   inset: 0;
   border-radius: 50%;
   background: radial-gradient(circle at center, rgba(30, 41, 59, 0.3) 0%, transparent 70%);
-  border: 1px solid rgba(100, 116, 139, 0.2);
+  border: var(--border-thin) solid rgba(100, 116, 139, 0.2);
 }
 
 .tpv-center-info {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base);
 }
 
 .tpv-suit {
-  font-size: 2.5rem;
+  font-size: var(--fs-2xl);
   line-height: 1;
 }
 
@@ -193,26 +192,26 @@
   height: 1.5rem;
   background: #1e293b;
   color: #e2e8f0;
-  border: 2px solid #334155;
+  border: var(--border-medium) solid #334155;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.625rem;
-  z-index: 2;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: var(--fs-2xs);
+  z-index: calc(var(--z-base) + 1);
+  box-shadow: var(--shadow-drop-sm);
 }
 
 .tpv-card {
   position: relative;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 /* Winner effects - Subtle */
 .tpv-card-container.winner .tpv-card {
-  box-shadow: 0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.3);
+  box-shadow: 0 0 0 var(--border-medium) #fbbf24, 0 0 var(--shadow-md) rgba(251, 191, 36, 0.3);
 }
 
 .tpv-winner-glow {
@@ -239,101 +238,8 @@
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 0.75rem;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+  font-size: var(--fs-xs);
+  box-shadow: var(--shadow-drop-sm);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .tpv-modal {
-    width: 95vw;
-    max-height: 90vh;
-  }
-  
-  .tpv-body {
-    padding: 1.5rem;
-  }
-  
-  .tpv-cross-container {
-    max-width: 400px;
-    height: 400px;
-    gap: 1rem;
-  }
-  
-  .tpv-table-center {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .tpv-suit {
-    font-size: 2rem;
-  }
-  
-  .tpv-header {
-    padding: 0.75rem 1rem;
-  }
-  
-  .tpv-title {
-    font-size: 0.75rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .tpv-cross-container {
-    max-width: 320px;
-    height: 320px;
-    gap: 0.75rem;
-  }
-  
-  .tpv-table-center {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .tpv-suit {
-    font-size: 1.75rem;
-  }
-  
-  .tpv-play-order {
-    width: 1.25rem;
-    height: 1.25rem;
-    font-size: 0.5rem;
-  }
-  
-  .tpv-winner-indicator {
-    width: 1.5rem;
-    height: 1.5rem;
-    font-size: 0.625rem;
-    bottom: -1.25rem;
-  }
-}
-
-/* High resolution */
-@media (min-width: 1920px) {
-  .tpv-modal {
-    max-width: 900px;
-  }
-  
-  .tpv-cross-container {
-    max-width: 600px;
-    height: 600px;
-    gap: 2rem;
-  }
-  
-  .tpv-table-center {
-    width: 160px;
-    height: 160px;
-  }
-  
-  .tpv-suit {
-    font-size: 3rem;
-  }
-  
-  .tpv-title {
-    font-size: 1rem;
-  }
-  
-  .tpv-points {
-    font-size: 1.125rem;
-  }
-}
+/* All responsive sizing now handled by clamp() functions in base rules above */

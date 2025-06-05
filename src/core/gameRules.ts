@@ -385,17 +385,48 @@ export function calculateRoundScore(
   
   // Apply contract rules
   if (!contractMade) {
-    // Contract failed - defending team gets all points
+    // Contract failed - defending team gets contract value based on double/redouble + all points
     const allPoints = totalPoints.A + totalPoints.B;
+    
+    // Calculate bonus based on double/redouble status
+    let contractBonus = contract.value;
+    if (contract.doubled) {
+      if (contract.redoubled) {
+        // Redoubled: 4x contract value
+        contractBonus = contract.value * 4;
+      } else {
+        // Doubled: 2x contract value
+        contractBonus = contract.value * 2;
+      }
+    } else {
+      // Normal (not doubled): 1x contract value
+      contractBonus = contract.value;
+    }
+    
+    // Debug logging for contract failure scoring
+    console.log('Contract Failed Scoring Debug:', {
+      contractTeam,
+      defendingTeam,
+      contractValue: contract.value,
+      contractBonus,
+      teamAPointsBefore: totalPoints.A,
+      teamBPointsBefore: totalPoints.B,
+      allPoints,
+      finalDefendingPoints: contractBonus + allPoints
+    });
+    
+    // Contract team gets 0 points
     totalPoints[contractTeam] = 0;
-    totalPoints[defendingTeam] = allPoints;
+    
+    // Defending team gets: contract bonus + all actual points (162 + announcements)
+    totalPoints[defendingTeam] = contractBonus + allPoints;
   }
   
   // Store raw points before division
   const rawPoints = { ...totalPoints };
   
-  // Handle doubled/redoubled contracts
-  if (contract.doubled) {
+  // Handle doubled/redoubled contracts for successful contracts only
+  if (contractMade && contract.doubled) {
     const multiplier = contract.redoubled ? 4 : 2;
     totalPoints.A *= multiplier;
     totalPoints.B *= multiplier;
@@ -422,6 +453,19 @@ export function calculateRoundScore(
     } else {
       finalPoints.B = Math.ceil(totalPoints.B / 10);
     }
+  }
+  
+  // IMPORTANT: If contract failed, ensure contract team has 0 points
+  if (!contractMade) {
+    finalPoints[contractTeam] = 0;
+    
+    console.log('Final Contract Failed Scores:', {
+      contractTeam,
+      defendingTeam,
+      finalPointsA: finalPoints.A,
+      finalPointsB: finalPoints.B,
+      contractMade: false
+    });
   }
   
   return {
