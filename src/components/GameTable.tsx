@@ -3,7 +3,6 @@ import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameLayout } from '../layouts/GameLayout';
 import { PlayerZone } from './PlayerZone';
-import PlayerHand from './PlayerHand';
 import PlayerHandFlex from './PlayerHandFlex';
 import TrickArea from './TrickArea';
 import BeloteIndicator from './BeloteIndicator';
@@ -19,8 +18,6 @@ import { mapGameToUIPosition } from '../utils/positionMapping';
 import { v4 as uuidv4 } from 'uuid';
 
 const GameTable: React.FC = () => {
-  // Toggle for testing flexbox layout - can be removed after testing
-  const USE_FLEXBOX_LAYOUT = true; // Set to true to test new flexbox layout
   const dispatch = useAppDispatch();
     // Selectors
   const players = useAppSelector(state => state.game.players);
@@ -252,31 +249,17 @@ const GameTable: React.FC = () => {
     return (
       <PlayerZone player={player} position={position}>
         {/* Player Hand */}
-        {USE_FLEXBOX_LAYOUT ? (
-          <PlayerHandFlex
-            player={player}
-            position={position}
-            isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
-            showCards={isHuman}
-            onCardClick={isHuman ? handleCardClick : undefined}
-            onCardPlay={isHuman ? handleCardPlay : undefined}
-            selectedCard={selectedCard}
-            validMoves={validMoves}
-            trumpSuit={trumpSuit}
-          />
-        ) : (
-          <PlayerHand
-            player={player}
-            position={position}
-            isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
-            showCards={isHuman}
-            onCardClick={isHuman ? handleCardClick : undefined}
-            onCardPlay={isHuman ? handleCardPlay : undefined}
-            selectedCard={selectedCard}
-            validMoves={validMoves}
-            trumpSuit={trumpSuit}
-          />
-        )}
+        <PlayerHandFlex
+          player={player}
+          position={position}
+          isCurrentPlayer={currentPlayerIndex === players.indexOf(player)}
+          showCards={isHuman}
+          onCardClick={isHuman ? handleCardClick : undefined}
+          onCardPlay={isHuman ? handleCardPlay : undefined}
+          selectedCard={selectedCard}
+          validMoves={validMoves}
+          trumpSuit={trumpSuit}
+        />
           {/* Belote Indicator */}
         <BeloteIndicator playerId={player.id} position={mapGameToUIPosition(position)} />
         
