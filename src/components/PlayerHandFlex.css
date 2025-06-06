@@ -30,8 +30,8 @@
 /* Flex container for cards */
 .ph-flex-container {
   display: flex;
-flex-flow: row nowrap; /* Keep cards in single row */
-gap: var(--ph-card-gap, var(--card-gap));
+  flex-flow: row nowrap; /* Keep cards in single row */
+  gap: var(--ph-card-gap, var(--card-gap));
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -86,6 +86,7 @@ gap: var(--ph-card-gap, var(--card-gap));
   min-width: 0;
 }
 
+/* Use adjusted rotation step for south player */
 .ph-flex-wrapper[data-position="south"] {
   --adjusted-rotation-step: calc(var(--ph-arc-rotation-step) * var(--south-card-spacing));
 }
@@ -128,7 +129,6 @@ gap: var(--ph-card-gap, var(--card-gap));
   max-width: clamp(300px, 70vw, 600px); /* Increased max width for 50% overlap */
   justify-content: center;
 }
-
 
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
   flex: 0 0 auto;
@@ -186,7 +186,6 @@ gap: var(--ph-card-gap, var(--card-gap));
 .ph-flex-wrapper[data-position="west"] .ph-flex-card {
   transform: rotate(-90deg);
 }
-
 
 /* Container responsive properties using clamp() */
 .ph-flex-container {
@@ -294,7 +293,6 @@ gap: var(--ph-card-gap, var(--card-gap));
   transform: translateZ(0);
   backface-visibility: hidden;
 }
-
 
 /* Container query support for dynamic card sizing */
 @container (max-width: 400px) {

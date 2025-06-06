@@ -44,9 +44,12 @@
 }
 
 .suit-card-button {
-  width: clamp(2.5rem, 5vw, 4rem);
-  height: clamp(3.5rem, 7vw, 5.6rem);
+  width: var(--suit-button-size);
+  height: var(--suit-button-size);
   font-size: clamp(1rem, 2vw, 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Responsive properties using clamp() */
@@ -73,6 +76,23 @@
 
 .bid-text-large {
   font-size: var(--fs-2xl);
+}
+
+.bid-step-button {
+  width: var(--bid-button-size);
+  height: var(--bid-button-size);
+}
+
+.bid-number-text {
+  font-size: var(--fs-3xl);
+}
+
+.bid-number-above {
+  top: calc(var(--bid-number-offset) * -1);
+}
+
+.bid-number-below {
+  top: var(--bid-number-offset);
 }
 
 .bid-shadow-glow {
