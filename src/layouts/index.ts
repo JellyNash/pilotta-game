@@ -5,5 +5,4 @@ export * from './UIPositioner';
 export { useResponsive, useContainerQuery, useMediaQuery, useResponsiveValue } from '../hooks/useResponsive';
 
 // Re-export commonly used types
-export type { PlayerPosition } from './GameLayout';
 export type { Breakpoint, ResponsiveValue } from './ResponsiveSystem';

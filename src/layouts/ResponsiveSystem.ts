@@ -1,5 +1,6 @@
-// Re-export from unified breakpoint system
-export { BREAKPOINTS as breakpoints, type BreakpointKey as Breakpoint } from '../styles/breakpoints';
+// Breakpoints utilities
+import { breakpoints, type BreakpointKey as Breakpoint } from '../styles/breakpoints';
+export { breakpoints, Breakpoint };
 
 // Responsive spacing scale (in rem units)
 export const spacing = {
@@ -91,7 +92,11 @@ export function mediaQuery(breakpoint: Breakpoint): string {
 // Hook for responsive values
 export function useResponsiveValue<T>(values: ResponsiveValue<T>): T {
   if (typeof window === 'undefined') {
-    return typeof values === 'object' ? (values.xs ?? Object.values(values)[0]) : values;
+    const serverDefault =
+      typeof values === 'object'
+        ? (values as Record<Breakpoint, T>).xs ?? Object.values(values as Record<string, T>)[0]
+        : values;
+    return serverDefault;
   }
 
   const width = window.innerWidth;
@@ -103,14 +108,19 @@ export function useResponsiveValue<T>(values: ResponsiveValue<T>): T {
   // Find the appropriate value for current screen size
   let result: T | undefined;
   
-  for (const [breakpoint, minWidth] of Object.entries(breakpoints).reverse()) {
-    if (width >= minWidth && values[breakpoint as Breakpoint] !== undefined) {
-      result = values[breakpoint as Breakpoint];
+  for (const [key, minWidth] of Object.entries(breakpoints) as [Breakpoint, number][]) {
+    if (width >= minWidth && typeof values === 'object' && (values as Record<Breakpoint, T>)[key] !== undefined) {
+      result = (values as Record<Breakpoint, T>)[key];
       break;
     }
   }
 
-  return result ?? (values.xs ?? Object.values(values)[0]);
+  const firstValue = Object.values(values as Record<string, T>)[0];
+  const fallback =
+    typeof values === 'object' && (values as Record<Breakpoint, T>).xs !== undefined
+      ? (values as Record<Breakpoint, T>).xs
+      : firstValue;
+  return result ?? fallback;
 }
 
 // Viewport units with fallback

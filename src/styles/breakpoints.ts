@@ -1,9 +1,22 @@
 /**
- * Unified breakpoint system - Single source of truth for all responsive values
- * Import this file wherever breakpoints are needed instead of hardcoding values
+ * Breakpoint helpers that read values from CSS custom properties defined in
+ * `tokens.css`. This keeps the TypeScript utilities in sync with the design
+ * tokens and removes the need for a separately maintained constant map.
  */
 
-export const BREAKPOINTS = {
+export const BREAKPOINT_KEYS = [
+  'xs',
+  'sm',
+  'md',
+  'lg',
+  'xl',
+  '2xl',
+  '4k',
+] as const;
+
+export type BreakpointKey = typeof BREAKPOINT_KEYS[number];
+
+const FALLBACK_BREAKPOINTS: Record<BreakpointKey, number> = {
   xs: 375,
   sm: 640,
   md: 768,
@@ -11,33 +24,59 @@ export const BREAKPOINTS = {
   xl: 1440,
   '2xl': 1920,
   '4k': 2560,
-} as const;
+};
 
-export type BreakpointKey = keyof typeof BREAKPOINTS;
+function readBreakpoint(key: BreakpointKey): number {
+  if (typeof window === 'undefined') {
+    return FALLBACK_BREAKPOINTS[key];
+  }
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(`--breakpoint-${key}`)
+    .trim();
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? FALLBACK_BREAKPOINTS[key] : parsed;
+}
+
+/**
+ * Breakpoints proxy that resolves values from CSS variables on demand.
+ */
+export const breakpoints: Record<BreakpointKey, number> = {} as Record<
+  BreakpointKey,
+  number
+>;
+
+for (const key of BREAKPOINT_KEYS) {
+  Object.defineProperty(breakpoints, key, {
+    get: () => readBreakpoint(key),
+    enumerable: true,
+  });
+}
 
 /**
  * Media query strings for use in CSS-in-JS or styled-components
  */
-export const MEDIA_QUERIES = {
-  xs: `(min-width: ${BREAKPOINTS.xs}px)`,
-  sm: `(min-width: ${BREAKPOINTS.sm}px)`,
-  md: `(min-width: ${BREAKPOINTS.md}px)`,
-  lg: `(min-width: ${BREAKPOINTS.lg}px)`,
-  xl: `(min-width: ${BREAKPOINTS.xl}px)`,
-  '2xl': `(min-width: ${BREAKPOINTS['2xl']}px)`,
-  '4k': `(min-width: ${BREAKPOINTS['4k']}px)`,
-} as const;
+export const MEDIA_QUERIES: Record<BreakpointKey, string> = {} as Record<
+  BreakpointKey,
+  string
+>;
+
+for (const key of BREAKPOINT_KEYS) {
+  Object.defineProperty(MEDIA_QUERIES, key, {
+    get: () => `(min-width: ${readBreakpoint(key)}px)`,
+    enumerable: true,
+  });
+}
 
 /**
  * Helper to get the current breakpoint based on window width
  */
 export function getCurrentBreakpoint(width: number): BreakpointKey {
-  if (width >= BREAKPOINTS['4k']) return '4k';
-  if (width >= BREAKPOINTS['2xl']) return '2xl';
-  if (width >= BREAKPOINTS.xl) return 'xl';
-  if (width >= BREAKPOINTS.lg) return 'lg';
-  if (width >= BREAKPOINTS.md) return 'md';
-  if (width >= BREAKPOINTS.sm) return 'sm';
+  if (width >= readBreakpoint('4k')) return '4k';
+  if (width >= readBreakpoint('2xl')) return '2xl';
+  if (width >= readBreakpoint('xl')) return 'xl';
+  if (width >= readBreakpoint('lg')) return 'lg';
+  if (width >= readBreakpoint('md')) return 'md';
+  if (width >= readBreakpoint('sm')) return 'sm';
   return 'xs';
 }
 
@@ -45,8 +84,8 @@ export function getCurrentBreakpoint(width: number): BreakpointKey {
  * Device type detection based on breakpoints
  */
 export function getDeviceType(width: number): 'mobile' | 'tablet' | 'desktop' {
-  if (width < BREAKPOINTS.md) return 'mobile';
-  if (width < BREAKPOINTS.lg) return 'tablet';
+  if (width < readBreakpoint('md')) return 'mobile';
+  if (width < readBreakpoint('lg')) return 'tablet';
   return 'desktop';
 }
 
@@ -61,3 +100,4 @@ export const BREAKPOINT_CSS_VARS = {
   wide: '--breakpoint-wide',
   ultrawide: '--breakpoint-ultrawide',
 } as const;
+

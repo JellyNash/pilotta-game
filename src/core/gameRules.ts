@@ -1,7 +1,6 @@
 import { 
   Card, 
   Player, 
-  Trick, 
   TrickCard, 
   GameState, 
   Suit, 
@@ -424,8 +423,6 @@ export function calculateRoundScore(
     totalPoints[defendingTeam] = contractBonus + allPoints;
   }
   
-  // Store raw points before division
-  const rawPoints = { ...totalPoints };
   
   // Handle doubled/redoubled contracts for successful contracts only
   if (contractMade && contract.doubled) {

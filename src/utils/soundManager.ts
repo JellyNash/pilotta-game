@@ -49,7 +49,7 @@ class SoundManager {
       clone.volume = volume ?? this.volume;
       clone.play().catch(_err => {
         // Silently fail - sounds are optional
-        // console.warn(`Failed to play sound ${soundName}:`, err);
+        // console.warn(`Failed to play sound ${soundName}:`, _err);
       });
     }
   }
@@ -60,7 +60,11 @@ class SoundManager {
     // Initialize AudioContext if not already done
     if (!this.audioContext) {
       try {
-        this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const AudioCtx =
+          window.AudioContext ||
+          (window as Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext })
+            .webkitAudioContext;
+        this.audioContext = new AudioCtx();
       } catch (err) {
         console.warn('Web Audio API not supported');
         return;

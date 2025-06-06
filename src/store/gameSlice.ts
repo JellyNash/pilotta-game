@@ -166,24 +166,24 @@ const gameSlice = createSlice({
     newGame: () => {
       return createInitialState();
     },
-    
+
     setTargetScore: (state, action: PayloadAction<number>) => {
       state.targetScore = action.payload;
     },
-    
-    setAIPersonality: (state, action: PayloadAction<{ 
-      playerId: string; 
-      personality: AIPersonality 
+
+    setAIPersonality: (state, action: PayloadAction<{
+      playerId: string;
+      personality: AIPersonality
     }>) => {
       const player = state.players.find(p => p.id === action.payload.playerId);
       if (player && player.isAI) {
         player.aiPersonality = action.payload.personality;
       }
     },
-    
+
     // Dealing phase
-    dealCards: (state, action: PayloadAction<{ 
-      playerHands: Record<string, Card[]> 
+    dealCards: (state, action: PayloadAction<{
+      playerHands: Record<string, Card[]>
     }>) => {
       state.phase = GamePhase.Dealing;
       state.players.forEach(player => {
@@ -206,13 +206,13 @@ const gameSlice = createSlice({
       state.declarationTracking = {};
       state.earlyTermination = false;
     },
-    
+
     startBidding: (state) => {
       state.phase = GamePhase.Bidding;
       // Counterclockwise: dealer + 1 in array order
       state.currentPlayerIndex = (state.dealerIndex + 1) % 4;
     },
-    
+
     // Bidding phase
     makeBid: (state, action: PayloadAction<{
       playerId: string;
@@ -221,18 +221,18 @@ const gameSlice = createSlice({
     }>) => {
       const player = state.players.find(p => p.id === action.payload.playerId);
       if (!player) return;
-      
+
       // Don't allow regular bids if contract is doubled
       if (state.contract?.doubled && action.payload.bid !== 'pass') {
         return;
       }
-      
+
       state.biddingHistory.push({
         player,
         bid: action.payload.bid,
         trump: action.payload.trump
       });
-      
+
       if (action.payload.bid === 'pass') {
         state.consecutivePasses++;
       } else {
@@ -249,13 +249,13 @@ const gameSlice = createSlice({
           state.trumpSuit = action.payload.trump;
         }
       }
-      
+
       // Move to next player counterclockwise
       state.currentPlayerIndex = (state.currentPlayerIndex + 1) % 4;
-      
+
       // Check if bidding is complete (4 consecutive passes or 3 passes after a bid)
-      if (state.consecutivePasses === 4 || 
-          (state.contract && state.consecutivePasses === 3)) {
+      if (state.consecutivePasses === 4 ||
+        (state.contract && state.consecutivePasses === 3)) {
         if (state.contract) {
           state.phase = GamePhase.Declaring;
         } else {
@@ -264,7 +264,7 @@ const gameSlice = createSlice({
           state.dealerIndex = (state.dealerIndex + 1) % 4;
         }
       }
-      
+
       // Record move for AI adaptation
       const moveRecord: MoveRecord = {
         round: state.round,
@@ -280,51 +280,51 @@ const gameSlice = createSlice({
       };
       state.moveHistory.push(moveRecord);
     },
-    
+
     doubleBid: (state, action: PayloadAction<{ playerId: string }>) => {
       if (state.contract && !state.contract.doubled) {
         const player = state.players.find(p => p.id === action.payload.playerId);
         if (player && player.teamId !== state.contract.team) {
           state.contract.doubled = true;
           state.consecutivePasses = 0; // Reset passes after double
-          
+
           // Add to bidding history
           state.biddingHistory.push({
             player,
-            bid: 'double' as any,
+            bid: 'double',
             trump: state.contract.trump
           });
-          
+
           // Move to next player
           state.currentPlayerIndex = (state.currentPlayerIndex + 1) % 4;
         }
       }
     },
-    
+
     redoubleBid: (state, action: PayloadAction<{ playerId: string }>) => {
       if (state.contract && state.contract.doubled && !state.contract.redoubled) {
         const player = state.players.find(p => p.id === action.payload.playerId);
         if (player && player.teamId === state.contract.team) {
           state.contract.redoubled = true;
           state.consecutivePasses = 0; // Reset passes after redouble
-          
+
           // Add to bidding history
           state.biddingHistory.push({
             player,
-            bid: 'redouble' as any,
+            bid: 'redouble',
             trump: state.contract.trump
           });
-          
+
           // Move to next player
           state.currentPlayerIndex = (state.currentPlayerIndex + 1) % 4;
         }
       }
     },
-    
+
     // Declaration phase
     makeDeclaration: (state, action: PayloadAction<Declaration>) => {
       state.declarations.push(action.payload);
-      
+
       // Record move for AI adaptation
       const player = action.payload.player;
       const moveRecord: MoveRecord = {
@@ -341,7 +341,7 @@ const gameSlice = createSlice({
       };
       state.moveHistory.push(moveRecord);
     },
-    
+
     startPlaying: (state) => {
       state.phase = GamePhase.Playing;
       // Contract bidder leads first trick
@@ -350,26 +350,26 @@ const gameSlice = createSlice({
         state.currentPlayerIndex = bidderIndex;
       }
     },
-    
+
     // Playing phase
     selectCard: (state, action: PayloadAction<Card | null>) => {
       state.selectedCard = action.payload;
     },
-    
+
     setValidMoves: (state, action: PayloadAction<Card[]>) => {
       state.validMoves = action.payload;
     },
-    
+
     playCard: (state, action: PayloadAction<{
       playerId: string;
       card: Card;
     }>) => {
       const player = state.players.find(p => p.id === action.payload.playerId);
       if (!player) return;
-      
+
       // Remove card from player's hand
       player.hand = player.hand.filter(c => c.id !== action.payload.card.id);
-      
+
       // Add to current trick
       const trickCard: TrickCard = {
         player,
@@ -377,10 +377,10 @@ const gameSlice = createSlice({
         order: state.currentTrick.length
       };
       state.currentTrick.push(trickCard);
-      
+
       // Add to animating cards for UI
       state.animatingCards.push(action.payload.card.id);
-      
+
       // Record move for AI adaptation
       const moveRecord: MoveRecord = {
         round: state.round,
@@ -395,24 +395,24 @@ const gameSlice = createSlice({
         }
       };
       state.moveHistory.push(moveRecord);
-      
+
       // Check for Belote announcement (King and Queen of trump suit)
       if (state.trumpSuit && action.payload.card.suit === state.trumpSuit) {
         const isKing = action.payload.card.rank === 'K';
         const isQueen = action.payload.card.rank === 'Q';
-        
+
         if (isKing || isQueen) {
           // Check if player has the other card (K needs Q, Q needs K)
-          const hasOther = player.hand.some(c => 
-            c.suit === state.trumpSuit && 
+          const hasOther = player.hand.some(c =>
+            c.suit === state.trumpSuit &&
             c.rank === (isKing ? 'Q' : 'K')
           );
-          
+
           if (hasOther || state.beloteAnnounced?.team === player.teamId) {
             // First card of the pair - announce "Belote"
             if (!state.beloteAnnounced || state.beloteAnnounced.team !== player.teamId) {
-              state.beloteAnnounced = { 
-                team: player.teamId, 
+              state.beloteAnnounced = {
+                team: player.teamId,
                 kingPlayed: isKing,
                 queenPlayed: isQueen,
                 announcement: 'belote'
@@ -426,7 +426,7 @@ const gameSlice = createSlice({
                 message: 'Belote!',
                 timestamp: Date.now()
               });
-            } 
+            }
             // Second card of the pair - announce "Rebelote"
             else if (state.beloteAnnounced.team === player.teamId) {
               state.beloteAnnounced.kingPlayed = state.beloteAnnounced.kingPlayed || isKing;
@@ -445,17 +445,17 @@ const gameSlice = createSlice({
           }
         }
       }
-      
+
       // Clear selected card and valid moves
       state.selectedCard = null;
       state.validMoves = [];
-      
+
       // Move to next player
       if (state.currentTrick.length < 4) {
         state.currentPlayerIndex = (state.currentPlayerIndex + 1) % 4;
       }
     },
-    
+
     completeTrick: (state, action: PayloadAction<{
       winner: Player;
       points: number;
@@ -468,11 +468,11 @@ const gameSlice = createSlice({
         winner: action.payload.winner,
         points: action.payload.points
       };
-      
+
       state.completedTricks.push(trick);
       state.currentTrick = [];
       state.animatingCards = [];
-      
+
       // Update round scores
       const winningTeam = action.payload.winner.teamId;
       if (winningTeam === 'A') {
@@ -480,11 +480,11 @@ const gameSlice = createSlice({
       } else {
         state.teams.B.roundScore += action.payload.points;
       }
-      
+
       // Winner leads next trick
       const winnerIndex = state.players.findIndex(p => p.id === action.payload.winner.id);
       state.currentPlayerIndex = winnerIndex;
-      
+
       // Check if round is complete
       if (state.completedTricks.length === 8) {
         state.phase = GamePhase.Scoring;
@@ -492,7 +492,7 @@ const gameSlice = createSlice({
         state.trickNumber++;
       }
     },
-    
+
     // Scoring phase
     completeRound: (state, action: PayloadAction<{
       teamAScore: number;
@@ -506,7 +506,7 @@ const gameSlice = createSlice({
       // IMPORTANT: Maintain consistent mapping - Team A = team1, Team B = team2
       state.scores.team1 = state.teams.A.score;
       state.scores.team2 = state.teams.B.score;
-      
+
       // Store round score with contract details
       const roundScoreWithContract: RoundScore = {
         ...action.payload.roundScore,
@@ -514,10 +514,10 @@ const gameSlice = createSlice({
       };
       state.lastRoundScore = roundScoreWithContract;
       state.roundHistory.push(roundScoreWithContract);
-      
+
       // Check for game over
-      if (state.teams.A.score >= state.targetScore || 
-          state.teams.B.score >= state.targetScore) {
+      if (state.teams.A.score >= state.targetScore ||
+        state.teams.B.score >= state.targetScore) {
         state.phase = GamePhase.GameOver;
       } else {
         // Next round
@@ -526,7 +526,7 @@ const gameSlice = createSlice({
         state.phase = GamePhase.Dealing;
       }
     },
-    
+
     // AI Adaptation
     updatePlayerProfile: (state, action: PayloadAction<{
       playerId: string;
@@ -537,20 +537,20 @@ const gameSlice = createSlice({
         Object.assign(player.playerProfile, action.payload.updates);
       }
     },
-    
+
     // Animation helpers
     addAnimatingCard: (state, action: PayloadAction<string>) => {
       state.animatingCards.push(action.payload);
     },
-    
+
     removeAnimatingCard: (state, action: PayloadAction<string>) => {
       state.animatingCards = state.animatingCards.filter(id => id !== action.payload);
     },
-    
+
     clearAnimatingCards: (state) => {
       state.animatingCards = [];
     },
-    
+
     updateSettings: (state, action: PayloadAction<Partial<{
       cardSize: 'small' | 'medium' | 'large' | 'xlarge';
       cardStyle: 'classic' | 'modern' | 'accessible' | 'minimalist';
@@ -573,14 +573,14 @@ const gameSlice = createSlice({
       }
       Object.assign(state.settings, action.payload);
     },
-    
+
     // Card zoom action
     toggleCardZoom: (state, action: PayloadAction<string | null>) => {
       if (state.settings?.rightClickZoom) {
         state.zoomedCard = state.zoomedCard === action.payload ? null : action.payload;
       }
     },
-    
+
     // Declaration actions
     markPlayerDeclared: (state, action: PayloadAction<{ playerId: string }>) => {
       if (!state.declarationTracking) {
@@ -596,15 +596,15 @@ const gameSlice = createSlice({
       state.declarationTracking[action.payload.playerId].hasDeclared = true;
       state.declarationTracking[action.payload.playerId].canShow = true;
     },
-    
+
     markPlayerShown: (state, action: PayloadAction<{ playerId: string }>) => {
       if (state.declarationTracking && state.declarationTracking[action.payload.playerId]) {
         state.declarationTracking[action.payload.playerId].hasShown = true;
         state.declarationTracking[action.payload.playerId].canShow = false;
       }
     },
-    
-    updateDeclarationRights: (state, action: PayloadAction<{ 
+
+    updateDeclarationRights: (state, action: PayloadAction<{
       winningTeam: 'A' | 'B';
     }>) => {
       // When a team wins declaration rights, only that team can show
@@ -639,7 +639,7 @@ const gameSlice = createSlice({
         });
       }
     },
-    
+
     enableThirdTrickShowing: (state, action: PayloadAction<{ playerIds: string[] }>) => {
       // Enable showing for third trick fallback
       if (!state.declarationTracking) {
@@ -657,20 +657,20 @@ const gameSlice = createSlice({
         tracking[playerId].canShow = true;
       });
     },
-    
+
     setEarlyTermination: (state, action: PayloadAction<boolean>) => {
       state.earlyTermination = action.payload;
     },
-    
+
     setPhase: (state, action: PayloadAction<GamePhase>) => {
       state.phase = action.payload;
     },
-    
+
     updateRoundScores: (state, action: PayloadAction<{ teamA: number; teamB: number }>) => {
       state.teams.A.roundScore = action.payload.teamA;
       state.teams.B.roundScore = action.payload.teamB;
     },
-    
+
     clearNotification: (state, action: PayloadAction<GameNotification>) => {
       if (state.notifications) {
         state.notifications = state.notifications.filter(

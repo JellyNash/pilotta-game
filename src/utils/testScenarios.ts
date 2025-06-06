@@ -1,4 +1,4 @@
-import { Card, Suit, Rank, DeclarationType } from '../core/types';
+import { Card, Suit, Rank, DeclarationType, GameState } from '../core/types';
 
 // Test scenarios for declaration system testing
 
@@ -146,9 +146,12 @@ export const testScenarios = [
 ];
 
 // Helper to inject test hands into game state (for development testing)
-export const injectTestHands = (gameState: any, scenario: 'strong' | 'medium' | 'weak' | 'mixed') => {
+export const injectTestHands = (
+  gameState: GameState,
+  scenario: 'strong' | 'medium' | 'weak' | 'mixed'
+) => {
   const hands = createTestHands();
-  
+
   switch (scenario) {
     case 'strong':
       // Team A gets strong declarations
@@ -158,7 +161,7 @@ export const injectTestHands = (gameState: any, scenario: 'strong' | 'medium' | 
       gameState.players[1].hand = hands.weakHand;
       gameState.players[3].hand = hands.noDeclarationHand;
       break;
-      
+
     case 'medium':
       // Both teams get medium declarations
       gameState.players[0].hand = hands.mediumHand;
@@ -166,7 +169,7 @@ export const injectTestHands = (gameState: any, scenario: 'strong' | 'medium' | 
       gameState.players[1].hand = hands.mediumHand;
       gameState.players[3].hand = hands.weakHand;
       break;
-      
+
     case 'weak':
       // All players get weak/no declarations
       gameState.players[0].hand = hands.weakHand;
@@ -174,7 +177,7 @@ export const injectTestHands = (gameState: any, scenario: 'strong' | 'medium' | 
       gameState.players[1].hand = hands.weakHand;
       gameState.players[3].hand = hands.noDeclarationHand;
       break;
-      
+
     case 'mixed':
       // Mixed scenario for general testing
       gameState.players[0].hand = hands.strongHand;
@@ -183,6 +186,6 @@ export const injectTestHands = (gameState: any, scenario: 'strong' | 'medium' | 
       gameState.players[3].hand = hands.noDeclarationHand;
       break;
   }
-  
+
   return gameState;
 };

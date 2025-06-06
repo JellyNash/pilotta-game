@@ -34,11 +34,7 @@ const TrickPile: React.FC<TrickPileProps> = ({ teamId, position, currentTrickNum
     large: 'w-10 h-10 text-base',
     xlarge: 'w-12 h-12 text-lg'
   };
-  
-  // Piles are now positioned by parent container using center-based layout
-  // No need for absolute positioning here
-  
-  
+
   return (
     <>
       <motion.div
