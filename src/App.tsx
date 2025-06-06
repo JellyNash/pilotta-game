@@ -111,6 +111,17 @@ function GameContent() {
     }
   }, [gamePhase, lastRoundScore]);
 
+  // Automatically show the detailed scoreboard for 4 seconds after each round
+  useEffect(() => {
+    if (lastRoundScore && gamePhase !== GamePhase.GameOver) {
+      setShowDetailedScoreboard(true);
+      const timer = setTimeout(() => {
+        setShowDetailedScoreboard(false);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [lastRoundScore, gamePhase]);
+
   // Show victory celebration on game over
   useEffect(() => {
     if (gamePhase === GamePhase.GameOver && winner) {
