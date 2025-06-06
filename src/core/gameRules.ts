@@ -34,6 +34,28 @@ export function isLegalPlay(
   const leadSuit = currentTrick[0].card.suit;
   const hasLeadSuit = hasSuit(hand, leadSuit);
   const hasTrump = trumpSuit ? hasSuit(hand, trumpSuit) : false;
+  const trumpsInTrick = trumpSuit
+    ? currentTrick.filter(tc => tc.card.suit === trumpSuit).map(tc => tc.card)
+    : [];
+
+  if (trumpSuit && trumpsInTrick.length > 0 && hasTrump) {
+    // Highest trump already played in this trick
+    const highestTrump = trumpsInTrick.reduce((highest, current) =>
+      getCardStrength(current, true) > getCardStrength(highest, true) ? current : highest
+    );
+
+    const myTrumps = getCardsOfSuit(hand, trumpSuit);
+    const beatingTrumps = myTrumps.filter(t =>
+      getCardStrength(t, true) > getCardStrength(highestTrump, true)
+    );
+
+    if (beatingTrumps.length > 0) {
+      return card.suit === trumpSuit &&
+             getCardStrength(card, true) > getCardStrength(highestTrump, true);
+    }
+
+    return card.suit === trumpSuit;
+  }
   
   // Must follow suit if possible
   if (hasLeadSuit) {
@@ -42,36 +64,26 @@ export function isLegalPlay(
   
   // No lead suit - must play trump if possible
   if (hasTrump && trumpSuit) {
-    // Must play trump
     if (card.suit !== trumpSuit) {
       return false;
     }
-    
-    // Check if must overtrump
-    const trumpsInTrick = currentTrick
-      .filter(tc => tc.card.suit === trumpSuit)
-      .map(tc => tc.card);
-    
+
     if (trumpsInTrick.length > 0) {
-      // Find highest trump in trick
-      const highestTrump = trumpsInTrick.reduce((highest, current) => 
+      const highestTrump = trumpsInTrick.reduce((highest, current) =>
         getCardStrength(current, true) > getCardStrength(highest, true) ? current : highest
       );
-      
-      // Must beat it if possible
+
       const myTrumps = getCardsOfSuit(hand, trumpSuit);
-      const canBeat = myTrumps.some(t => 
+      const canBeat = myTrumps.some(t =>
         getCardStrength(t, true) > getCardStrength(highestTrump, true)
       );
-      
+
       if (canBeat) {
-        // This card must beat the highest trump
-        return card.suit === trumpSuit && 
+        return card.suit === trumpSuit &&
                getCardStrength(card, true) > getCardStrength(highestTrump, true);
       }
     }
-    
-    // Can play any trump
+
     return card.suit === trumpSuit;
   }
   
@@ -81,51 +93,47 @@ export function isLegalPlay(
 
 // Get all legal plays from a hand
 export function getLegalPlays(
-  hand: Card[], 
-  currentTrick: TrickCard[], 
+  hand: Card[],
+  currentTrick: TrickCard[],
   trumpSuit: Suit | null
 ): Card[] {
-  // Special handling for forced overtrump
-  if (currentTrick.length > 0 && trumpSuit) {
-    const leadSuit = currentTrick[0].card.suit;
-    const hasLeadSuit = hasSuit(hand, leadSuit);
-    
-    if (!hasLeadSuit) {
-      const hasTrump = hasSuit(hand, trumpSuit);
-      if (hasTrump) {
-        const trumpsInTrick = currentTrick
-          .filter(tc => tc.card.suit === trumpSuit)
-          .map(tc => tc.card);
-        
-        if (trumpsInTrick.length > 0) {
-          // Find highest trump in trick
-          const highestTrump = trumpsInTrick.reduce((highest, current) => 
-            getCardStrength(current, true) > getCardStrength(highest, true) ? current : highest
-          );
-          
-          // Get trumps that can beat it
-          const myTrumps = getCardsOfSuit(hand, trumpSuit);
-          const beatingTrumps = myTrumps.filter(t => 
-            getCardStrength(t, true) > getCardStrength(highestTrump, true)
-          );
-          
-          // If we have beating trumps, must play one
-          if (beatingTrumps.length > 0) {
-            return beatingTrumps;
-          }
-          
-          // Otherwise can play any trump
-          return myTrumps;
-        }
-        
-        // No trump in trick yet - must play trump
-        return getCardsOfSuit(hand, trumpSuit);
-      }
-    }
+  if (currentTrick.length === 0) {
+    return hand;
   }
-  
-  // Normal case - filter by legality
-  return hand.filter(card => isLegalPlay(card, hand, currentTrick, trumpSuit));
+
+  const leadSuit = currentTrick[0].card.suit;
+  const hasLeadSuit = hasSuit(hand, leadSuit);
+  const hasTrump = trumpSuit ? hasSuit(hand, trumpSuit) : false;
+  const trumpsInTrick = trumpSuit
+    ? currentTrick.filter(tc => tc.card.suit === trumpSuit).map(tc => tc.card)
+    : [];
+
+  if (trumpSuit && trumpsInTrick.length > 0 && hasTrump) {
+    const highestTrump = trumpsInTrick.reduce((highest, current) =>
+      getCardStrength(current, true) > getCardStrength(highest, true) ? current : highest
+    );
+
+    const myTrumps = getCardsOfSuit(hand, trumpSuit);
+    const beatingTrumps = myTrumps.filter(t =>
+      getCardStrength(t, true) > getCardStrength(highestTrump, true)
+    );
+
+    if (beatingTrumps.length > 0) {
+      return beatingTrumps;
+    }
+
+    return myTrumps;
+  }
+
+  if (hasLeadSuit) {
+    return getCardsOfSuit(hand, leadSuit);
+  }
+
+  if (hasTrump && trumpSuit) {
+    return getCardsOfSuit(hand, trumpSuit);
+  }
+
+  return hand;
 }
 
 // Determine the winner of a completed trick
