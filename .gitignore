@@ -144,4 +144,8 @@ dist
 
 # Build directories
 build/
-dist/\n# Screenshot outputs\nScreenshots/
+dist/
+dist-baseline/
+purged-css/
+# Screenshot outputs
+Screenshots/
