@@ -16,7 +16,8 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true,
+    open: process.env.CI ? false : true,
+    strictPort: true,
     hmr: {
       overlay: false
     }
