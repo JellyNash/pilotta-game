@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { useAppSelector } from './store/hooks';
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { startNextRound } from './store/gameSlice';
 import { GamePhase } from './core/types';
 import { gameManager } from './game/GameManager';
 import GameTable from './components/GameTable';
@@ -27,6 +28,7 @@ const DndBackend = isTouchDevice ? TouchBackend : HTML5Backend;
 
 // Inner component with game logic
 function GameContent() {
+  const dispatch = useAppDispatch();
   const gamePhase = useAppSelector(state => state.game.phase);
   const round = useAppSelector(state => state.game.round);
   const gameStarted = gamePhase !== GamePhase.GameOver && gamePhase !== GamePhase.Dealing || round > 1;
@@ -100,20 +102,27 @@ function GameContent() {
     };
   }, []);
 
-  // Show round transition when scoring phase ends
+  // Track if we've shown scoreboards for current scoring phase
+  const [scoreboardsShownForRound, setScoreboardsShownForRound] = useState<number | null>(null);
+
+  // Show round transition when scoring phase starts
   useEffect(() => {
+    // Only show scoreboards during Scoring phase, and only once per round
     if (gamePhase === GamePhase.Scoring && lastRoundScore) {
-      setShowRoundTransition(true);
-      if (lastRoundScore.contractSuccess) {
-        setShowVictoryCelebration('contract-made');
-        setTimeout(() => setShowVictoryCelebration(null), 3000);
+      // Check if this is a new scoring phase we haven't shown scoreboards for
+      const scoringKey = `${round}-${Date.now()}`;
+      if (scoreboardsShownForRound !== round) {
+        setShowRoundTransition(true);
+        setScoreboardsShownForRound(round);
+        // Contract success is already shown in RoundTransitionScreen
       }
     }
-  }, [gamePhase, lastRoundScore]);
+  }, [gamePhase, lastRoundScore, round, scoreboardsShownForRound]);
 
-  // FEATURE LOGIC: Automatically show the detailed scoreboard at the end of each round with a 1s delay, then hide after 4s (total 5s).
+  // FEATURE LOGIC: Automatically show the detailed scoreboard during scoring phase with a 1s delay, then hide after 4s (total 5s).
   useEffect(() => {
-    if (lastRoundScore && gamePhase !== GamePhase.GameOver) {
+    // Only show during Scoring phase, not during other phases
+    if (gamePhase === GamePhase.Scoring && lastRoundScore && scoreboardsShownForRound !== round) {
       const showTimer = setTimeout(() => {
         setShowDetailedScoreboard(true);
       }, 1000);
@@ -126,7 +135,7 @@ function GameContent() {
         clearTimeout(hideTimer);
       };
     }
-  }, [lastRoundScore, gamePhase]);
+  }, [gamePhase, lastRoundScore, round, scoreboardsShownForRound]);
 
   // Show victory celebration on game over
   useEffect(() => {
@@ -230,7 +239,12 @@ function GameContent() {
           <RoundTransitionScreen 
             onComplete={() => {
               setShowRoundTransition(false);
-              // Continue to next round or game over
+              // Start next round after modal closes
+              if (gamePhase === GamePhase.Scoring) {
+                dispatch(startNextRound());
+                // GameManager will handle continuing the game flow
+                setTimeout(() => gameManager.runGameFlow(), 100);
+              }
             }}
           />
         )}

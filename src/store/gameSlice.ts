@@ -532,11 +532,17 @@ const gameSlice = createSlice({
         state.teams.B.score >= state.targetScore) {
         state.phase = GamePhase.GameOver;
       } else {
-        // Next round
-        state.round++;
-        state.dealerIndex = (state.dealerIndex + 1) % 4;
-        state.phase = GamePhase.Dealing;
+        // Stay in Scoring phase - GameFlowController will handle transition
+        state.phase = GamePhase.Scoring;
       }
+    },
+
+    // Start next round after scoring phase
+    startNextRound: (state) => {
+      // Move to next round
+      state.round++;
+      state.dealerIndex = (state.dealerIndex + 1) % 4;
+      state.phase = GamePhase.Dealing;
     },
 
     // AI Adaptation
@@ -719,6 +725,7 @@ export const {
   playCard,
   completeTrick,
   completeRound,
+  startNextRound,
   updatePlayerProfile,
   clearNotification,
   addAnimatingCard,

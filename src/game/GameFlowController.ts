@@ -15,6 +15,7 @@ import {
   enableThirdTrickShowing,
   completeTrick,
   completeRound,
+  startNextRound,
   setValidMoves,
   updatePlayerProfile,
   setEarlyTermination,
@@ -459,13 +460,8 @@ export class GameFlowController {
     // Update AI profiles based on round results
     this.updateAIProfilesAfterRound();
     
-    // Pause before dealing next round so players can view the scoreboard
-    await this.delay(5500);
-
-    // Continue to next round or game over
-    if (this.getState().game.phase === GamePhase.Dealing) {
-      await this.runGameFlow();
-    }
+    // The RoundTransitionScreen will handle the 5.5s display
+    // and call startNextRound when complete
   }
 
   // AI Decision Making
