@@ -216,15 +216,6 @@ gap: var(--ph-card-gap, var(--card-gap));
   transform: rotate(-90deg);
 }
 
-/* Card size controls from Settings */
-.ph-flex-wrapper {
-  /* Responsive card scale using clamp() - smooth scaling from 0.5 to 1.0 */
-  --ph-card-scale: clamp(
-    0.5,     /* minimum scale at 320px viewport */
-    0.5 + (100vw - 320px) / 1440,  /* smooth scale based on viewport */
-    1.0      /* maximum scale at 1760px+ viewport */
-  );
-}
 
 /* Container responsive properties using clamp() */
 .ph-flex-container {
