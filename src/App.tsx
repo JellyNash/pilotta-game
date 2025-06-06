@@ -18,7 +18,6 @@ import Tutorial from './components/Tutorial';
 import VictoryCelebration from './components/VictoryCelebration';
 import DetailedScoreboard from './components/DetailedScoreboard';
 import DevTools from './components/DevTools';
-import AnnouncementDisplay from './components/AnnouncementDisplay';
 import PotpieAnalyzer from './components/PotpieAnalyzer';
 import { AccessibilityProvider, KeyboardHelp, AccessibilitySettings } from './accessibility';
 import './App.css';
@@ -198,8 +197,6 @@ function GameContent() {
         <main className="game-content">
           <GameTable />
           
-          {/* Announcement Display for Belote/Rebelote */}
-          <AnnouncementDisplay />
           
           {gamePhase === GamePhase.Bidding && (
             <div id="bidding">

@@ -133,7 +133,6 @@ npm run preview
 src/
 ├── ai/                 # AI strategies and MCTS
 ├── components/         # React components
-│   ├── BiddingAnnouncement.tsx  # Visual bid feedback
 │   ├── DeclarationManager.tsx   # Enhanced declarations
 │   └── CardSortingDemo.tsx      # Sorting demonstration
 ├── core/              # Game engine and rules
