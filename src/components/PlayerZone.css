@@ -6,13 +6,30 @@
   flex: 1 1 auto; /* Allow growing and shrinking */
   min-width: 0;
   min-height: 0;
-  width: var(--hand-container-width);
-  height: var(--hand-container-height);
+  width: auto;
+  height: auto;
   max-width: 100%;
   max-height: 100%;
   position: relative;
-  z-index: var(--z-south-player);
+  z-index: var(--z-north-player);
   overflow: visible;
+}
+
+/* Individual z-index tokens for each position */
+.player-zone-north {
+  z-index: var(--z-north-player);
+}
+
+.player-zone-east {
+  z-index: var(--z-east-player);
+}
+
+.player-zone-west {
+  z-index: var(--z-west-player);
+}
+
+.player-zone-south {
+  z-index: var(--z-south-player);
 }
 
 /* Player name positioning */
