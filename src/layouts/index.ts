@@ -2,7 +2,6 @@
 export * from './ResponsiveSystem';
 export * from './GameLayout';
 export * from './UIPositioner';
-export * from './ResponsiveCardHand';
 export { useResponsive, useContainerQuery, useMediaQuery, useResponsiveValue } from '../hooks/useResponsive';
 
 // Re-export commonly used types

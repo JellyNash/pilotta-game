@@ -178,6 +178,7 @@
   --announcement-icon-size: clamp(1.75rem, 4.5vw, 2.75rem);
   --announcement-spacing: clamp(60px, 8vw, 90px);
   --announcement-offset: clamp(20px, 3vw, 30px);
+  --announcement-border-width: var(--border-thin);
 
   /* ===== CARD SYSTEM ===== */
   /* Card layout approach */
@@ -188,6 +189,13 @@
   --card-hover-lift: clamp(-15px, -2vw, -20px);
   --card-gap: clamp(0.5rem, 1vw, 1rem);
   --hand-offset: clamp(1rem, 2vw, 2rem);
+  --ph-card-gap: 8px;
+  --ph-container-padding: 1rem;
+  --ph-card-scale: clamp(
+    0.5,
+    0.5 + (100vw - 320px) / 1440,
+    1.0
+  );
   
   /* Card animations */
   --card-transition: var(--duration-fast) var(--ease-out);
