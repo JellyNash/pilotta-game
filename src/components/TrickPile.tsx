@@ -15,25 +15,10 @@ const TrickPile: React.FC<TrickPileProps> = ({ teamId, position, currentTrickNum
   const [showViewer, setShowViewer] = useState(false);
   const settings = useAppSelector(state => state.game.settings);
   const tricks = useAppSelector(teamId === 'A' ? selectTeamATricks : selectTeamBTricks);
-  const cardSize = settings?.cardSize || 'medium';
   const showPoints = settings?.showTrickPilePoints || false;
   
   if (tricks.length === 0) return null;
   
-  // Size classes based on card size setting
-  const sizeClasses = {
-    small: 'w-16 h-24',
-    medium: 'w-20 h-28',
-    large: 'w-24 h-32',
-    xlarge: 'w-32 h-44'
-  };
-  
-  const badgeSizes = {
-    small: 'w-6 h-6 text-xs',
-    medium: 'w-8 h-8 text-sm',
-    large: 'w-10 h-10 text-base',
-    xlarge: 'w-12 h-12 text-lg'
-  };
 
   return (
     <>
@@ -45,7 +30,13 @@ const TrickPile: React.FC<TrickPileProps> = ({ teamId, position, currentTrickNum
         onClick={() => setShowViewer(true)}
       >
         {/* Card stack visual */}
-        <div className={`relative ${sizeClasses[cardSize]}`}>
+        <div
+          className="relative"
+          style={{
+            width: 'calc(var(--card-width) * var(--card-scale) * 0.8)',
+            height: 'calc(var(--card-height) * var(--card-scale) * 0.8)'
+          }}
+        >
           {/* Shadow cards to create stack effect */}
           {tricks.slice(0, Math.min(3, tricks.length)).map((_, index) => (
             <div
@@ -77,9 +68,14 @@ const TrickPile: React.FC<TrickPileProps> = ({ teamId, position, currentTrickNum
           
           {/* Trick count badge */}
           <motion.div
-            className={`absolute -top-2 -right-2 ${badgeSizes[cardSize]} ${
+            className={`absolute -top-2 -right-2 ${
               teamId === 'A' ? 'bg-blue-500' : 'bg-red-500'
             } rounded-full flex items-center justify-center shadow-lg`}
+            style={{
+              width: 'calc(var(--card-width) * var(--card-scale) * 0.3)',
+              height: 'calc(var(--card-width) * var(--card-scale) * 0.3)',
+              fontSize: '0.75rem'
+            }}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2 }}

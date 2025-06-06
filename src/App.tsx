@@ -237,16 +237,11 @@ function GameContent() {
 
 // Main App component
 function App() {
-  // Initialize card size from localStorage on mount
+  // Initialize card scale from localStorage on mount
   useEffect(() => {
-    const savedCardSize = localStorage.getItem('cardSize');
-    const size = savedCardSize ? parseFloat(savedCardSize) : 1.0;
-    
-    // Set CSS variables for card scaling
-    document.documentElement.style.setProperty('--card-size-human', size.toString());
-    // AI players get 5% increments (20% of human scaling)
-    const aiScale = 1.0 + (size - 1.0) * 0.2;
-    document.documentElement.style.setProperty('--card-size-ai', aiScale.toString());
+    const savedCardScale = localStorage.getItem('cardScale');
+    const size = savedCardScale ? parseFloat(savedCardScale) : 1.0;
+    document.documentElement.style.setProperty('--card-scale', size.toString());
   }, []);
 
   return (
