@@ -136,6 +136,43 @@ export function evaluateHandForBidding(
   };
 }
 
+// Estimate probability that the current bidder will succeed
+// Uses a simple heuristic based on our defensive strength against
+// the proposed trump suit and the bid value.
+function estimateOpponentContractSuccess(
+  hand: Card[],
+  bid: { value: number; trump: Suit }
+): number {
+  let strength = 0;
+  let trumpCount = 0;
+  let highCardCount = 0;
+
+  for (const card of hand) {
+    if (card.suit === bid.trump) {
+      trumpCount++;
+      if (card.rank === Rank.Jack || card.rank === Rank.Nine) strength += 0.2;
+    } else {
+      if (card.rank === Rank.Ace || card.rank === Rank.Ten) {
+        highCardCount++;
+        strength += 0.1;
+      }
+    }
+  }
+
+  if (trumpCount <= 2) strength += 0.2;
+  strength += highCardCount * 0.1;
+
+  const defensiveStrength = Math.min(1, strength);
+  const bidFactor = (bid.value - 80) / 170; // Normalize 80-250 range
+
+  const probability = Math.max(
+    0,
+    Math.min(1, 0.5 + bidFactor * 0.3 - defensiveStrength * 0.4)
+  );
+
+  return probability;
+}
+
 // Decide whether to bid or pass
 export function decideBid(
   hand: Card[],
@@ -151,13 +188,21 @@ export function decideBid(
   if (gameContext) {
     const scoreDiff = gameContext.teamScore - gameContext.opponentScore;
     const closeToWin = gameContext.teamScore > gameContext.targetScore * 0.8;
-    
+
     if (scoreDiff < -50 && !closeToWin) {
       // Behind - be more aggressive
       adjustedConfidence *= 1.2;
     } else if (scoreDiff > 50 || closeToWin) {
       // Ahead or close to winning - be more conservative
       adjustedConfidence *= 0.8;
+    }
+  }
+
+  if (currentBid) {
+    const successProb = estimateOpponentContractSuccess(hand, currentBid);
+    if (successProb > 0.7) {
+      // Opponents likely to make contract - increase risk appetite
+      adjustedConfidence *= 1.2;
     }
   }
   
@@ -168,9 +213,10 @@ export function decideBid(
     return null; // Pass
   }
   
-  // If no current bid, open if confident enough
+  // If no current bid, only open with a reasonably strong hand
   if (!currentBid) {
-    if (evaluation.suggestedBid >= 80) {
+    const openThreshold = 40;
+    if (evaluation.bestSuitScore >= openThreshold) {
       return { bid: evaluation.suggestedBid, trump: evaluation.bestSuit };
     }
     return null;
@@ -182,6 +228,15 @@ export function decideBid(
   // Check if we can outbid with our preferred suit
   if (evaluation.suggestedBid >= requiredBid) {
     return { bid: requiredBid, trump: evaluation.bestSuit };
+  }
+
+  if (currentBid) {
+    const successProb = estimateOpponentContractSuccess(hand, currentBid);
+    if (successProb > 0.7 && adjustedConfidence > minimumConfidence * 1.1) {
+      if (evaluation.bestSuitScore >= 40) {
+        return { bid: requiredBid, trump: evaluation.bestSuit };
+      }
+    }
   }
   
   // Check other suits if desperate
