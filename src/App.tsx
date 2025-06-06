@@ -255,9 +255,18 @@ function GameContent() {
 function App() {
   // Initialize card scale from localStorage on mount
   useEffect(() => {
-    const savedCardScale = localStorage.getItem('cardScale');
-    const size = savedCardScale ? parseFloat(savedCardScale) : 1.0;
-    document.documentElement.style.setProperty('--card-scale', size.toString());
+    const root = document.documentElement;
+    const savedCardScale = parseFloat(localStorage.getItem('cardScale') || '1');
+    root.style.setProperty('--card-scale', savedCardScale.toString());
+
+    const southSize = parseFloat(localStorage.getItem('southCardSize') || '0.8');
+    root.style.setProperty('--south-card-size', southSize.toString());
+    const southSpacing = parseFloat(localStorage.getItem('southCardSpacing') || '0.5');
+    root.style.setProperty('--south-card-spacing', southSpacing.toString());
+    const aiSize = parseFloat(localStorage.getItem('aiCardSize') || '0.75');
+    root.style.setProperty('--ai-card-size', aiSize.toString());
+    const aiSpacing = parseFloat(localStorage.getItem('aiCardSpacing') || '1');
+    root.style.setProperty('--ai-card-spacing', aiSpacing.toString());
   }, []);
 
   return (

@@ -38,8 +38,10 @@
   --card-shadow-blur: clamp(8px, 1vw, 16px);
   /* Global scale applied to all card elements */
   --card-scale: 1;
-  /* AI players slightly smaller than human controlled cards */
-  --ai-card-scale: calc(0.8 + 0.2 * var(--card-scale));
+  /* Base size multiplier for AI and pile cards */
+  --ai-card-size: 0.75;
+  /* Computed scale for AI cards */
+  --ai-card-scale: calc(var(--ai-card-size) * var(--card-scale));
   
   /* Button dimensions */
   --button-height: clamp(2rem, 5vw, 3rem);
@@ -215,10 +217,11 @@
     1.0
   );
   /* Quantifiable sizing for south player's hand */
-  --south-card-size: 0.8;      /* Multiplier for card dimensions */
-  --north-card-size: 0.75;     /* Multiplier for north player's cards */
-  --side-card-size: 0.6;       /* Multiplier for east/west players */
+  --south-card-size: 0.8;      /* Multiplier for south player cards */
   --south-card-spacing: 0.5;   /* Multiplier for arc rotation step */
+  --ai-card-spacing: 1;        /* Overlap scale for north/east/west */
+  --north-card-size: var(--ai-card-size);   /* AI player cards */
+  --side-card-size: var(--ai-card-size);    /* East/West cards */
 
   /* Arc layout variables for PlayerHandFlex */
   --ph-arc-rotation-base: -17.5deg; /* starting rotation for leftmost card */
@@ -260,7 +263,8 @@
   
   /* ===== TRICK PILE VIEWER ===== */
   --trick-pile-width: clamp(200px, 40vw, 400px);
-  --trick-pile-card-size: clamp(60px, 8vw, 100px);
+  /* Size of cards in trick pile viewer */
+  --trick-pile-card-size: calc(var(--card-width) * var(--ai-card-size));
   --trick-pile-padding: clamp(1rem, 2vw, 2rem);
   --trick-pile-gap: clamp(0.5rem, 1vw, 1rem);
   
