@@ -1,4 +1,4 @@
-.bidding-interface-modal {
+.bidding-modal-wrapper {
   position: fixed;
   inset: 0;
   display: flex;
@@ -56,6 +56,27 @@
 
 .bid-actions {
   gap: clamp(0.5rem, 1vw, 1rem);
+}
+
+.bid-section {
+  padding: var(--bid-section-padding);
+}
+
+.bid-number-display {
+  min-width: var(--bid-display-width);
+  height: var(--bid-history-height);
+}
+
+.bid-text-primary {
+  font-size: var(--fs-xl);
+}
+
+.bid-text-large {
+  font-size: var(--fs-2xl);
+}
+
+.bid-shadow-glow {
+  box-shadow: var(--shadow-glow-md);
 }
 
 .bid-button {

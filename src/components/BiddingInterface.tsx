@@ -281,7 +281,7 @@ const BiddingInterface: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+        className="bidding-modal-wrapper pointer-events-none fixed inset-0 flex items-center justify-center"
       >
         <div className="bg-slate-800/90 backdrop-blur-md rounded-xl p-6 shadow-2xl pointer-events-auto">
           <p className="text-slate-300 text-lg">
@@ -297,7 +297,7 @@ const BiddingInterface: React.FC = () => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className="fixed inset-0 flex items-center justify-center z-50"
+      className="bidding-modal-wrapper fixed inset-0 flex items-center justify-center"
     >
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/40 pointer-events-auto" />
