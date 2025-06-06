@@ -58,7 +58,9 @@ const DevTools: React.FC = () => {
   const skipToTrick = (trickNumber: number) => {
     // This would require more complex state manipulation
     // For now, just log the intention
-    console.log(`Skip to trick ${trickNumber} - requires manual play through`);
+    if (import.meta.env.DEV) {
+      console.log(`Skip to trick ${trickNumber} - requires manual play through`);
+    }
   };
 
   if (!showDevTools) {

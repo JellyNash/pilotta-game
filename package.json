@@ -2,6 +2,7 @@
   "name": "pilotta-game",
   "private": true,
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:css": "stylelint 'src/**/*.css'",
-    "test:visual": "node test-visual-regression.cjs"
+    "test": "playwright test",
+    "test:visual": "playwright test tests/responsive-screenshots.spec.ts"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
@@ -39,6 +41,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.32",
     "puppeteer": "^24.10.0",
+    "@playwright/test": "^1.39.0",
     "stylelint": "^16.20.0",
     "stylelint-config-standard": "^38.0.0",
     "tailwindcss": "^3.3.0",

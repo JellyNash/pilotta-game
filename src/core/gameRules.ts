@@ -404,16 +404,18 @@ export function calculateRoundScore(
     }
     
     // Debug logging for contract failure scoring
-    console.log('Contract Failed Scoring Debug:', {
-      contractTeam,
-      defendingTeam,
-      contractValue: contract.value,
-      contractBonus,
-      teamAPointsBefore: totalPoints.A,
-      teamBPointsBefore: totalPoints.B,
-      allPoints,
-      finalDefendingPoints: contractBonus + allPoints
-    });
+    if (import.meta.env.DEV) {
+      console.log('Contract Failed Scoring Debug:', {
+        contractTeam,
+        defendingTeam,
+        contractValue: contract.value,
+        contractBonus,
+        teamAPointsBefore: totalPoints.A,
+        teamBPointsBefore: totalPoints.B,
+        allPoints,
+        finalDefendingPoints: contractBonus + allPoints
+      });
+    }
     
     // Contract team gets 0 points
     totalPoints[contractTeam] = 0;
@@ -459,13 +461,15 @@ export function calculateRoundScore(
   if (!contractMade) {
     finalPoints[contractTeam] = 0;
     
-    console.log('Final Contract Failed Scores:', {
-      contractTeam,
-      defendingTeam,
-      finalPointsA: finalPoints.A,
-      finalPointsB: finalPoints.B,
-      contractMade: false
-    });
+    if (import.meta.env.DEV) {
+      console.log('Final Contract Failed Scores:', {
+        contractTeam,
+        defendingTeam,
+        finalPointsA: finalPoints.A,
+        finalPointsB: finalPoints.B,
+        contractMade: false
+      });
+    }
   }
   
   return {
