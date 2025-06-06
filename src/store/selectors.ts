@@ -27,14 +27,16 @@ export const selectTrumpSuit = (state: RootState) => state.game.trumpSuit;
 export const selectCurrentTrick = (state: RootState) => state.game.currentTrick;
 export const selectContract = (state: RootState) => state.game.contract;
 
+export const selectCompletedTricks = (state: RootState) => state.game.completedTricks;
+
 // Valid moves selector
 export const selectValidMovesForCurrentPlayer = createSelector(
-  [selectCurrentPlayer, selectCurrentTrick, selectTrumpSuit, selectContract],
-  (currentPlayer, currentTrick, trumpSuit, contract) => {
-    if (!currentPlayer || !currentPlayer.hand || !trumpSuit || !contract) {
+  [selectCurrentPlayer, selectCurrentTrick, selectTrumpSuit],
+  (currentPlayer, currentTrick, trumpSuit) => {
+    if (!currentPlayer || !currentPlayer.hand || !trumpSuit) {
       return [];
     }
-    return getLegalPlays(currentPlayer.hand, currentTrick, trumpSuit, contract);
+    return getLegalPlays(currentPlayer.hand, currentTrick, trumpSuit);
   }
 );
 
@@ -62,6 +64,16 @@ export const selectTeamScores = createSelector(
     teamA: scores.team1,
     teamB: scores.team2
   })
+);
+
+export const selectTeamATricks = createSelector(
+  [selectCompletedTricks],
+  (tricks) => tricks.filter(t => t.winner?.teamId === 'A')
+);
+
+export const selectTeamBTricks = createSelector(
+  [selectCompletedTricks],
+  (tricks) => tricks.filter(t => t.winner?.teamId === 'B')
 );
 
 // Game state summary selector

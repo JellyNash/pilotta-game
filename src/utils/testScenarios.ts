@@ -1,4 +1,4 @@
-import { Card, Suit, Rank, Declaration, DeclarationType } from '../core/types';
+import { Card, Suit, Rank, DeclarationType } from '../core/types';
 
 // Test scenarios for declaration system testing
 
@@ -37,26 +37,26 @@ export const createTestDeclarations = () => {
   return {
     strongDeclarations: {
       fourJacks: {
-        type: DeclarationType.FourOfAKind,
+        type: DeclarationType.Carre,
         cards: fourJacks,
         points: 200
       },
       fourNines: {
-        type: DeclarationType.FourOfAKind,
+        type: DeclarationType.Carre,
         cards: fourNines,
         points: 150
       }
     },
     mediumDeclarations: {
       sequence4: {
-        type: DeclarationType.Sequence,
+        type: DeclarationType.Quarte,
         cards: sequence4,
         points: 50
       }
     },
     weakDeclarations: {
       sequence3: {
-        type: DeclarationType.Sequence,
+        type: DeclarationType.Tierce,
         cards: sequence3,
         points: 20
       }

@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trick } from '../core/types';
-import Card from './Card';
 import TrickPileViewer from './TrickPileViewer';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
+import { selectTeamATricks, selectTeamBTricks } from '../store/selectors';
 
 interface TrickPileProps {
-  tricks: Trick[];
   teamId: 'A' | 'B';
   position: 'north' | 'east' | 'south' | 'west';
   currentTrickNumber: number;
   isLastTrickPile?: boolean;
 }
 
-const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, currentTrickNumber, isLastTrickPile = false }) => {
+const TrickPile: React.FC<TrickPileProps> = ({ teamId, position, currentTrickNumber, isLastTrickPile = false }) => {
   const [showViewer, setShowViewer] = useState(false);
-  const settings = useSelector((state: RootState) => state.game.settings);
+  const settings = useAppSelector(state => state.game.settings);
+  const tricks = useAppSelector(teamId === 'A' ? selectTeamATricks : selectTeamBTricks);
   const cardSize = settings?.cardSize || 'medium';
   const showPoints = settings?.showTrickPilePoints || false;
   
@@ -40,8 +38,6 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
   // Piles are now positioned by parent container using center-based layout
   // No need for absolute positioning here
   
-  // Get team color
-  const teamColor = teamId === 'A' ? 'blue' : 'red';
   
   return (
     <>
