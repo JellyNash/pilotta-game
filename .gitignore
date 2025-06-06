@@ -149,3 +149,8 @@ dist-baseline/
 purged-css/
 # Screenshot outputs
 Screenshots/
+
+# Playwright test results
+test-results/
+playwright-report/
+tests/screenshots/

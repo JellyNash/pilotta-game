@@ -20,6 +20,18 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const [cardSize, setCardSize] = useState<number>(
     parseFloat(localStorage.getItem('cardScale') || '1.0')  // Default to 1.0 (100%)
   );
+  const [southCardSize, setSouthCardSize] = useState<number>(
+    parseFloat(localStorage.getItem('southCardSize') || '0.8')
+  );
+  const [southCardSpacing, setSouthCardSpacing] = useState<number>(
+    parseFloat(localStorage.getItem('southCardSpacing') || '0.5')
+  );
+  const [aiCardSize, setAICardSize] = useState<number>(
+    parseFloat(localStorage.getItem('aiCardSize') || '0.75')
+  );
+  const [aiCardSpacing, setAICardSpacing] = useState<number>(
+    parseFloat(localStorage.getItem('aiCardSpacing') || '1')
+  );
   const [showTrickPilePoints, setShowTrickPilePoints] = useState(gameSettings?.showTrickPilePoints || false);
   const [rightClickZoom, setRightClickZoom] = useState(gameSettings?.rightClickZoom ?? true);
 
@@ -42,6 +54,34 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
 
     dispatch(updateSettings({ cardScale: size }));
     gameManager.setCardScale(size);
+  };
+
+  const handleSouthCardSizeChange = (size: number) => {
+    setSouthCardSize(size);
+    localStorage.setItem('southCardSize', size.toString());
+    document.documentElement.style.setProperty('--south-card-size', size.toString());
+    dispatch(updateSettings({ southCardSize: size }));
+  };
+
+  const handleSouthCardSpacingChange = (spacing: number) => {
+    setSouthCardSpacing(spacing);
+    localStorage.setItem('southCardSpacing', spacing.toString());
+    document.documentElement.style.setProperty('--south-card-spacing', spacing.toString());
+    dispatch(updateSettings({ southCardSpacing: spacing }));
+  };
+
+  const handleAICardSizeChange = (size: number) => {
+    setAICardSize(size);
+    localStorage.setItem('aiCardSize', size.toString());
+    document.documentElement.style.setProperty('--ai-card-size', size.toString());
+    dispatch(updateSettings({ aiCardSize: size }));
+  };
+
+  const handleAICardSpacingChange = (spacing: number) => {
+    setAICardSpacing(spacing);
+    localStorage.setItem('aiCardSpacing', spacing.toString());
+    document.documentElement.style.setProperty('--ai-card-spacing', spacing.toString());
+    dispatch(updateSettings({ aiCardSpacing: spacing }));
   };
 
   const handleShowTrickPilePointsChange = (show: boolean) => {
@@ -183,8 +223,64 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                         </button>
                       ))}
                     </div>
+                </div>
+              </div>
+                {/* Hand Layout Settings */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">Hand Layout</h3>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-2">South Card Size</label>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="1.2"
+                        step="0.05"
+                        value={southCardSize}
+                        onChange={(e) => handleSouthCardSizeChange(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-2">South Card Spacing</label>
+                      <input
+                        type="range"
+                        min="0.3"
+                        max="1"
+                        step="0.05"
+                        value={southCardSpacing}
+                        onChange={(e) => handleSouthCardSpacingChange(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-2">AI Card Size</label>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="1.2"
+                        step="0.05"
+                        value={aiCardSize}
+                        onChange={(e) => handleAICardSizeChange(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-2">AI Card Spacing</label>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="1.5"
+                        step="0.05"
+                        value={aiCardSpacing}
+                        onChange={(e) => handleAICardSpacingChange(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                    </div>
                   </div>
                 </div>
+
                 {/* Sound Settings */}
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-4">Sound</h3>

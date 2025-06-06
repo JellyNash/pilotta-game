@@ -460,8 +460,8 @@ export class GameFlowController {
     this.updateAIProfilesAfterRound();
     
     // Pause before dealing next round so players can view the scoreboard
-    await this.delay(4000);
-    
+    await this.delay(5500);
+
     // Continue to next round or game over
     if (this.getState().game.phase === GamePhase.Dealing) {
       await this.runGameFlow();

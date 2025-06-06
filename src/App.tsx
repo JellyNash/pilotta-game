@@ -111,14 +111,20 @@ function GameContent() {
     }
   }, [gamePhase, lastRoundScore]);
 
-  // Automatically show the detailed scoreboard for 4 seconds after each round
+  // FEATURE LOGIC: Automatically show the detailed scoreboard at the end of each round with a 1s delay, then hide after 4s (total 5s).
   useEffect(() => {
     if (lastRoundScore && gamePhase !== GamePhase.GameOver) {
-      setShowDetailedScoreboard(true);
-      const timer = setTimeout(() => {
+      const showTimer = setTimeout(() => {
+        setShowDetailedScoreboard(true);
+      }, 1000);
+      const hideTimer = setTimeout(() => {
         setShowDetailedScoreboard(false);
-      }, 4000);
-      return () => clearTimeout(timer);
+      }, 5000); // 1s delay then visible for 4s
+
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+      };
     }
   }, [lastRoundScore, gamePhase]);
 
@@ -207,7 +213,6 @@ function GameContent() {
         <main className="game-content">
           <GameTable />
           
-          
           {gamePhase === GamePhase.Bidding && (
             <div id="bidding">
               <BiddingInterface />
@@ -250,9 +255,18 @@ function GameContent() {
 function App() {
   // Initialize card scale from localStorage on mount
   useEffect(() => {
-    const savedCardScale = localStorage.getItem('cardScale');
-    const size = savedCardScale ? parseFloat(savedCardScale) : 1.0;
-    document.documentElement.style.setProperty('--card-scale', size.toString());
+    const root = document.documentElement;
+    const savedCardScale = parseFloat(localStorage.getItem('cardScale') || '1');
+    root.style.setProperty('--card-scale', savedCardScale.toString());
+
+    const southSize = parseFloat(localStorage.getItem('southCardSize') || '0.8');
+    root.style.setProperty('--south-card-size', southSize.toString());
+    const southSpacing = parseFloat(localStorage.getItem('southCardSpacing') || '0.5');
+    root.style.setProperty('--south-card-spacing', southSpacing.toString());
+    const aiSize = parseFloat(localStorage.getItem('aiCardSize') || '0.75');
+    root.style.setProperty('--ai-card-size', aiSize.toString());
+    const aiSpacing = parseFloat(localStorage.getItem('aiCardSpacing') || '1');
+    root.style.setProperty('--ai-card-spacing', aiSpacing.toString());
   }, []);
 
   return (

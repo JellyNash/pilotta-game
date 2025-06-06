@@ -24,7 +24,7 @@
 .ph-flex-wrapper[data-position="north"],
 .ph-flex-wrapper[data-position="east"],
 .ph-flex-wrapper[data-position="west"] {
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Flex container for cards */
@@ -133,10 +133,12 @@
 
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
   flex: 0 0 auto;
-  width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * 0.7);
+
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * var(--north-card-size));
+  width: var(--dynamic-card-width);
 
   /* Negative margin for overlap - using compact ratio */
-  margin-right: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact)));
+  margin-right: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact) * var(--ai-card-spacing)));
 }
 
 /* Last card shouldn't have negative margin */
@@ -146,7 +148,7 @@
 
 /* Dynamic overlap based on card count for North player */
 .ph-flex-wrapper[data-position="north"][data-card-count="8"] .ph-flex-card {
-  margin-right: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-tight)));
+  margin-right: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-tight) * var(--ai-card-spacing)));
 }
 
 /* EAST/WEST PLAYERS - Vertical flex with rotation */
@@ -161,11 +163,14 @@
 .ph-flex-wrapper[data-position="east"] .ph-flex-card,
 .ph-flex-wrapper[data-position="west"] .ph-flex-card {
   flex: 0 0 auto;
-  width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * 0.5);
-  height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * 0.5);
+
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * var(--side-card-size));
+  --dynamic-card-height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * var(--side-card-size));
+  width: var(--dynamic-card-width);
+  height: var(--dynamic-card-height);
 
   /* Negative margin to create overlap - using compact ratio */
-  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact)));
+  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact) * var(--ai-card-spacing)));
 }
 
 /* Last card shouldn't have negative margin */
@@ -177,7 +182,7 @@
 /* Dynamic overlap based on card count for East/West players */
 .ph-flex-wrapper[data-position="east"][data-card-count="8"] .ph-flex-card,
 .ph-flex-wrapper[data-position="west"][data-card-count="8"] .ph-flex-card {
-  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-tight)));
+  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-tight) * var(--ai-card-spacing)));
 }
 
 .ph-flex-wrapper[data-position="east"] .ph-flex-card {
@@ -196,12 +201,12 @@
 
 /* Responsive card overlap using clamp() - fixed at 50% */
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
-  margin-right: calc(var(--dynamic-card-width) * -0.5);
+  margin-right: calc(var(--dynamic-card-width) * -0.5 * var(--ai-card-spacing));
 }
 
 .ph-flex-wrapper[data-position="east"] .ph-flex-card,
 .ph-flex-wrapper[data-position="west"] .ph-flex-card {
-  margin-bottom: calc(var(--dynamic-card-height) * -0.5);
+  margin-bottom: calc(var(--dynamic-card-height) * -0.5 * var(--ai-card-spacing));
 }
 
 /* Responsive arc effect for south player using clamp() and --card-index */
@@ -315,7 +320,7 @@
 @media (width <= 400px) {
   /* South player - more overlap for 8 cards */
   .ph-flex-wrapper[data-position="south"] .ph-flex-card {
-    margin-right: calc(var(--dynamic-card-width) * -0.4);
+    margin-right: calc(var(--dynamic-card-width) * -0.4 * var(--ai-card-spacing));
   }
   
   /* Reduce arc effect on very small screens */
@@ -326,7 +331,7 @@
   
   /* North player - extreme overlap */
   .ph-flex-wrapper[data-position="north"] .ph-flex-card {
-    margin-right: calc(var(--dynamic-card-width) * -0.6);
+    margin-right: calc(var(--dynamic-card-width) * -0.6 * var(--ai-card-spacing));
   }
 }
 
