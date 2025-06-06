@@ -21,6 +21,13 @@ The project has successfully completed a comprehensive responsive design overhau
 - Single source of truth in tokens.css
 - Modern CSS architecture with @layer system
 - Basic accessibility restored (keyboard nav, ARIA labels)
+- Removed obsolete `ResponsiveCardHand.css` and cleaned built asset directories
+  (`dist-baseline/` and `purged-css/`)
+- Added tokens `--announcement-border-width`, `--ph-card-gap`,
+  `--ph-container-padding` and `--ph-card-scale` for unified spacing and scale
+  control
+- `PlayerHandFlex` now relies on these tokens for its gap, container padding and
+  card scaling
 
 **Documentation Created**:
 - `RESPONSIVE_FIXES_IMPLEMENTED.md` - Complete implementation summary
