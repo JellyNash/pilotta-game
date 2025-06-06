@@ -359,7 +359,7 @@ export function calculateRoundScore(
   const teamBTricks = gameState.completedTricks.filter(t => t.winner.teamId === 'B').length;
   
   // Calculate total points for each team
-  let totalPoints = {
+  const totalPoints = {
     A: 0,
     B: 0
   };
@@ -438,7 +438,7 @@ export function calculateRoundScore(
   const remainderA = totalPoints.A % 10;
   const remainderB = totalPoints.B % 10;
   
-  let finalPoints = {
+  const finalPoints = {
     A: Math.floor(totalPoints.A / 10),
     B: Math.floor(totalPoints.B / 10)
   };

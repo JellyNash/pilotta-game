@@ -121,7 +121,13 @@ const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClo
         {/* Main content */}
         <div className="tpv-body">
           {/* Cross layout container */}
-          <div className="tpv-cross-container">
+          <div
+            className="tpv-cross-container"
+            style={{
+              '--card-width': 'var(--trick-pile-card-size)',
+              '--card-height': 'var(--trick-pile-card-size)'
+            } as React.CSSProperties}
+          >
             {/* Center table decoration */}
             <div className="tpv-table-center">
               <div className="tpv-table-circle" />

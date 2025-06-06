@@ -23,8 +23,8 @@
 /* Flex container for cards */
 .ph-flex-container {
   display: flex;
-  flex-flow: row nowrap; /* Keep cards in single row */
-  gap: var(--ph-card-gap, 8px);
+flex-flow: row nowrap; /* Keep cards in single row */
+gap: var(--ph-card-gap, var(--card-gap));
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -45,16 +45,8 @@
   position: relative;
   
   /* Dynamic card dimensions with min/max constraints */
-  --dynamic-card-width: clamp(
-    60px,
-    calc(var(--card-width) * var(--ph-card-scale)),
-    120px
-  );
-  --dynamic-card-height: clamp(
-    84px,
-    calc(var(--card-height) * var(--ph-card-scale)),
-    168px
-  );
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale));
+  --dynamic-card-height: calc(var(--card-height) * var(--ph-card-scale));
   
   width: var(--dynamic-card-width);
   height: var(--dynamic-card-height);
@@ -236,7 +228,7 @@
 
 /* Container responsive properties using clamp() */
 .ph-flex-container {
-  gap: clamp(0px, 0.5vw, 8px);
+  gap: clamp(0px, 0.5vw, var(--card-gap));
   padding: clamp(0.5rem, 1vw, 1rem);
 }
 
@@ -333,8 +325,16 @@
 /* Container query support for dynamic card sizing */
 @container (max-width: 400px) {
   .ph-flex-card {
-    --dynamic-card-width: clamp(45px, 10vw, 60px);
-    --dynamic-card-height: clamp(63px, 14vw, 84px);
+    --dynamic-card-width: clamp(
+      calc(var(--card-width) * 0.75),
+      10vw,
+      var(--card-width)
+    );
+    --dynamic-card-height: clamp(
+      calc(var(--card-height) * 0.75),
+      14vw,
+      var(--card-height)
+    );
   }
 }
 
