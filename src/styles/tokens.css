@@ -36,6 +36,10 @@
   --card-height: clamp(84px, 14vw, 168px);
   --card-corner-radius: clamp(4px, 0.8vw, 12px);
   --card-shadow-blur: clamp(8px, 1vw, 16px);
+  /* Global scale applied to all card elements */
+  --card-scale: 1;
+  /* AI players slightly smaller than human controlled cards */
+  --ai-card-scale: calc(0.8 + 0.2 * var(--card-scale));
   
   /* Button dimensions */
   --button-height: clamp(2rem, 5vw, 3rem);

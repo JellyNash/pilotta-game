@@ -43,13 +43,13 @@
 
 /* Override card dimensions in trick area based on who played them */
 .trick-card-south {
-  --card-width-base: calc(120px * var(--card-size-human, 1));
-  --card-height-base: calc(168px * var(--card-size-human, 1));
+  --card-width-base: calc(120px * var(--card-scale));
+  --card-height-base: calc(168px * var(--card-scale));
 }
 
 .trick-card-north,
 .trick-card-east,
 .trick-card-west {
-  --card-width-base: calc(120px * var(--card-size-ai, 1));
-  --card-height-base: calc(168px * var(--card-size-ai, 1));
+  --card-width-base: calc(120px * var(--ai-card-scale));
+  --card-height-base: calc(168px * var(--ai-card-scale));
 }

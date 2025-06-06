@@ -45,8 +45,8 @@ gap: var(--ph-card-gap, var(--card-gap));
   position: relative;
   
   /* Dynamic card dimensions with min/max constraints */
-  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale));
-  --dynamic-card-height: calc(var(--card-height) * var(--ph-card-scale));
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale));
+  --dynamic-card-height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale));
   
   width: var(--dynamic-card-width);
   height: var(--dynamic-card-height);
@@ -159,12 +159,13 @@ gap: var(--ph-card-gap, var(--card-gap));
   justify-content: center;
 }
 
+
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
   flex: 0 0 auto;
-  width: calc(var(--card-width) * var(--ph-card-scale) * 0.7);
+  width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * 0.7);
 
   /* Negative margin for overlap - using compact ratio */
-  margin-right: calc(var(--card-width) * var(--ph-card-scale) * calc(-1 * var(--card-overlap-compact)));
+  margin-right: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact)));
 }
 
 /* Last card shouldn't have negative margin */
@@ -174,7 +175,7 @@ gap: var(--ph-card-gap, var(--card-gap));
 
 /* Dynamic overlap based on card count for North player */
 .ph-flex-wrapper[data-position="north"][data-card-count="8"] .ph-flex-card {
-  margin-right: calc(var(--card-width) * var(--ph-card-scale) * calc(-1 * var(--card-overlap-tight)));
+  margin-right: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-tight)));
 }
 
 /* EAST/WEST PLAYERS - Vertical flex with rotation */
@@ -189,11 +190,11 @@ gap: var(--ph-card-gap, var(--card-gap));
 .ph-flex-wrapper[data-position="east"] .ph-flex-card,
 .ph-flex-wrapper[data-position="west"] .ph-flex-card {
   flex: 0 0 auto;
-  width: calc(var(--card-width) * var(--ph-card-scale) * 0.5);
-  height: calc(var(--card-height) * var(--ph-card-scale) * 0.5);
+  width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * 0.5);
+  height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * 0.5);
 
   /* Negative margin to create overlap - using compact ratio */
-  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * calc(-1 * var(--card-overlap-compact)));
+  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact)));
 }
 
 /* Last card shouldn't have negative margin */
@@ -205,7 +206,7 @@ gap: var(--ph-card-gap, var(--card-gap));
 /* Dynamic overlap based on card count for East/West players */
 .ph-flex-wrapper[data-position="east"][data-card-count="8"] .ph-flex-card,
 .ph-flex-wrapper[data-position="west"][data-card-count="8"] .ph-flex-card {
-  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * calc(-1 * var(--card-overlap-tight)));
+  margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-tight)));
 }
 
 .ph-flex-wrapper[data-position="east"] .ph-flex-card {

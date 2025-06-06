@@ -2,7 +2,6 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrickCard } from '../core/types';
 import Card from './Card';
-import { useAppSelector } from '../store/hooks';
 
 interface TrickAreaProps {
   currentTrick: TrickCard[];
@@ -11,7 +10,6 @@ interface TrickAreaProps {
 }
 
 const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trickWinner }) => {
-  const cardSize = useAppSelector(state => state.game.settings?.cardSize || 'medium');
   
   
   
@@ -134,7 +132,6 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
             >
               <Card
                 card={trickCard.card}
-                size={cardSize as 'small' | 'medium' | 'large' | 'xlarge'}
                 className="shadow-2xl"
               />
               
