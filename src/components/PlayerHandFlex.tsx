@@ -63,9 +63,10 @@ const PlayerHandFlex: React.FC<PlayerHandFlexProps> = ({
           const isHovered = hoveredCardId === card.id;
           const isKeyboardSelected = position === 'south' && isKeyboardNavigationActive && selectedCardIndex === index;
           
-          // Only pass the card index for z-index calculation
+          // Pass centered index for transform calculations
+          const centerOffset = (sortedCards.length - 1) / 2;
           const cardStyle = {
-            '--card-index': index,
+            '--card-index': index - centerOffset,
           } as React.CSSProperties;
           
           return (
