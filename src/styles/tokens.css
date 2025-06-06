@@ -211,6 +211,9 @@
     0.5 + (100vw - 320px) / 1440,
     1.0
   );
+  /* Quantifiable sizing for south player's hand */
+  --south-card-size: 0.8;      /* Multiplier for card dimensions */
+  --south-card-spacing: 0.5;   /* Multiplier for arc rotation step */
 
   /* Arc layout variables for PlayerHandFlex */
   --ph-arc-rotation-base: -17.5deg; /* starting rotation for leftmost card */
@@ -219,6 +222,7 @@
   --ph-arc-lift-mid: 20px;          /* next inner card lift */
   --ph-arc-lift-low: 10px;          /* inner card lift */
   --ph-arc-lift-min: 5px;           /* center card lift */
+  --ph-arc-lift-step: 8px;          /* step used for index formula */
   
   /* Card animations */
   --card-transition: var(--duration-fast) var(--ease-out);

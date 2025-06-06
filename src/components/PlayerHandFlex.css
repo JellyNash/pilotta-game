@@ -20,6 +20,13 @@
   padding: var(--space-xs); /* Add small padding to prevent edge clipping */
 }
 
+/* Ensure AI hands stay within relative area */
+.ph-flex-wrapper[data-position="north"],
+.ph-flex-wrapper[data-position="east"],
+.ph-flex-wrapper[data-position="west"] {
+  overflow: hidden;
+}
+
 /* Flex container for cards */
 .ph-flex-container {
   display: flex;
@@ -79,78 +86,41 @@ gap: var(--ph-card-gap, var(--card-gap));
   min-width: 0;
 }
 
+.ph-flex-wrapper[data-position="south"] {
+  --adjusted-rotation-step: calc(var(--ph-arc-rotation-step) * var(--south-card-spacing));
+}
+
 .ph-flex-wrapper[data-position="south"] .ph-flex-card {
-  /* Each card gets transform for arc position */
+  /* Apply south specific size */
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * var(--south-card-size));
+  --dynamic-card-height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * var(--south-card-size));
+
+  /* Each card gets transform for arc position using --card-index */
   transform-origin: center bottom;
-}
-
-/* Arc transforms for each card position */
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1) {
   transform:
-    rotateZ(var(--ph-arc-rotation-base))
-    translateY(var(--ph-arc-lift-max));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(2) {
-  transform:
-    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step)))
-    translateY(var(--ph-arc-lift-mid));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(3) {
-  transform:
-    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 2))
-    translateY(var(--ph-arc-lift-low));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(4) {
-  transform:
-    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 3))
-    translateY(var(--ph-arc-lift-min));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(5) {
-  transform:
-    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 4))
-    translateY(var(--ph-arc-lift-min));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(6) {
-  transform:
-    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 5))
-    translateY(var(--ph-arc-lift-low));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(7) {
-  transform:
-    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 6))
-    translateY(var(--ph-arc-lift-mid));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) {
-  transform:
-    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 7))
-    translateY(var(--ph-arc-lift-max));
+    rotateZ(calc(var(--adjusted-rotation-step) * var(--card-index)))
+    translateY(
+      calc(
+        var(--ph-arc-lift-min) +
+        var(--ph-arc-lift-step) * max(var(--card-index), calc(-1 * var(--card-index)))
+      )
+    );
 }
 
 /* Hover states */
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:hover {
   z-index: var(--z-card-hover);
-  transform: 
-    rotateZ(var(--hover-rotation, 0deg))
-    translateY(calc(var(--hover-y, 0px) - 20px))
+
+  --hover-rotation: calc(var(--adjusted-rotation-step) * var(--card-index));
+  --hover-y: calc(
+    var(--ph-arc-lift-min) +
+    var(--ph-arc-lift-step) * max(var(--card-index), calc(-1 * var(--card-index)))
+  );
+  transform:
+    rotateZ(var(--hover-rotation))
+    translateY(calc(var(--hover-y) - 20px))
     scale(1.05);
 }
-
-/* Set hover rotation values */
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1):hover { --hover-rotation: var(--ph-arc-rotation-base); --hover-y: var(--ph-arc-lift-max); }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(2):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step)); --hover-y: var(--ph-arc-lift-mid); }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(3):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 2); --hover-y: var(--ph-arc-lift-low); }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(4):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 3); --hover-y: var(--ph-arc-lift-min); }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(5):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 4); --hover-y: var(--ph-arc-lift-min); }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(6):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 5); --hover-y: var(--ph-arc-lift-low); }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(7):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 6); --hover-y: var(--ph-arc-lift-mid); }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 7); --hover-y: var(--ph-arc-lift-max); }
 
 /* NORTH PLAYER - Compact horizontal layout */
 .ph-flex-wrapper[data-position="north"] .ph-flex-container {
@@ -234,22 +204,34 @@ gap: var(--ph-card-gap, var(--card-gap));
   margin-bottom: calc(var(--dynamic-card-height) * -0.5);
 }
 
-/* Responsive arc effect for south player using clamp() */
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1) {
-  transform: rotateZ(clamp(-12deg, -20deg + 8deg * (100vw - 320px) / 800, -20deg)) 
-             translateY(clamp(20px, 15px + 10px * (100vw - 320px) / 800, 30px));
-}
-
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) {
-  transform: rotateZ(clamp(12deg, 20deg - 8deg * (100vw - 320px) / 800, 20deg)) 
-             translateY(clamp(20px, 15px + 10px * (100vw - 320px) / 800, 30px));
+/* Responsive arc effect for south player using clamp() and --card-index */
+.ph-flex-wrapper[data-position="south"] .ph-flex-card {
+  transform:
+    rotateZ(
+      clamp(
+        -20deg,
+        calc(var(--adjusted-rotation-step) * var(--card-index)),
+        20deg
+      )
+    )
+    translateY(
+      clamp(
+        15px,
+        calc(
+          var(--ph-arc-lift-min) +
+          var(--ph-arc-lift-step) * max(var(--card-index), calc(-1 * var(--card-index)))
+        ),
+        30px
+      )
+    );
 }
 
 /* Structural changes still need media queries */
 @media (width <= 640px) {
-  /* Reduce arc effect on mobile - keep these as discrete changes */
-  .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1) { transform: rotateZ(-12deg) translateY(20px); }
-  .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) { transform: rotateZ(12deg) translateY(20px); }
+  /* Slightly reduce south arc on small screens */
+  .ph-flex-wrapper[data-position="south"] .ph-flex-card {
+    --adjusted-rotation-step: calc(4deg * var(--south-card-spacing));
+  }
 }
 
 /* Handle overflow scenarios - EXTREME FALLBACK */
@@ -338,12 +320,9 @@ gap: var(--ph-card-gap, var(--card-gap));
   }
   
   /* Reduce arc effect on very small screens */
-  .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1) {
-    transform: rotateZ(-10deg) translateY(15px);
-  }
-
-  .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) {
-    transform: rotateZ(10deg) translateY(15px);
+  .ph-flex-wrapper[data-position="south"] .ph-flex-card {
+    --adjusted-rotation-step: calc(3deg * var(--south-card-spacing));
+    --ph-arc-lift-step: 6px;
   }
   
   /* North player - extreme overlap */

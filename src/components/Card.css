@@ -102,12 +102,19 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
+  max-width: var(--card-width);
+  max-height: var(--card-height);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .playing-card:hover:not(.card-face-down) {
   box-shadow: 0 var(--shadow-sm) var(--shadow-lg) rgba(0, 0, 0, 0.2);
   z-index: var(--z-card-hover);
   transform: translateY(-4px) translateZ(0);
+}
+
+.playing-card:active {
+  transform: scale(0.98);
 }
 
 /* Card visibility states */
