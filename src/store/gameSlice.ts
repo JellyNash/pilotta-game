@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import { 
-  GamePhase, 
-  Player, 
-  Card, 
-  Suit, 
-  Contract,
+import {
+  GamePhase,
+  Player,
+  Card,
+  Suit,
   TrickCard,
   Declaration,
   MoveRecord,
@@ -13,7 +12,6 @@ import {
   PlayerProfile,
   Trick,
   RoundScore,
-  Scores,
   GameState as BaseGameState,
   GameNotification
 } from '../core/types';
@@ -115,19 +113,15 @@ const createInitialState = (): GameState => {
     targetScore: 151,
     players,
     teams: {
-      A: { 
-        players: players.filter(p => p.teamId === 'A'), 
-        score: 0, 
-        roundScore: 0,
-        wonTricks: [],
-        trickPilePosition: null
+      A: {
+        players: players.filter(p => p.teamId === 'A'),
+        score: 0,
+        roundScore: 0
       },
-      B: { 
-        players: players.filter(p => p.teamId === 'B'), 
-        score: 0, 
-        roundScore: 0,
-        wonTricks: [],
-        trickPilePosition: null
+      B: {
+        players: players.filter(p => p.teamId === 'B'),
+        score: 0,
+        roundScore: 0
       }
     },
     dealerIndex: 0,
@@ -169,7 +163,7 @@ const gameSlice = createSlice({
   initialState: createInitialState(),
   reducers: {
     // Game initialization
-    newGame: (state) => {
+    newGame: () => {
       return createInitialState();
     },
     
@@ -208,10 +202,7 @@ const gameSlice = createSlice({
       state.validMoves = [];
       state.teams.A.roundScore = 0;
       state.teams.B.roundScore = 0;
-      state.teams.A.wonTricks = [];
-      state.teams.B.wonTricks = [];
-      state.teams.A.trickPilePosition = null;
-      state.teams.B.trickPilePosition = null;
+      // Trick piles are derived from completed tricks, so no per-team arrays
       state.declarationTracking = {};
       state.earlyTermination = false;
     },
@@ -482,24 +473,12 @@ const gameSlice = createSlice({
       state.currentTrick = [];
       state.animatingCards = [];
       
-      // Update round scores and add trick to winning team's pile
+      // Update round scores
       const winningTeam = action.payload.winner.teamId;
       if (winningTeam === 'A') {
         state.teams.A.roundScore += action.payload.points;
-        if (!state.teams.A.wonTricks) state.teams.A.wonTricks = [];
-        state.teams.A.wonTricks.push(trick);
-        // Set pile position to first winner's position if not set
-        if (!state.teams.A.trickPilePosition) {
-          state.teams.A.trickPilePosition = action.payload.winner.position;
-        }
       } else {
         state.teams.B.roundScore += action.payload.points;
-        if (!state.teams.B.wonTricks) state.teams.B.wonTricks = [];
-        state.teams.B.wonTricks.push(trick);
-        // Set pile position to first winner's position if not set
-        if (!state.teams.B.trickPilePosition) {
-          state.teams.B.trickPilePosition = action.payload.winner.position;
-        }
       }
       
       // Winner leads next trick
@@ -529,9 +508,9 @@ const gameSlice = createSlice({
       state.scores.team2 = state.teams.B.score;
       
       // Store round score with contract details
-      const roundScoreWithContract = {
+      const roundScoreWithContract: RoundScore = {
         ...action.payload.roundScore,
-        contract: state.contract
+        contract: state.contract || undefined
       };
       state.lastRoundScore = roundScoreWithContract;
       state.roundHistory.push(roundScoreWithContract);
@@ -629,31 +608,33 @@ const gameSlice = createSlice({
       winningTeam: 'A' | 'B';
     }>) => {
       // When a team wins declaration rights, only that team can show
-      if (state.declarationTracking) {
+      const tracking = state.declarationTracking;
+      if (tracking) {
         // First, disable showing for all players
-        Object.keys(state.declarationTracking).forEach(playerId => {
-          state.declarationTracking![playerId].canShow = false;
+        Object.keys(tracking).forEach(playerId => {
+          tracking[playerId].canShow = false;
         });
-        
+
         // Then enable showing for winning team players who declared
         state.players.forEach(player => {
           if (player.teamId === action.payload.winningTeam) {
-            const tracking = state.declarationTracking[player.id];
-            if (tracking && tracking.hasDeclared && !tracking.hasShown) {
-              tracking.canShow = true;
+            const playerTracking = tracking[player.id];
+            if (playerTracking && playerTracking.hasDeclared && !playerTracking.hasShown) {
+              playerTracking.canShow = true;
             }
           }
         });
       }
     },
-    
+
     enableBothTeamsToShow: (state) => {
       // Enable showing for all players who have declared but not shown (used for tied declarations)
-      if (state.declarationTracking) {
+      const tracking = state.declarationTracking;
+      if (tracking) {
         state.players.forEach(player => {
-          const tracking = state.declarationTracking[player.id];
-          if (tracking && tracking.hasDeclared && !tracking.hasShown) {
-            tracking.canShow = true;
+          const playerTracking = tracking[player.id];
+          if (playerTracking && playerTracking.hasDeclared && !playerTracking.hasShown) {
+            playerTracking.canShow = true;
           }
         });
       }
@@ -664,15 +645,16 @@ const gameSlice = createSlice({
       if (!state.declarationTracking) {
         state.declarationTracking = {};
       }
+      const tracking = state.declarationTracking;
       action.payload.playerIds.forEach(playerId => {
-        if (!state.declarationTracking![playerId]) {
-          state.declarationTracking![playerId] = {
+        if (!tracking[playerId]) {
+          tracking[playerId] = {
             hasDeclared: false,
             hasShown: false,
             canShow: false
           };
         }
-        state.declarationTracking![playerId].canShow = true;
+        tracking[playerId].canShow = true;
       });
     },
     

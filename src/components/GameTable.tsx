@@ -15,6 +15,7 @@ import ContractIndicator from './ContractIndicator';
 import { Card as CardType, GamePhase, Player } from '../core/types';
 import { gameManager } from '../game/GameManager';
 import { selectCard } from '../store/gameSlice';
+import { selectTeamATricks, selectTeamBTricks } from '../store/selectors';
 import { mapGameToUIPosition } from '../utils/positionMapping';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -37,6 +38,8 @@ const GameTable: React.FC = () => {
   const declarationTracking = useAppSelector(state => state.game.declarationTracking);
   const completedTricks = useAppSelector(state => state.game.completedTricks);
   const teams = useAppSelector(state => state.game.teams);
+  const teamATricks = useAppSelector(selectTeamATricks);
+  const teamBTricks = useAppSelector(selectTeamBTricks);
   const trickNumber = useAppSelector(state => state.game.trickNumber);
   const earlyTermination = useAppSelector(state => state.game.earlyTermination);
   const biddingHistory = useAppSelector(state => state.game.biddingHistory);
@@ -54,11 +57,11 @@ const GameTable: React.FC = () => {
       console.log('Teams data:', {
         teamA: teams.A,
         teamB: teams.B,
-        teamATricks: teams.A?.wonTricks?.length || 0,
-        teamBTricks: teams.B?.wonTricks?.length || 0
+        teamATricks: teamATricks.length,
+        teamBTricks: teamBTricks.length
       });
     }
-  }, [players, teams]);
+  }, [players, teams, teamATricks, teamBTricks]);
   // Track viewing state
   const [trickWinner, setTrickWinner] = useState<string | undefined>(undefined);
   const [shownInTrick, setShownInTrick] = useState<Record<string, number>>({});
@@ -324,12 +327,11 @@ const GameTable: React.FC = () => {
       {/* Contract Indicator - manages its own responsive positioning */}
       <ContractIndicator />
         {/* Team B Trick Pile - Upper Left */}
-      {teams.B?.wonTricks && teams.B.wonTricks.length > 0 && (
+      {teamBTricks.length > 0 && (
         <div className="absolute top-2 left-2 sm:top-4 sm:left-4 lg:top-6 lg:left-6 z-10">
-          <TrickPile 
-            tricks={teams.B.wonTricks} 
-            teamId="B" 
-            position="north" 
+          <TrickPile
+            teamId="B"
+            position="north"
             currentTrickNumber={trickNumber}
             isLastTrickPile={completedTricks.length > 0 && completedTricks[completedTricks.length - 1]?.winner?.teamId === 'B'}
           />
@@ -337,12 +339,11 @@ const GameTable: React.FC = () => {
       )}
       
       {/* Team A Trick Pile - Lower Right (Human's team) */}
-      {teams.A?.wonTricks && teams.A.wonTricks.length > 0 && (
+      {teamATricks.length > 0 && (
         <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 lg:bottom-6 lg:right-6 z-10">
-          <TrickPile 
-            tricks={teams.A.wonTricks} 
-            teamId="A" 
-            position="south" 
+          <TrickPile
+            teamId="A"
+            position="south"
             currentTrickNumber={trickNumber}
             isLastTrickPile={completedTricks.length > 0 && completedTricks[completedTricks.length - 1]?.winner?.teamId === 'A'}
           />
