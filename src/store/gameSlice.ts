@@ -25,6 +25,10 @@ export interface GameSettings {
   advancedAI: boolean;
   showTrickPilePoints: boolean;
   rightClickZoom: boolean;
+  southCardSize: number;
+  southCardSpacing: number;
+  aiCardSize: number;
+  aiCardSpacing: number;
 }
 
 // Declaration tracking interface
@@ -64,6 +68,10 @@ const createInitialProfile = (): PlayerProfile => ({
 const createInitialState = (): GameState => {
   // Load saved settings
   const savedCardScale = parseFloat(localStorage.getItem('cardScale') || '1');
+  const savedSouthCardSize = parseFloat(localStorage.getItem('southCardSize') || '0.8');
+  const savedSouthCardSpacing = parseFloat(localStorage.getItem('southCardSpacing') || '0.5');
+  const savedAICardSize = parseFloat(localStorage.getItem('aiCardSize') || '0.75');
+  const savedAICardSpacing = parseFloat(localStorage.getItem('aiCardSpacing') || '1');
   // Create players - counterclockwise order: South -> East -> North -> West
   const players: Player[] = [
     {
@@ -149,7 +157,11 @@ const createInitialState = (): GameState => {
       animationSpeed: 'normal',
       advancedAI: false,
       showTrickPilePoints: false,
-      rightClickZoom: true
+      rightClickZoom: true,
+      southCardSize: savedSouthCardSize,
+      southCardSpacing: savedSouthCardSpacing,
+      aiCardSize: savedAICardSize,
+      aiCardSpacing: savedAICardSpacing
     },
     zoomedCard: null,
     declarationTracking: {},
@@ -559,6 +571,10 @@ const gameSlice = createSlice({
       advancedAI: boolean;
       showTrickPilePoints: boolean;
       rightClickZoom: boolean;
+      southCardSize: number;
+      southCardSpacing: number;
+      aiCardSize: number;
+      aiCardSpacing: number;
     }>>) => {
       if (!state.settings) {
         state.settings = {
@@ -568,7 +584,11 @@ const gameSlice = createSlice({
           animationSpeed: 'normal',
           advancedAI: false,
           showTrickPilePoints: false,
-          rightClickZoom: true
+          rightClickZoom: true,
+          southCardSize: 0.8,
+          southCardSpacing: 0.5,
+          aiCardSize: 0.75,
+          aiCardSpacing: 1
         };
       }
       Object.assign(state.settings, action.payload);
