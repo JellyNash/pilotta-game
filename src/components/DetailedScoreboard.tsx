@@ -14,6 +14,18 @@ const DetailedScoreboard: React.FC<DetailedScoreboardProps> = ({ show, onClose }
   const teams = useAppSelector(state => state.game.teams);
   const targetScore = useAppSelector(state => state.game.targetScore);
   const currentRound = useAppSelector(state => state.game.round);
+
+  // Allow closing with Escape key
+  React.useEffect(() => {
+    if (!show) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [show, onClose]);
   
   // Calculate cumulative scores
   const getCumulativeScores = () => {
