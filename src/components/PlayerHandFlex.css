@@ -130,6 +130,7 @@
   justify-content: center;
 }
 
+
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
   flex: 0 0 auto;
   width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * 0.7);
