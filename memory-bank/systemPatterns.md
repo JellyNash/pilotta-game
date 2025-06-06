@@ -7,6 +7,7 @@
 - Responsive design via CSS, utility classes, and custom hooks.
 
 ## Key Technical Decisions
+- **MANDATORY: Follow /docs/RESPONSIVE_DESIGN_CHEATSHEET.md for ALL styling** (Session 33)
 - Clamp-first responsive approach - all values scale smoothly
 - Minimal media queries - only for structural layout changes
 - Single source of truth - all responsive values in tokens.css
@@ -19,6 +20,7 @@
 - **tokens.css as ONLY source** - removed all conflicting z-index systems (Session 29)
 - **No stacking context creators** - removed isolation/contain properties (Session 29)
 - **CSS architecture consolidation** - deleted obsolete files, single import chain (Session 29)
+- **UI Scalability Overhaul** - See /COMPREHENSIVE_UI_SCALABILITY_ACTION_PLAN.md (Session 33)
 
 ## Design Patterns in Use
 - Container/presenter separation in UI.
@@ -40,11 +42,13 @@
 - Focus management with visible indicators using design tokens
 
 ## Critical Implementation Paths
+- **Responsive Compliance**: Check /docs/RESPONSIVE_DESIGN_CHEATSHEET.md → Apply principles → No exceptions
 - Style application order: Tailwind base → custom CSS → overrides.
 - Responsive token system: Define in tokens.css → Use via clamp() → No hardcoded values.
 - Layout hierarchy: GameLayout grid → Component positioning → No absolute positioning.
 - Scaling enforcement: Every element uses tokens → Audit for violations → ESLint rules.
 - Linting configuration: ESLint (.eslintrc) and Stylelint (.stylelintrc) in JSON format.
+- **Container Queries**: Parent defines container → Children query parent width → Component-level responsiveness
 
 ## Responsive Implementation Patterns (Sessions 27-29)
 - **Card Overlap**: Use CSS variables (--card-overlap-compact: 0.5) with negative margins
@@ -69,5 +73,17 @@
 - **Animation**: Pre-defined Framer Motion variants to prevent recreations
 - **Documentation**: Comprehensive technical guide maintained alongside code
 
+## Mandatory Responsive Rules (Session 33)
+- **ALL styling MUST follow /docs/RESPONSIVE_DESIGN_CHEATSHEET.md**
+- Use clamp() for ALL dimensions - no fixed pixels
+- Container queries for component-level responsiveness
+- Grid-first layout (flex only for single-axis alignment)
+- dvh/svh with vh fallback for heights
+- Logical properties for RTL support
+- Safe area insets for mobile devices
+- Z-index ONLY from token scale
+- Test at 320px minimum width
+- No Tailwind utilities for sizing - use tokens.css
+
 ## This Document
-Updated with final architectural patterns from Sessions 27-30. Project architecture is now stable and well-documented.
+Updated with mandatory responsive compliance (Session 33). The cheatsheet at /docs/RESPONSIVE_DESIGN_CHEATSHEET.md is now the ultimate authority for all styling decisions.

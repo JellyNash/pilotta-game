@@ -2,11 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Current Project Status (Session 31 - January 2025)
+## 🚨 MANDATORY RESPONSIVE DESIGN COMPLIANCE 🚨
 
-**✅ ALL RESPONSIVE FIXES COMPLETED**
+**ALL styling and responsive work MUST follow the cheatsheet at `/docs/RESPONSIVE_DESIGN_CHEATSHEET.md`**
+- NO EXCEPTIONS - This is non-negotiable
+- Current implementation plan: `/COMPREHENSIVE_UI_SCALABILITY_ACTION_PLAN.md`
+- Always check tokens.css before adding any dimension
+- Never use fixed pixels without clamp()
+- Never use Tailwind utilities for sizing
 
-The project has successfully completed a comprehensive responsive design overhaul:
+## Current Project Status (Session 33 - January 2025)
+
+**⚠️ UI SCALABILITY OVERHAUL IN PROGRESS**
+
+A comprehensive audit revealed systematic issues beyond just cards:
 
 1. **Z-Index Hierarchy**: Fixed - table elements no longer clip cards
 2. **Card Overlaps**: All bot players now use 50% overlap (55% for 8 cards)
@@ -29,10 +38,10 @@ The project has successfully completed a comprehensive responsive design overhau
 - `PlayerHandFlex` now relies on these tokens for its gap, container padding and
   card scaling
 
-**Documentation Created**:
-- `RESPONSIVE_FIXES_IMPLEMENTED.md` - Complete implementation summary
-- `RESPONSIVE_REFACTOR_PLAN.md` - Clamp-first design strategy
-- `CSS_RESPONSIVE_AUDIT_2025.md` - Comprehensive audit findings
+**Active Documentation**:
+- `/docs/RESPONSIVE_DESIGN_CHEATSHEET.md` - **MANDATORY** guidelines for all styling
+- `/COMPREHENSIVE_UI_SCALABILITY_ACTION_PLAN.md` - Current implementation plan
+- `/docs/CSS_ARCHITECTURE.md` - CSS layer system documentation
 
 **Current State**:
 - Development server runs on http://localhost:3000
