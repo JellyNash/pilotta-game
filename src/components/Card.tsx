@@ -160,6 +160,19 @@ const Card: React.FC<CardProps> = ({
     }
   }, [isDraggable, drag]);
 
+  // Close zoom on global Escape press
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isZoomed) {
+        dispatch(toggleCardZoom(null));
+      }
+    };
+    if (isZoomed) {
+      document.addEventListener('keydown', handleEsc);
+      return () => document.removeEventListener('keydown', handleEsc);
+    }
+  }, [isZoomed, dispatch]);
+
   // Font sizes use CSS custom properties
   const fontClasses = {
     main: 'card-main-text',
