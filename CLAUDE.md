@@ -430,10 +430,9 @@ The game follows a strict phase progression:
    - **Hover Effects**: 3D depth with translateZ and scale transforms
 
 2. **Declaration Cards Display Improvements**:
-   - **Smart Timing System**:
-     - 3-second auto-hide for AI players
-     - Persistent display for human player throughout the round
-     - Clean state management with useEffect hooks
+    - **Smart Timing System**:
+      - 3-second auto-hide for all players
+      - Clean state management with useEffect hooks
    - **3D Card Animations**:
      - rotateY flip entrance (-180° to 0°)
      - Staggered appearance with spring physics
@@ -454,8 +453,8 @@ The game follows a strict phase progression:
 4. **Files Modified**:
    - `AnnouncementSystem.tsx`: Complete animation overhaul
    - `AnnouncementSystem.css`: Enhanced 3D effects and depth
-   - `DeclarationCardsDisplay.tsx`: Added timing logic and 3D animations
-   - `GameTable.tsx`: Added isHumanPlayer prop for declarations
+    - `DeclarationCardsDisplay.tsx`: Added timing logic and 3D animations
+    - `GameTable.tsx`: Updated declaration display logic
 
 ### Session 17 - Announcement System Fixed & Declaration UI Enhanced (RESOLVED)
 1. **Fixed Announcement Positioning System**:

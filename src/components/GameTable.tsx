@@ -166,8 +166,7 @@ const GameTable: React.FC = () => {
   useEffect(() => {
     if (phase === GamePhase.Playing && trickNumber === 2 && declarationTracking) {
       // In the second trick, players should show their cards
-      // This is handled by DeclarationViewer component which is already in place
-      // We just need to ensure shownInTrick is updated
+      // Update shownInTrick to track which players have displayed declarations
       Object.entries(declarationTracking).forEach(([playerId, tracking]) => {
         if (tracking.hasDeclared && !shownInTrick[playerId]) {
           setShownInTrick(prev => ({ ...prev, [playerId]: 2 }));
@@ -279,7 +278,6 @@ const GameTable: React.FC = () => {
             declarationTracking?.[player.id]?.hasShown === true &&
             playerDeclarations.length > 0
           }
-          isHumanPlayer={isHuman}
         />
         
       </PlayerZone>
