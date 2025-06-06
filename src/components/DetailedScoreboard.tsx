@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppSelector } from '../store/hooks';
 import ContractBadge from './ContractBadge';
@@ -45,6 +45,19 @@ const DetailedScoreboard: React.FC<DetailedScoreboardProps> = ({ show, onClose }
   };
   
   const cumulativeScores = getCumulativeScores();
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (show) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [show, onClose]);
   
   return (
     <AnimatePresence>

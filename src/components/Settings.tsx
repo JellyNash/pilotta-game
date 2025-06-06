@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSoundSettings } from '../utils/soundManager';
 import { gameManager } from '../game/GameManager';
@@ -53,6 +53,19 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     setRightClickZoom(enabled);
     dispatch(updateSettings({ rightClickZoom: enabled }));
   };
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>

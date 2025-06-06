@@ -111,7 +111,7 @@ function GameContent() {
     }
   }, [gamePhase, lastRoundScore]);
 
-  // Automatically show the detailed scoreboard at the end of each round
+  // FEATURE LOGIC: Automatically show the detailed scoreboard at the end of each round with a 1s delay, then hide after 4s (total 5s).
   useEffect(() => {
     if (lastRoundScore && gamePhase !== GamePhase.GameOver) {
       const showTimer = setTimeout(() => {
@@ -212,7 +212,6 @@ function GameContent() {
         
         <main className="game-content">
           <GameTable />
-          
           
           {gamePhase === GamePhase.Bidding && (
             <div id="bidding">

@@ -95,10 +95,10 @@ const Card: React.FC<CardProps> = ({
       return { width, height };
     }
 
-    // Always use CSS variables for responsive sizing
+    // Default to fill parent container which defines card scaling
     return {
-      width: 'var(--card-width)',
-      height: 'var(--card-height)'
+      width: '100%',
+      height: '100%'
     };
   };
 
@@ -159,6 +159,19 @@ const Card: React.FC<CardProps> = ({
       drag(cardRef.current);
     }
   }, [isDraggable, drag]);
+
+  // Close zoom on global Escape press
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isZoomed) {
+        dispatch(toggleCardZoom(null));
+      }
+    };
+    if (isZoomed) {
+      document.addEventListener('keydown', handleEsc);
+      return () => document.removeEventListener('keydown', handleEsc);
+    }
+  }, [isZoomed, dispatch]);
 
   // Font sizes use CSS custom properties
   const fontClasses = {
@@ -266,8 +279,12 @@ const Card: React.FC<CardProps> = ({
 
             {/* Trump indicator */}
             {isTrump && (
-              <div 
-                className="absolute top-1 right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse shadow-lg" 
+              <div
+                className="absolute top-1 right-1 bg-yellow-400 rounded-full animate-pulse shadow-lg"
+                style={{
+                  width: 'calc(0.75rem * var(--ph-card-scale) * var(--card-scale))',
+                  height: 'calc(0.75rem * var(--ph-card-scale) * var(--card-scale))'
+                }}
               />
             )}
           </div>

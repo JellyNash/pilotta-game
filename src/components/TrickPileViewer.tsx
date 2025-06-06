@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trick, Suit } from '../core/types';
 import Card from './Card';
@@ -30,6 +30,17 @@ const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClo
       onClose();
     }
   }, [lastTrick, onClose]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
   
   if (!lastTrick) {
     return null;

@@ -123,6 +123,9 @@
   --z-table-surface: 1;      /* Table decorations, center circle */
   --z-card-base: 10;         /* All player cards start here */
   --z-trick-cards: 20;       /* Cards in trick area */
+  --z-north-player: 20;      /* AI opponent */
+  --z-east-player: 20;       /* AI opponent */
+  --z-west-player: 20;       /* AI opponent */
   --z-south-player: 25;      /* Human player priority */
   --z-player-indicator: 30;
   --z-card-hover: 40;        /* Hovered cards */
@@ -213,6 +216,8 @@
   );
   /* Quantifiable sizing for south player's hand */
   --south-card-size: 0.8;      /* Multiplier for card dimensions */
+  --north-card-size: 0.75;     /* Multiplier for north player's cards */
+  --side-card-size: 0.6;       /* Multiplier for east/west players */
   --south-card-spacing: 0.5;   /* Multiplier for arc rotation step */
 
   /* Arc layout variables for PlayerHandFlex */

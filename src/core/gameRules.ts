@@ -386,22 +386,13 @@ export function calculateRoundScore(
   if (!contractMade) {
     // Contract failed - defending team gets contract value based on double/redouble + all points
     const allPoints = totalPoints.A + totalPoints.B;
-    
+
     // Calculate bonus based on double/redouble status
     let contractBonus = contract.value;
     if (contract.doubled) {
-      if (contract.redoubled) {
-        // Redoubled: 4x contract value
-        contractBonus = contract.value * 4;
-      } else {
-        // Doubled: 2x contract value
-        contractBonus = contract.value * 2;
-      }
-    } else {
-      // Normal (not doubled): 1x contract value
-      contractBonus = contract.value;
+      contractBonus = contract.redoubled ? contract.value * 4 : contract.value * 2;
     }
-    
+
     // Debug logging for contract failure scoring
     if (import.meta.env.DEV) {
       console.log('Contract Failed Scoring Debug:', {
@@ -415,20 +406,18 @@ export function calculateRoundScore(
         finalDefendingPoints: contractBonus + allPoints
       });
     }
-    
+
     // Contract team gets 0 points
     totalPoints[contractTeam] = 0;
-    
+
     // Defending team gets: contract bonus + all actual points (162 + announcements)
     totalPoints[defendingTeam] = contractBonus + allPoints;
-  }
-  
-  
-  // Handle doubled/redoubled contracts for successful contracts only
-  if (contractMade && contract.doubled) {
+  } else if (contract.doubled) {
+    // Contract made with a double/redouble - winner takes all
     const multiplier = contract.redoubled ? 4 : 2;
-    totalPoints.A *= multiplier;
-    totalPoints.B *= multiplier;
+    const winnerPoints = (totalPoints.A + totalPoints.B) * multiplier;
+    totalPoints[contractTeam] = winnerPoints;
+    totalPoints[defendingTeam] = 0;
   }
   
   // Apply new rounding rules
