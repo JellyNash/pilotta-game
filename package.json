@@ -11,7 +11,15 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:css": "stylelint 'src/**/*.css'",
     "test": "playwright test",
-    "test:visual": "playwright test tests/responsive-screenshots.spec.ts"
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:visual": "playwright test tests/responsive-screenshots.spec.ts",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "playwright:install": "playwright install",
+    "playwright:install-deps": "playwright install-deps",
+    "pretest": "npm run playwright:install",
+    "test:codegen": "playwright codegen http://localhost:3000"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",

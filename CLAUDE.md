@@ -177,9 +177,51 @@ The game follows a strict phase progression:
 - ✅ Counter-clockwise progression
 - ✅ Team-based scoring and trick piles
 
-## Latest Session Updates (2025-01-07)
+## Latest Session Updates (2025-01-07 to 2025-01-09)
 
-### Session 31 - Code Cleanup & Component Removal
+### Session 32 - Major Repository Sync & Feature Updates (2025-01-09)
+1. **Repository Synchronization**:
+   - Pulled all changes from main branch (commits ca0471f through 19e5db1)
+   - Resolved divergent branches with rebase strategy
+   - Synced 28 pull requests worth of updates
+
+2. **CSS Consolidation & Token System**:
+   - **Removed Obsolete CSS Files**: Purged `dist-baseline/` and `purged-css/` directories
+   - **Token Additions**: Added `--announcement-border-width`, `--ph-card-gap`, `--ph-container-padding`, `--ph-card-scale`
+   - **PlayerHandFlex Updates**: Now uses unified tokens for gap, padding, and scaling
+   - **Bidding Modal**: Centralized tokens, removed hardcoded values
+
+3. **Component Removals & Refactoring**:
+   - **Removed Legacy Components**: `AnnouncementDisplay.tsx`, `BiddingAnnouncement.tsx`, `UnifiedAnnouncement.tsx`
+   - **Removed Old Declaration Viewer**: Unified declaration display system
+   - **Removed Potpie Integration**: Cleaned up analysis tools and API integration
+   - **Removed Breakpoints.ts**: Eliminated constants in favor of CSS-only approach
+
+4. **Card System Improvements**:
+   - **Card Scaling Feature**: Added size settings (Small: 0.8x, Medium: 1x, Large: 1.2x, XL: 1.4x)
+   - **Card Overlap Settings**: Small (30%), Medium (50%), Large (70%)
+   - **Fixed Overflow Issues**: Resolved z-index conflicts and clipping problems
+   - **Global Scale Variable**: `--ph-card-scale` controls all card sizing
+
+5. **Game Logic Updates**:
+   - **AI Bidding Improvements**: Added pass logic and opponent success tracking
+   - **Scoring Fix**: Corrected doubled/redoubled contract calculations
+   - **Trump Rule Clarification**: Better UI indication of overtrump requirements
+   - **Scoreboard Timing**: Added configurable display duration and manual controls
+
+6. **Build & Linting**:
+   - **ESLint & Stylelint**: Added proper config files (`.eslintrc.cjs`, `stylelint.config.cjs`)
+   - **Lint Rules**: Relaxed strictness for gradual migration
+   - **TypeScript Fixes**: Resolved selector and type errors
+   - **Gitignore Updates**: Added build directories to ignore list
+
+7. **UI/UX Enhancements**:
+   - **Escape Key Support**: Close modals and unzoom cards with ESC
+   - **Round Transition**: Show scoreboard after each round completion
+   - **Responsive Bidding**: Aligned with token system for all viewports
+   - **Player Hand Layout**: Consolidated styles, improved responsiveness
+
+### Session 31 - Code Cleanup & Component Removal (2025-01-07)
 1. **Removed Deprecated Components**:
    - Deleted `AnnouncementDisplay.tsx` - replaced by AnnouncementSystem
    - Deleted `BiddingAnnouncement.tsx` - functionality merged into AnnouncementSystem
