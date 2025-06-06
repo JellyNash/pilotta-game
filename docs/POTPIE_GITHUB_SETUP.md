@@ -95,3 +95,6 @@ To verify your setup:
 const testRepo = 'your-username/pilotta-game';
 console.log(`Testing with repo: ${testRepo}`);
 // If this matches your GitHub repo, you're ready!
+```
+
+Happy hacking!

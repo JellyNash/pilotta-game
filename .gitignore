@@ -144,4 +144,4 @@ dist
 
 # Build directories
 build/
-dist/
+dist/\n# Screenshot outputs\nScreenshots/

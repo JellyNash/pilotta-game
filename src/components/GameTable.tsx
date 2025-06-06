@@ -45,17 +45,19 @@ const GameTable: React.FC = () => {
   
   // Debug logging
   React.useEffect(() => {
-    console.log('GameTable render - players:', players.map(p => ({
-      name: p.name,
-      position: p.position,
-      cards: p.hand.length
-    })));
-    console.log('Teams data:', {
-      teamA: teams.A,
-      teamB: teams.B,
-      teamATricks: teams.A?.wonTricks?.length || 0,
-      teamBTricks: teams.B?.wonTricks?.length || 0
-    });
+    if (import.meta.env.DEV) {
+      console.log('GameTable render - players:', players.map(p => ({
+        name: p.name,
+        position: p.position,
+        cards: p.hand.length
+      })));
+      console.log('Teams data:', {
+        teamA: teams.A,
+        teamB: teams.B,
+        teamATricks: teams.A?.wonTricks?.length || 0,
+        teamBTricks: teams.B?.wonTricks?.length || 0
+      });
+    }
   }, [players, teams]);
   // Track viewing state
   const [trickWinner, setTrickWinner] = useState<string | undefined>(undefined);
