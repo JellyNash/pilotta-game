@@ -16,6 +16,9 @@
 - Viewport space reservation for zoom feature (Session 27)
 - Z-index hierarchy strictly enforced (Session 27)
 - Container overflow strategy: visible everywhere (Session 27)
+- **tokens.css as ONLY source** - removed all conflicting z-index systems (Session 29)
+- **No stacking context creators** - removed isolation/contain properties (Session 29)
+- **CSS architecture consolidation** - deleted obsolete files, single import chain (Session 29)
 
 ## Design Patterns in Use
 - Container/presenter separation in UI.

@@ -357,7 +357,13 @@ Successfully removed all conflicting CSS systems and established tokens.css as t
 - **Deleted**: containment.css, responsive-fixes.css, responsive.css
 - **Modified**: ResponsiveDesignSystem.ts, ResponsiveSystem.ts (removed z-index)
 - **Modified**: PlayerZone.tsx/css, index.css, Card.css, etc.
-- **Created**: utilities.css, ResponsiveCardHand.css
+- **Created**: utilities.css
+
+### Post-Session Updates (from remote):
+- **Deleted**: dist-baseline/, purged-css/ directories
+- **Deleted**: ResponsiveCardHand component (was redundant)
+- **Updated**: PlayerHandFlex.css now uses 50% card overlap for bot players
+- **Updated**: tokens.css safe area insets consolidated
 
 ### Remaining Lower Priority Tasks:
 - 36 inline styles still exist in components (mostly colors and positioning)
@@ -366,4 +372,4 @@ Successfully removed all conflicting CSS systems and established tokens.css as t
 - StyleLint setup needs fixing
 
 ## This Document
-Updated with Session 29 CSS consolidation. Achieved single source of truth with tokens.css for all design values.
+Updated with Session 29 CSS consolidation. Achieved single source of truth with tokens.css for all design values. Post-session pull integrated additional improvements from remote.
