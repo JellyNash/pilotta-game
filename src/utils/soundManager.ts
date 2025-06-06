@@ -47,9 +47,9 @@ class SoundManager {
       // Clone the audio to allow overlapping sounds
       const clone = sound.cloneNode() as HTMLAudioElement;
       clone.volume = volume ?? this.volume;
-      clone.play().catch(() => {
+      clone.play().catch(_err => {
         // Silently fail - sounds are optional
-        // console.warn(`Failed to play sound ${soundName}:`, err);
+        // console.warn(`Failed to play sound ${soundName}:`, _err);
       });
     }
   }

@@ -42,7 +42,6 @@ Instead of rendering within PlayerZone, render declaration cards as overlays in 
     declarations={[decl]}
     position={decl.player.position}
     show={shouldShow}
-    isHumanPlayer={!decl.player.isAI}
   />
 ))}
 ```

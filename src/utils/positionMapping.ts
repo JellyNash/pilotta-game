@@ -34,11 +34,3 @@ export const mapUIToGamePosition = (uiPos: UIPosition): GamePosition => {
   return mapping[uiPos];
 };
 
-/**
- * Maps team positioning to game positions for trick piles
- */
-export const getTeamTrickPilePosition = (teamId: 'A' | 'B'): GamePosition => {
-  // Team A (human team) gets south position (bottom-right in UI)
-  // Team B (AI team) gets north position (top-left in UI)
-  return teamId === 'A' ? 'south' : 'north';
-};

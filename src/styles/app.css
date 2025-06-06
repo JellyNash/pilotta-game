@@ -1,19 +1,18 @@
 /* CSS Layer Architecture for Pilotta Game */
 
 /* Import all CSS files at the top */
-@import './tokens.css';
-@import '../layouts/game-grid.css';
-@import '../layouts/table-center.css';
-@import '../components/Card.css';
-@import '../components/PlayerHandFlex.css';
-@import '../components/AnnouncementSystem.css';
-@import '../components/BiddingInterface.css';
-@import '../components/ContractIndicator.css';
-@import '../components/PlayerZone.css';
-@import '../components/TrickArea.css';
-@import '../components/TrickPileViewer.css';
-@import './utilities.css';
-@import './scoped-overrides.css';
+@import url('./tokens.css');
+@import url('../layouts/game-grid.css');
+@import url('../components/Card.css');
+@import url('../components/PlayerHandFlex.css');
+@import url('../components/AnnouncementSystem.css');
+@import url('../components/BiddingInterface.css');
+@import url('../components/ContractIndicator.css');
+@import url('../components/PlayerZone.css');
+@import url('../components/TrickArea.css');
+@import url('../components/TrickPileViewer.css');
+@import url('./utilities.css');
+@import url('./scoped-overrides.css');
 
 /* Define layer order */
 @layer reset, base, tokens, tailwind, layout, components, states, utilities, overrides;

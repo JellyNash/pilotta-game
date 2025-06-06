@@ -136,8 +136,8 @@ export interface GameState {
   // Players and teams
   players: Player[];
   teams: {
-    A: { players: Player[]; score: number; roundScore: number; wonTricks?: Trick[]; trickPilePosition?: string | null };
-    B: { players: Player[]; score: number; roundScore: number; wonTricks?: Trick[]; trickPilePosition?: string | null };
+    A: { players: Player[]; score: number; roundScore: number };
+    B: { players: Player[]; score: number; roundScore: number };
   };
   
   // Current round state

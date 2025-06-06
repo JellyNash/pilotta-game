@@ -52,6 +52,21 @@ All CSS custom properties are centralized in `tokens.css`:
 - **Z-index System**: Managed z-index values
 - **Animation**: Timing and easing values
 
+### Player Hand Layout
+
+The `PlayerHandFlex` component uses variables from `tokens.css` to control
+how cards are stacked and fanned. Key variables include:
+
+- `--ph-arc-rotation-base` / `--ph-arc-rotation-step` – control the arc rotation
+  for each card in the south player's hand.
+- `--ph-arc-lift-max`, `--ph-arc-lift-mid`, `--ph-arc-lift-low`, `--ph-arc-lift-min`
+  – vertical translation values for the arc effect.
+- `--card-overlap-normal` and `--card-overlap-tight` – determine overlap ratios
+  for the north/east/west hands.
+
+Adjusting these tokens provides a single source of truth for card positioning
+across all four players.
+
 ## Naming Conventions
 
 ### CSS Classes

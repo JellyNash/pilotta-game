@@ -1,5 +1,5 @@
 /* Import new layered CSS architecture */
-@import './styles/app.css';
+@import url('./styles/app.css');
 
 @tailwind base;
 @tailwind components;
@@ -15,18 +15,18 @@ html {
   /* Ensure HTML is responsive */
   width: 100%;
   min-height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden auto;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #0f172a;
   color: #f1f5f9;
+
   /* Allow scrolling to detect overflow issues */
   overflow: auto;
   min-height: 100vh;
@@ -37,6 +37,7 @@ body {
   /* Remove fixed dimensions - be responsive */
   width: 100%;
   min-height: 100vh;
+
   /* Change to visible to detect clipping */
   overflow: visible;
 }
@@ -47,6 +48,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
   /* Change to visible to detect overflow */
   overflow: visible;
   position: relative;
@@ -58,7 +60,7 @@ body {
   min-height: calc(var(--header-height) * 0.8);
   max-height: var(--header-height);
   padding: 0.5rem;
-  background-color: rgba(15, 23, 42, 0.9);
+  background-color: rgb(15 23 42 / 90%);
   z-index: var(--z-header);
 }
 
@@ -78,19 +80,8 @@ body {
   overflow: visible;
 }
 
-/* Player area containment */
-.player-hand {
-  contain: layout;
-  overflow: visible;
-}
-
-/* Ensure south player cards are always visible */
-.player-hand[data-position="south"] {
-  z-index: 20;
-  padding-bottom: 0.5rem;
-}
-
 /* ==================== ENHANCED CARD STYLES ==================== */
+
 /* Card styles moved to src/components/Card.css to avoid duplicates */
 
 /* Card-specific styles moved to src/components/Card.css */
@@ -106,40 +97,12 @@ body {
   transform: translateZ(0);
 }
 
-/* ==================== RESPONSIVE CARD CONTAINERS ==================== */
 
-/* Horizontal hands (north/south) */
-.player-hand[data-position="north"],
-.player-hand[data-position="south"] {
-  width: 100%;
-  max-width: min(90vw, 900px);
-  margin: 0 auto;
-}
-
-.player-hand[data-position="north"] .cards-container,
-.player-hand[data-position="south"] .cards-container {
-  max-width: 100%;
-  justify-content: center;
-}
-
-/* Vertical hands (east/west) */
-.player-hand[data-position="east"],
-.player-hand[data-position="west"] {
-  height: 100%;
-  max-height: min(70vh, 600px);
-  margin: auto 0;
-}
-
-.player-hand[data-position="east"] .cards-container,
-.player-hand[data-position="west"] .cards-container {
-  max-height: 100%;
-  justify-content: center;
-}
 
 /* ==================== RESPONSIVE GAME LAYOUT ==================== */
 
 /* Desktop and larger tablets */
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   /* North player area */
   .h-1\/4:first-child {
     height: 22%;
@@ -157,7 +120,7 @@ body {
 }
 
 /* Tablets */
-@media (max-width: 1023px) and (min-width: 768px) {
+@media (width <= 1023px) and (width >= 768px) {
   .game-header {
     min-height: 3.5rem;
     max-height: 4rem;
@@ -177,7 +140,7 @@ body {
 }
 
 /* Mobile devices */
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .game-header {
     min-height: 3rem;
     max-height: 3.5rem;
@@ -213,7 +176,7 @@ body {
 }
 
 /* Small mobile screens */
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .h-1\/4:first-child {
     height: 16%;
   }
@@ -230,10 +193,6 @@ body {
     flex: 1 1 70%;
   }
   
-  /* Smaller card overlap on tiny screens */
-  .player-hand .cards-container {
-    gap: 0;
-  }
 }
 
 /* ==================== CARD SIZE CONSTRAINTS ==================== */
@@ -251,19 +210,20 @@ body {
   margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .trick-area {
     transform: scale(0.85);
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .trick-area {
     transform: scale(0.7);
   }
 }
 
 /* ==================== BIDDING INTERFACE ==================== */
+
 /* Removed old positioning styles - bidding interface now handles its own centering */
 
 
@@ -274,7 +234,7 @@ body {
 
 /* Button press effects */
 .active\:shadow-inner:active {
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 6%);
 }
 
 /* Z-index values now in tokens.css */
@@ -301,15 +261,15 @@ body {
 /* CSS variables now in tokens.css */
 
 /* Performance: Disable expensive effects on low-end devices */
-@media (max-width: 768px), (max-height: 600px) {
+@media (width <= 768px), (height <= 600px) {
   .backdrop-blur-md {
     backdrop-filter: none;
-    background-color: rgba(30, 41, 59, 0.95);
+    background-color: rgb(30 41 59 / 95%);
   }
   
   .backdrop-blur-lg {
     backdrop-filter: none;
-    background-color: rgba(30, 41, 59, 0.98);
+    background-color: rgb(30 41 59 / 98%);
   }
   
   .shadow-2xl {
@@ -318,23 +278,16 @@ body {
 }
 
 /* ==================== UTILITY CLASSES ==================== */
+
 /* Prevent text selection during gameplay */
 .game-content {
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
 /* Allow text selection in modals */
 .modal-content {
   user-select: text;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
 }
-
-/* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
   .playing-card {
     -webkit-tap-highlight-color: transparent;
@@ -365,7 +318,6 @@ body {
 
 /* Custom slider styles for card size control */
 input[type="range"].slider-thumb {
-  -webkit-appearance: none;
   appearance: none;
   outline: none;
   opacity: 0.9;
@@ -377,7 +329,6 @@ input[type="range"].slider-thumb:hover {
 }
 
 input[type="range"].slider-thumb::-webkit-slider-thumb {
-  -webkit-appearance: none;
   appearance: none;
   width: 20px;
   height: 20px;
@@ -385,14 +336,14 @@ input[type="range"].slider-thumb::-webkit-slider-thumb {
   cursor: pointer;
   border-radius: 50%;
   border: 2px solid #1e40af;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   transition: all 0.2s ease;
 }
 
 input[type="range"].slider-thumb::-webkit-slider-thumb:hover {
   background: #2563eb;
   transform: scale(1.1);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 6px rgb(0 0 0 / 30%);
 }
 
 input[type="range"].slider-thumb::-moz-range-thumb {
@@ -402,14 +353,14 @@ input[type="range"].slider-thumb::-moz-range-thumb {
   cursor: pointer;
   border-radius: 50%;
   border: 2px solid #1e40af;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   transition: all 0.2s ease;
 }
 
 input[type="range"].slider-thumb::-moz-range-thumb:hover {
   background: #2563eb;
   transform: scale(1.1);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 6px rgb(0 0 0 / 30%);
 }
 
 /* Disabled button styles for card size controls */

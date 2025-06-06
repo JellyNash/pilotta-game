@@ -1,7 +1,9 @@
 /* Design Tokens - Centralized CSS Custom Properties */
+
 /* Modern Clamp-First Responsive System */
 :root {
   /* ===== TYPOGRAPHY SCALE ===== */
+
   /* 9 sizes using clamp() for smooth scaling */
   --fs-3xs: clamp(0.5rem, 1.5vw, 0.625rem);    /* 8px -> 10px */
   --fs-2xs: clamp(0.625rem, 1.75vw, 0.75rem);  /* 10px -> 12px */
@@ -14,6 +16,7 @@
   --fs-3xl: clamp(2rem, 5vw, 3rem);            /* 32px -> 48px */
 
   /* ===== SPACING SCALE ===== */
+
   /* 10 sizes for consistent spacing rhythm */
   --space-3xs: clamp(0.125rem, 0.5vw, 0.25rem);   /* 2px -> 4px */
   --space-2xs: clamp(0.25rem, 0.75vw, 0.375rem);  /* 4px -> 6px */
@@ -27,6 +30,7 @@
   --space-4xl: clamp(4rem, 6vw, 6rem);            /* 64px -> 96px */
 
   /* ===== COMPONENT DIMENSIONS ===== */
+
   /* Card dimensions with responsive scaling */
   --card-width: clamp(60px, 10vw, 120px);
   --card-height: clamp(84px, 14vw, 168px);
@@ -50,6 +54,7 @@
   --input-border-width: clamp(1px, 0.2vw, 2px);
 
   /* ===== VISUAL EFFECTS ===== */
+
   /* Blur effects */
   --blur-xs: clamp(2px, 0.25vw, 4px);
   --blur-sm: clamp(4px, 0.5vw, 8px);
@@ -65,14 +70,14 @@
   --shadow-xl: clamp(24px, 3vw, 48px);
   
   /* Shadow definitions */
-  --shadow-glow-sm: 0 0 var(--shadow-sm) currentColor;
-  --shadow-glow-md: 0 0 var(--shadow-md) currentColor;
-  --shadow-glow-lg: 0 0 var(--shadow-lg) currentColor;
-  --shadow-drop-sm: 0 var(--shadow-xs) var(--shadow-sm) rgba(0, 0, 0, 0.2);
-  --shadow-drop-md: 0 var(--shadow-sm) var(--shadow-md) rgba(0, 0, 0, 0.3);
-  --shadow-drop-lg: 0 var(--shadow-md) var(--shadow-lg) rgba(0, 0, 0, 0.5);
-  --shadow-drop-xl: 0 var(--shadow-lg) var(--shadow-xl) rgba(0, 0, 0, 0.5);
-  --shadow-inset-sm: inset 0 var(--shadow-xs) var(--shadow-sm) 0 rgba(0, 0, 0, 0.06);
+  --shadow-glow-sm: 0 0 var(--shadow-sm) currentcolor;
+  --shadow-glow-md: 0 0 var(--shadow-md) currentcolor;
+  --shadow-glow-lg: 0 0 var(--shadow-lg) currentcolor;
+  --shadow-drop-sm: 0 var(--shadow-xs) var(--shadow-sm) rgb(0 0 0 / 20%);
+  --shadow-drop-md: 0 var(--shadow-sm) var(--shadow-md) rgb(0 0 0 / 30%);
+  --shadow-drop-lg: 0 var(--shadow-md) var(--shadow-lg) rgb(0 0 0 / 50%);
+  --shadow-drop-xl: 0 var(--shadow-lg) var(--shadow-xl) rgb(0 0 0 / 50%);
+  --shadow-inset-sm: inset 0 var(--shadow-xs) var(--shadow-sm) 0 rgb(0 0 0 / 6%);
   
   /* Glass morphism effects */
   --glass-effect-sm: blur(var(--blur-sm)) saturate(180%) brightness(1.05);
@@ -93,6 +98,7 @@
   --radius-full: 9999px;
 
   /* ===== ANIMATION TOKENS ===== */
+
   /* Durations */
   --duration-instant: 100ms;
   --duration-fast: 200ms;
@@ -107,6 +113,7 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* ===== Z-INDEX SYSTEM ===== */
+
   /* Properly layered to prevent conflicts */
   --z-base: 1;
   --z-table-surface: 1;      /* Table decorations, center circle */
@@ -127,6 +134,7 @@
   --z-tooltip: 200;
   
   /* ===== RESPONSIVE BREAKPOINTS ===== */
+
   /* Minimal set for structural changes only */
   --breakpoint-xs: 375px;
   --breakpoint-sm: 640px;
@@ -137,6 +145,7 @@
   --breakpoint-4k: 2560px;
   
   /* ===== LAYOUT SYSTEM ===== */
+
   /* Grid proportions for game layout */
   --grid-side-ratio: 1;
   --grid-center-ratio: 2;
@@ -154,6 +163,7 @@
   --nav-height: clamp(2.5rem, 6vw, 4rem);
   
   /* ===== GAME-SPECIFIC DIMENSIONS ===== */
+
   /* Table and play area */
   --table-radius-max: min(
     calc((var(--game-area-width) - var(--card-width)) / 2),
@@ -181,6 +191,7 @@
   --announcement-border-width: var(--border-thin);
 
   /* ===== CARD SYSTEM ===== */
+
   /* Card layout approach */
   --card-fan-overlap: clamp(0.55, 0.08vw, 0.85);
   --card-fan-arc-height: clamp(20px, 3vw, 30px);
@@ -196,6 +207,14 @@
     0.5 + (100vw - 320px) / 1440,
     1.0
   );
+
+  /* Arc layout variables for PlayerHandFlex */
+  --ph-arc-rotation-base: -17.5deg; /* starting rotation for leftmost card */
+  --ph-arc-rotation-step: 5deg;     /* rotation difference between cards */
+  --ph-arc-lift-max: 35px;          /* outermost card lift */
+  --ph-arc-lift-mid: 20px;          /* next inner card lift */
+  --ph-arc-lift-low: 10px;          /* inner card lift */
+  --ph-arc-lift-min: 5px;           /* center card lift */
   
   /* Card animations */
   --card-transition: var(--duration-fast) var(--ease-out);
@@ -240,7 +259,7 @@
   
   /* ===== MODALS AND OVERLAYS ===== */
   --overlay-blur: var(--blur-lg);
-  --modal-shadow: 0 var(--shadow-lg) var(--shadow-xl) rgba(0, 0, 0, 0.3);
+  --modal-shadow: 0 var(--shadow-lg) var(--shadow-xl) rgb(0 0 0 / 30%);
   --modal-max-width: clamp(320px, 90vw, 800px);
   --modal-max-height: clamp(400px, 80vh, 600px);
   
@@ -248,7 +267,7 @@
   --contract-indicator-size: clamp(2rem, 4vw, 3rem);
   --dealer-badge-size: clamp(1.5rem, 3vw, 2rem);
   --turn-indicator-size: clamp(3px, 0.5vw, 5px);
-  --declaration-glow: 0 0 clamp(10px, 2vw, 20px) rgba(255, 215, 0, 0.6);
+  --declaration-glow: 0 0 clamp(10px, 2vw, 20px) rgb(255 215 0 / 60%);
   
   /* Safe Area Insets for notched devices */
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
@@ -279,6 +298,7 @@
   --game-area-height: calc(100vh - 2 * var(--zoom-reserve-y));
   
   /* ===== DECLARATION CARDS POSITIONING ===== */
+
   /* Declaration cards offset - can overlap since temporary */
   --declaration-offset-v: clamp(
     calc(var(--card-height) * 1.2),    /* Min: 120% of card height */
@@ -292,6 +312,7 @@
   );
   
   /* ===== LEGACY ALIASES ===== */
+
   /* For backward compatibility - will be removed in Phase 3 */
   --card-width-base: var(--card-width);
   --card-height-base: var(--card-height);
@@ -307,10 +328,11 @@
 }
 
 /* ===== STRUCTURAL MEDIA QUERIES ONLY ===== */
+
 /* For layout changes that can't be achieved with clamp() */
 
 /* Hide side players on very small screens */
-@media (max-width: 640px) {
+@media (width <= 640px) {
   :root {
     --grid-side-ratio: 0;
     --grid-center-ratio: 1;
@@ -318,7 +340,7 @@
 }
 
 /* Adjust grid for landscape orientation with limited height */
-@media (orientation: landscape) and (max-height: 500px) {
+@media (orientation: landscape) and (height <= 500px) {
   :root {
     --grid-top-ratio: 0.5;
     --grid-middle-ratio: 3;
