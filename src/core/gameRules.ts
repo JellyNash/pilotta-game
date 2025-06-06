@@ -1,7 +1,6 @@
 import { 
   Card, 
   Player, 
-  Trick, 
   TrickCard, 
   GameState, 
   Suit, 
@@ -359,7 +358,7 @@ export function calculateRoundScore(
   const teamBTricks = gameState.completedTricks.filter(t => t.winner.teamId === 'B').length;
   
   // Calculate total points for each team
-  let totalPoints = {
+  const totalPoints = {
     A: 0,
     B: 0
   };
@@ -424,8 +423,6 @@ export function calculateRoundScore(
     totalPoints[defendingTeam] = contractBonus + allPoints;
   }
   
-  // Store raw points before division
-  const rawPoints = { ...totalPoints };
   
   // Handle doubled/redoubled contracts for successful contracts only
   if (contractMade && contract.doubled) {
@@ -438,7 +435,7 @@ export function calculateRoundScore(
   const remainderA = totalPoints.A % 10;
   const remainderB = totalPoints.B % 10;
   
-  let finalPoints = {
+  const finalPoints = {
     A: Math.floor(totalPoints.A / 10),
     B: Math.floor(totalPoints.B / 10)
   };

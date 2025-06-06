@@ -22,9 +22,9 @@ import {
   updateRoundScores
 } from '../store/gameSlice';
 import { soundManager } from '../utils/soundManager';
-import { 
-  Card, 
-  Player, 
+import {
+  Card,
+  Player,
   GamePhase,
   Contract,
   Declaration,
@@ -32,7 +32,10 @@ import {
   Suit,
   Rank,
   AIPersonality,
-  RoundScore
+  RoundScore,
+  PlayerProfile,
+  Trick,
+  TrickCard
 } from '../core/types';
 import { createDeck, shuffleDeck, dealCards as dealHands } from '../core/cardUtils';
 import { 
@@ -41,11 +44,23 @@ import {
   findAllDeclarations,
   getLegalPlays,
   calculateRoundScore as calculateBaseRoundScore,
-  compareDeclarations,
   determineDeclarationWinner
 } from '../core/gameRules';
 import { AIStrategy } from '../ai/AIStrategyClass';
 import { MCTSPlayer } from '../ai/MCTSPlayer';
+
+interface MCTSState {
+  currentPlayer: number;
+  hands: Card[][];
+  currentTrick: TrickCard[];
+  completedTricks: Trick[];
+  trumpSuit: Suit | null;
+  contract: Contract | null;
+  scores: {
+    A: number;
+    B: number;
+  };
+}
 
 export class GameFlowController {
   private dispatch: AppDispatch;
@@ -572,7 +587,10 @@ export class GameFlowController {
     return Math.max(0, Math.min(1, aggressiveness));
   }
 
-  private updateAIProfile(playerId: string, updates: Partial<any>) {
+  private updateAIProfile(
+    playerId: string,
+    updates: Partial<PlayerProfile>
+  ) {
     this.dispatch(updatePlayerProfile({ playerId, updates }));
   }
 
@@ -700,13 +718,16 @@ export class GameFlowController {
     return Math.min(1, strength);
   }
   
-  private isAggressivePlay(card: Card, context: any): boolean {
+  private isAggressivePlay(
+    card: Card,
+    context: { trickNumber: number }
+  ): boolean {
     // High cards played early or trumping partner's trick
     return card.rank === Rank.Ace || card.rank === Rank.Jack || 
            (context.trickNumber <= 4 && (card.rank === Rank.Ten || card.rank === Rank.King));
   }
 
-  private convertToMCTSState(gameState: RootState['game']): any {
+  private convertToMCTSState(gameState: RootState['game']): MCTSState {
     // Convert Redux state to MCTS game state format
     // This is a placeholder - actual implementation would map all necessary fields
     return {

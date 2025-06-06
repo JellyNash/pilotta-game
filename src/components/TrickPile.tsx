@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trick } from '../core/types';
-import Card from './Card';
 import TrickPileViewer from './TrickPileViewer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
@@ -39,9 +38,6 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
   
   // Piles are now positioned by parent container using center-based layout
   // No need for absolute positioning here
-  
-  // Get team color
-  const teamColor = teamId === 'A' ? 'blue' : 'red';
   
   return (
     <>

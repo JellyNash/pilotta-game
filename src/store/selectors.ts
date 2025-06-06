@@ -29,12 +29,12 @@ export const selectContract = (state: RootState) => state.game.contract;
 
 // Valid moves selector
 export const selectValidMovesForCurrentPlayer = createSelector(
-  [selectCurrentPlayer, selectCurrentTrick, selectTrumpSuit, selectContract],
-  (currentPlayer, currentTrick, trumpSuit, contract) => {
-    if (!currentPlayer || !currentPlayer.hand || !trumpSuit || !contract) {
+  [selectCurrentPlayer, selectCurrentTrick, selectTrumpSuit],
+  (currentPlayer, currentTrick, trumpSuit) => {
+    if (!currentPlayer || !currentPlayer.hand || !trumpSuit) {
       return [];
     }
-    return getLegalPlays(currentPlayer.hand, currentTrick, trumpSuit, contract);
+    return getLegalPlays(currentPlayer.hand, currentTrick, trumpSuit);
   }
 );
 

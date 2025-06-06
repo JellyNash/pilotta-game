@@ -3,9 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { 
   GamePhase, 
   Player, 
-  Card, 
-  Suit, 
-  Contract,
+  Card,
+  Suit,
   TrickCard,
   Declaration,
   MoveRecord,
@@ -13,7 +12,6 @@ import {
   PlayerProfile,
   Trick,
   RoundScore,
-  Scores,
   GameState as BaseGameState,
   GameNotification
 } from '../core/types';
@@ -169,7 +167,7 @@ const gameSlice = createSlice({
   initialState: createInitialState(),
   reducers: {
     // Game initialization
-    newGame: (state) => {
+    newGame: () => {
       return createInitialState();
     },
     
@@ -300,7 +298,7 @@ const gameSlice = createSlice({
           // Add to bidding history
           state.biddingHistory.push({
             player,
-            bid: 'double' as any,
+            bid: 'double',
             trump: state.contract.trump
           });
           
@@ -320,7 +318,7 @@ const gameSlice = createSlice({
           // Add to bidding history
           state.biddingHistory.push({
             player,
-            bid: 'redouble' as any,
+            bid: 'redouble',
             trump: state.contract.trump
           });
           
@@ -529,9 +527,9 @@ const gameSlice = createSlice({
       state.scores.team2 = state.teams.B.score;
       
       // Store round score with contract details
-      const roundScoreWithContract = {
+      const roundScoreWithContract: RoundScore = {
         ...action.payload.roundScore,
-        contract: state.contract
+        contract: state.contract!
       };
       state.lastRoundScore = roundScoreWithContract;
       state.roundHistory.push(roundScoreWithContract);
@@ -638,7 +636,7 @@ const gameSlice = createSlice({
         // Then enable showing for winning team players who declared
         state.players.forEach(player => {
           if (player.teamId === action.payload.winningTeam) {
-            const tracking = state.declarationTracking[player.id];
+            const tracking = state.declarationTracking?.[player.id];
             if (tracking && tracking.hasDeclared && !tracking.hasShown) {
               tracking.canShow = true;
             }
@@ -651,7 +649,7 @@ const gameSlice = createSlice({
       // Enable showing for all players who have declared but not shown (used for tied declarations)
       if (state.declarationTracking) {
         state.players.forEach(player => {
-          const tracking = state.declarationTracking[player.id];
+          const tracking = state.declarationTracking?.[player.id];
           if (tracking && tracking.hasDeclared && !tracking.hasShown) {
             tracking.canShow = true;
           }

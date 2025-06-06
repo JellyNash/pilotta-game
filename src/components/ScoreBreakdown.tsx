@@ -17,9 +17,6 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
 }) => {
   if (!roundScore) return null;
 
-  const formatPoints = (points: number) => {
-    return points.toLocaleString();
-  };
 
   return (
     <AnimatePresence>

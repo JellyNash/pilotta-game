@@ -183,7 +183,7 @@ export interface MoveRecord {
   trick: number;
   player: Player;
   action: 'bid' | 'play' | 'declare';
-  details: any; // Specific to action type
+  details: Record<string, unknown>; // Specific to action type
   gameContext: {
     score: { A: number; B: number };
     contract: Contract | null;

@@ -8,8 +8,6 @@ interface TrickPileViewerProps {
   tricks: Trick[];
   teamId: 'A' | 'B';
   onClose: () => void;
-  currentTrickNumber: number;
-  isLastTrickPile?: boolean;
 }
 
 const getSuitSymbol = (suit: Suit): string => {
@@ -22,7 +20,7 @@ const getSuitSymbol = (suit: Suit): string => {
   return symbols[suit];
 };
 
-const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClose, currentTrickNumber, isLastTrickPile = false }) => {
+const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClose }) => {
   // Show the most recent trick in this team's pile
   const lastTrick = tricks.length > 0 ? tricks[tricks.length - 1] : null;
   
@@ -39,8 +37,7 @@ const TrickPileViewer: React.FC<TrickPileViewerProps> = ({ tricks, teamId, onClo
   
   const totalPoints = tricks.reduce((sum, trick) => sum + trick.points, 0);
   
-  // Find who played first (lead player) and human player
-  const leadPlayer = lastTrick.cards[0]?.player;
+  // Find human player in the trick
   const humanCard = lastTrick.cards.find(tc => !tc.player.isAI);
   const humanPlayer = humanCard?.player;
   

@@ -18,7 +18,6 @@ import Tutorial from './components/Tutorial';
 import VictoryCelebration from './components/VictoryCelebration';
 import DetailedScoreboard from './components/DetailedScoreboard';
 import DevTools from './components/DevTools';
-import PotpieAnalyzer from './components/PotpieAnalyzer';
 import { AccessibilityProvider, KeyboardHelp, AccessibilitySettings } from './accessibility';
 import './App.css';
 
@@ -231,8 +230,6 @@ function GameContent() {
         {/* Development tools - only show in development mode */}
         {process.env.NODE_ENV === 'development' && <DevTools />}
         
-        {/* Potpie Analyzer - AI-powered code analysis */}
-        <PotpieAnalyzer />
         </DndProvider>
     </div>
   );
