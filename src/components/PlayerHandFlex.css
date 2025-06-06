@@ -30,8 +30,8 @@
 /* Flex container for cards */
 .ph-flex-container {
   display: flex;
-flex-flow: row nowrap; /* Keep cards in single row */
-gap: var(--ph-card-gap, var(--card-gap));
+  flex-flow: row nowrap; /* Keep cards in single row */
+  gap: var(--ph-card-gap, var(--card-gap));
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -86,11 +86,20 @@ gap: var(--ph-card-gap, var(--card-gap));
   min-width: 0;
 }
 
+/* Use adjusted rotation step for south player */
+.ph-flex-wrapper[data-position="south"] {
+  --adjusted-rotation-step: calc(var(--ph-arc-rotation-step) * var(--south-card-spacing));
+}
+
 .ph-flex-wrapper[data-position="south"] .ph-flex-card {
+  /* Apply south specific size */
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * var(--south-card-size));
+  --dynamic-card-height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * var(--south-card-size));
+
   /* Each card gets transform for arc position using --card-index */
   transform-origin: center bottom;
   transform:
-    rotateZ(calc(var(--ph-arc-rotation-step) * var(--card-index)))
+    rotateZ(calc(var(--adjusted-rotation-step) * var(--card-index)))
     translateY(
       calc(
         var(--ph-arc-lift-min) +
@@ -103,7 +112,7 @@ gap: var(--ph-card-gap, var(--card-gap));
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:hover {
   z-index: var(--z-card-hover);
 
-  --hover-rotation: calc(var(--ph-arc-rotation-step) * var(--card-index));
+  --hover-rotation: calc(var(--adjusted-rotation-step) * var(--card-index));
   --hover-y: calc(
     var(--ph-arc-lift-min) +
     var(--ph-arc-lift-step) * max(var(--card-index), calc(-1 * var(--card-index)))
@@ -120,7 +129,6 @@ gap: var(--ph-card-gap, var(--card-gap));
   max-width: clamp(300px, 70vw, 600px); /* Increased max width for 50% overlap */
   justify-content: center;
 }
-
 
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
   flex: 0 0 auto;
@@ -179,7 +187,6 @@ gap: var(--ph-card-gap, var(--card-gap));
   transform: rotate(-90deg);
 }
 
-
 /* Container responsive properties using clamp() */
 .ph-flex-container {
   gap: clamp(0px, 0.5vw, var(--card-gap));
@@ -202,7 +209,7 @@ gap: var(--ph-card-gap, var(--card-gap));
     rotateZ(
       clamp(
         -20deg,
-        calc(var(--ph-arc-rotation-step) * var(--card-index)),
+        calc(var(--adjusted-rotation-step) * var(--card-index)),
         20deg
       )
     )
@@ -222,7 +229,7 @@ gap: var(--ph-card-gap, var(--card-gap));
 @media (width <= 640px) {
   /* Slightly reduce south arc on small screens */
   .ph-flex-wrapper[data-position="south"] .ph-flex-card {
-    --ph-arc-rotation-step: 4deg;
+    --adjusted-rotation-step: calc(4deg * var(--south-card-spacing));
   }
 }
 
@@ -287,7 +294,6 @@ gap: var(--ph-card-gap, var(--card-gap));
   backface-visibility: hidden;
 }
 
-
 /* Container query support for dynamic card sizing */
 @container (max-width: 400px) {
   .ph-flex-card {
@@ -313,7 +319,7 @@ gap: var(--ph-card-gap, var(--card-gap));
   
   /* Reduce arc effect on very small screens */
   .ph-flex-wrapper[data-position="south"] .ph-flex-card {
-    --ph-arc-rotation-step: 3deg;
+    --adjusted-rotation-step: calc(3deg * var(--south-card-spacing));
     --ph-arc-lift-step: 6px;
   }
   

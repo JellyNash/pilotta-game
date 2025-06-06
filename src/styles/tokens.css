@@ -211,6 +211,9 @@
     0.5 + (100vw - 320px) / 1440,
     1.0
   );
+  /* Quantifiable sizing for south player's hand */
+  --south-card-size: 0.8;      /* Multiplier for card dimensions */
+  --south-card-spacing: 0.5;   /* Multiplier for arc rotation step */
 
   /* Arc layout variables for PlayerHandFlex */
   --ph-arc-rotation-base: -17.5deg; /* starting rotation for leftmost card */
