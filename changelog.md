@@ -145,3 +145,16 @@
   - Changed to medium-sized cards
 - **Result**: Clean, unobtrusive modal that shows essential info without distraction
 - **Kept**: CSS Grid layout, golden glow on winner, cross formation
+
+## 2025-01-07 - Cleanup & Token Additions
+
+### Maintenance
+- Removed obsolete `ResponsiveCardHand.css` and deleted built asset directories
+  (`dist-baseline/` and `purged-css/`) from the repository.
+- Added new design tokens in `tokens.css`:
+  - `--announcement-border-width`
+  - `--ph-card-gap`
+  - `--ph-container-padding`
+  - `--ph-card-scale`
+- Updated `PlayerHandFlex` to rely entirely on these tokens for spacing, padding
+  and card scaling.
