@@ -23,8 +23,7 @@
 /* Flex container for cards */
 .ph-flex-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap; /* Keep cards in single row */
+  flex-flow: row nowrap; /* Keep cards in single row */
   gap: var(--ph-card-gap, 8px);
   align-items: center;
   justify-content: center;
@@ -80,8 +79,10 @@
   width: min(95vw, 800px);
   max-width: 100%;
   padding: clamp(1rem, 3vw, 3rem) clamp(0.5rem, 2vw, 2rem);
+
   /* Perspective for 3D arc effect */
   perspective: 1000px;
+
   /* Allow shrinking if needed */
   min-width: 0;
 }
@@ -93,51 +94,51 @@
 
 /* Arc transforms for each card position */
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1) {
-  transform: 
-    rotateZ(-17.5deg)
-    translateY(35px);
+  transform:
+    rotateZ(var(--ph-arc-rotation-base))
+    translateY(var(--ph-arc-lift-max));
 }
 
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(2) {
-  transform: 
-    rotateZ(-12.5deg)
-    translateY(20px);
+  transform:
+    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step)))
+    translateY(var(--ph-arc-lift-mid));
 }
 
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(3) {
-  transform: 
-    rotateZ(-7.5deg)
-    translateY(10px);
+  transform:
+    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 2))
+    translateY(var(--ph-arc-lift-low));
 }
 
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(4) {
-  transform: 
-    rotateZ(-2.5deg)
-    translateY(5px);
+  transform:
+    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 3))
+    translateY(var(--ph-arc-lift-min));
 }
 
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(5) {
-  transform: 
-    rotateZ(2.5deg)
-    translateY(5px);
+  transform:
+    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 4))
+    translateY(var(--ph-arc-lift-min));
 }
 
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(6) {
-  transform: 
-    rotateZ(7.5deg)
-    translateY(10px);
+  transform:
+    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 5))
+    translateY(var(--ph-arc-lift-low));
 }
 
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(7) {
-  transform: 
-    rotateZ(12.5deg)
-    translateY(20px);
+  transform:
+    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 6))
+    translateY(var(--ph-arc-lift-mid));
 }
 
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) {
-  transform: 
-    rotateZ(17.5deg)
-    translateY(35px);
+  transform:
+    rotateZ(calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 7))
+    translateY(var(--ph-arc-lift-max));
 }
 
 /* Hover states */
@@ -150,14 +151,14 @@
 }
 
 /* Set hover rotation values */
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1):hover { --hover-rotation: -17.5deg; --hover-y: 35px; }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(2):hover { --hover-rotation: -12.5deg; --hover-y: 20px; }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(3):hover { --hover-rotation: -7.5deg; --hover-y: 10px; }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(4):hover { --hover-rotation: -2.5deg; --hover-y: 5px; }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(5):hover { --hover-rotation: 2.5deg; --hover-y: 5px; }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(6):hover { --hover-rotation: 7.5deg; --hover-y: 10px; }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(7):hover { --hover-rotation: 12.5deg; --hover-y: 20px; }
-.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8):hover { --hover-rotation: 17.5deg; --hover-y: 35px; }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1):hover { --hover-rotation: var(--ph-arc-rotation-base); --hover-y: var(--ph-arc-lift-max); }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(2):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step)); --hover-y: var(--ph-arc-lift-mid); }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(3):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 2); --hover-y: var(--ph-arc-lift-low); }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(4):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 3); --hover-y: var(--ph-arc-lift-min); }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(5):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 4); --hover-y: var(--ph-arc-lift-min); }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(6):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 5); --hover-y: var(--ph-arc-lift-low); }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(7):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 6); --hover-y: var(--ph-arc-lift-mid); }
+.ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8):hover { --hover-rotation: calc(var(--ph-arc-rotation-base) + var(--ph-arc-rotation-step) * 7); --hover-y: var(--ph-arc-lift-max); }
 
 /* NORTH PLAYER - Compact horizontal layout */
 .ph-flex-wrapper[data-position="north"] .ph-flex-container {
@@ -169,6 +170,7 @@
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
   flex: 0 0 auto;
   width: calc(var(--card-width) * var(--ph-card-scale) * 0.7);
+
   /* Negative margin for overlap - using compact ratio */
   margin-right: calc(var(--card-width) * var(--ph-card-scale) * calc(-1 * var(--card-overlap-compact)));
 }
@@ -197,6 +199,7 @@
   flex: 0 0 auto;
   width: calc(var(--card-width) * var(--ph-card-scale) * 0.5);
   height: calc(var(--card-height) * var(--ph-card-scale) * 0.5);
+
   /* Negative margin to create overlap - using compact ratio */
   margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * calc(-1 * var(--card-overlap-compact)));
 }
@@ -252,20 +255,21 @@
   transform: rotateZ(clamp(-12deg, -20deg + 8deg * (100vw - 320px) / 800, -20deg)) 
              translateY(clamp(20px, 15px + 10px * (100vw - 320px) / 800, 30px));
 }
+
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) {
   transform: rotateZ(clamp(12deg, 20deg - 8deg * (100vw - 320px) / 800, 20deg)) 
              translateY(clamp(20px, 15px + 10px * (100vw - 320px) / 800, 30px));
 }
 
 /* Structural changes still need media queries */
-@media (max-width: 640px) {
+@media (width <= 640px) {
   /* Reduce arc effect on mobile - keep these as discrete changes */
   .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1) { transform: rotateZ(-12deg) translateY(20px); }
   .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) { transform: rotateZ(12deg) translateY(20px); }
 }
 
 /* Handle overflow scenarios - EXTREME FALLBACK */
-@media (max-width: 480px) {
+@media (width <= 480px) {
   /* For very small screens, use scroll for all positions */
   .ph-flex-wrapper .ph-flex-container {
     overflow: auto;
@@ -277,15 +281,13 @@
   
   /* South player horizontal scroll */
   .ph-flex-wrapper[data-position="south"] .ph-flex-container {
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: auto visible;
   }
   
   /* East/West vertical scroll */
   .ph-flex-wrapper[data-position="east"] .ph-flex-container,
   .ph-flex-wrapper[data-position="west"] .ph-flex-container {
-    overflow-y: auto;
-    overflow-x: visible;
+    overflow: visible auto;
     max-height: 80vh;
   }
   
@@ -301,7 +303,7 @@
 .ph-flex-card.ph-selected {
   z-index: var(--z-card-selected);
   transform: scale(1.05);
-  box-shadow: 0 0 var(--shadow-md) rgba(59, 130, 246, 0.8);
+  box-shadow: 0 0 var(--shadow-md) rgb(59 130 246 / 80%);
 }
 
 /* Keyboard selection state */
@@ -337,7 +339,7 @@
 }
 
 /* More aggressive mobile overlap */
-@media (max-width: 400px) {
+@media (width <= 400px) {
   /* South player - more overlap for 8 cards */
   .ph-flex-wrapper[data-position="south"] .ph-flex-card {
     margin-right: calc(var(--dynamic-card-width) * -0.4);
@@ -347,6 +349,7 @@
   .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(1) {
     transform: rotateZ(-10deg) translateY(15px);
   }
+
   .ph-flex-wrapper[data-position="south"] .ph-flex-card:nth-child(8) {
     transform: rotateZ(10deg) translateY(15px);
   }
