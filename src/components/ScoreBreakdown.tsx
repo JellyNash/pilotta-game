@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RoundScore } from '../core/types';
 
@@ -9,13 +9,26 @@ interface ScoreBreakdownProps {
   rawPoints?: { A: number; B: number };
 }
 
-const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ 
-  isOpen, 
-  onClose, 
+const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
+  isOpen,
+  onClose,
   roundScore,
-  rawPoints 
+  rawPoints
 }) => {
   if (!roundScore) return null;
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
 
 
   return (
