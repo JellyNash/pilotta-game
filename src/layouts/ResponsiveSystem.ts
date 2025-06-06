@@ -19,19 +19,26 @@ export const spacing = {
   32: '8rem',     // 128px
 } as const;
 
-// Z-index scale for proper layering
-export const zIndex = {
-  base: 0,
-  dropdown: 10,
-  sticky: 20,
-  fixed: 30,
-  modalBackdrop: 40,
-  modal: 50,
-  popover: 60,
-  tooltip: 70,
-  notification: 80,
-  debug: 90
-} as const;
+// Z-index values removed - use CSS variables from tokens.css instead
+// Example: style={{ zIndex: 'var(--z-card-base)' }}
+// Available variables from tokens.css:
+// --z-base: 1
+// --z-table-surface: 1
+// --z-card-base: 10
+// --z-trick-cards: 20
+// --z-south-player: 25
+// --z-player-indicator: 30
+// --z-card-hover: 40
+// --z-card-selected: 50
+// --z-ui-overlay: 60
+// --z-trick-pile: 70
+// --z-announcement: 80
+// --z-bidding-interface: 90
+// --z-modal-backdrop: 100
+// --z-modal: 110
+// --z-header: 120
+// --z-notification: 150
+// --z-tooltip: 200
 
 // Container queries for component-level responsiveness
 export const containerQueries = {

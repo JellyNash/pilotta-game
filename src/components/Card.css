@@ -40,7 +40,7 @@
 .card-zoomed-container {
   width: var(--card-width);
   height: var(--card-height);
-  z-index: 10000;
+  z-index: var(--z-tooltip);
 }
 
 /* Zoomed card styles */
@@ -93,7 +93,6 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  contain: style layout;
   background-color: white;
   border: 1px solid #e5e7eb;
   box-shadow: 0 var(--shadow-xs) var(--shadow-sm) rgba(0, 0, 0, 0.1);

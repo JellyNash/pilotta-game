@@ -173,7 +173,7 @@ const AnnouncementSystem: React.FC<AnnouncementSystemProps> = ({ announcements, 
             <motion.div
               key={`${announcement.position}-${announcement.id}`}
               className={`announcement-container ${positionClass}`}
-              style={{ zIndex: 100 }}
+              style={{ zIndex: 'var(--z-announcement)' }}
               initial={{ 
                 opacity: 0,
                 scale: 0,

@@ -4,7 +4,6 @@
 @import './tokens.css';
 @import '../layouts/game-grid.css';
 @import '../layouts/table-center.css';
-@import '../layouts/responsive.css';
 @import '../components/Card.css';
 @import '../components/PlayerHandFlex.css';
 @import '../components/AnnouncementSystem.css';
@@ -13,8 +12,7 @@
 @import '../components/PlayerZone.css';
 @import '../components/TrickArea.css';
 @import '../components/TrickPileViewer.css';
-@import './containment.css';
-@import './responsive-fixes.css';
+@import './utilities.css';
 @import './scoped-overrides.css';
 
 /* Define layer order */

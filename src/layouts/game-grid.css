@@ -7,7 +7,6 @@
   height: calc(100vh - var(--header-height, 5rem));
   overflow: visible;
   position: relative;
-  isolation: isolate; /* Create new stacking context */
   
   /* Apply safe area insets */
   padding-top: var(--safe-area-inset-top);
@@ -55,7 +54,6 @@
   width: auto;
   height: auto;
   /* Add proper containment */
-  contain: layout style;
 }
 
 .player-area-east { 
@@ -69,7 +67,6 @@
   position: relative;
   width: auto;
   height: auto;
-  contain: layout style;
 }
 
 .player-area-south { 
@@ -83,7 +80,6 @@
   position: relative;
   width: auto;
   height: auto;
-  contain: layout style;
 }
 
 .player-area-west { 
@@ -97,7 +93,6 @@
   position: relative;
   width: auto;
   height: auto;
-  contain: layout style;
 }
 
 .game-center { 

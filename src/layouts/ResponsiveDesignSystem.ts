@@ -10,17 +10,10 @@ export const breakpoints = {
 
 export type Breakpoint = keyof typeof breakpoints;
 
-// Z-index scale for proper layering
-export const zIndex = {
-  base: 0,
-  cards: 10,
-  badges: 20,
-  trickArea: 30,
-  modal: 40,
-  modalBackdrop: 35,
-  notification: 50,
-  debug: 100
-} as const;
+// Z-index values removed - use CSS variables from tokens.css instead
+// Example: style={{ zIndex: 'var(--z-card-base)' }}
+// Available variables:
+// --z-base, --z-card-base, --z-card-hover, --z-modal, etc.
 
 // Responsive spacing using CSS custom properties
 export const spacing = {

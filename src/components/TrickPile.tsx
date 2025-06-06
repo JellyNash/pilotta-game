@@ -61,7 +61,7 @@ const TrickPile: React.FC<TrickPileProps> = ({ tricks, teamId, position, current
               className="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg shadow-lg"
               style={{
                 transform: `translateY(${index * 2}px) translateX(${index * 1}px)`,
-                zIndex: -index
+                zIndex: `calc(var(--z-trick-pile) - ${index})`
               }}
             />
           ))}

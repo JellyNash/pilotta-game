@@ -39,7 +39,7 @@ const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
   const getContainerStyle = () => {
     const baseStyle: React.CSSProperties = {
       position: 'absolute',
-      zIndex: 'calc(var(--z-modal) - 10)', // Just below modals
+      zIndex: 'var(--z-ui-overlay)', // UI overlay level
       pointerEvents: 'none'
     };
 
@@ -138,7 +138,7 @@ const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
                           }
                         }}
                         style={{ 
-                          zIndex: cardIndex,
+                          zIndex: `calc(var(--z-ui-overlay) + ${cardIndex})`,
                           transformOrigin: 'bottom center'
                         }}
                       >

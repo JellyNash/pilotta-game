@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { zIndex } from './ResponsiveSystem';
 
 type Position = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 
                 'top-center' | 'bottom-center' | 'center' | 'custom';
@@ -17,7 +16,7 @@ interface UIPositionerProps {
     md?: Partial<{ position: Position; offset: { x?: string | number; y?: string | number } }>;
     lg?: Partial<{ position: Position; offset: { x?: string | number; y?: string | number } }>;
   };
-  zIndex?: number;
+  zIndex?: string;
   className?: string;
 }
 
@@ -30,7 +29,7 @@ export const UIPositioner: React.FC<UIPositionerProps> = ({
   position,
   offset = {},
   responsive = {},
-  zIndex: customZIndex = zIndex.fixed,
+  zIndex: customZIndex = 'var(--z-ui-overlay)',
   className = ''
 }) => {
   // Generate position classes based on breakpoints
@@ -165,7 +164,7 @@ export const NotificationPositioner: React.FC<NotificationPositionerProps> = ({
       left: basePosition.x,
       top: basePosition.y,
       transform: 'translate(-50%, -50%)',
-      zIndex: zIndex.notification + index
+      zIndex: `calc(var(--z-notification) + ${index})`
     };
   };
 

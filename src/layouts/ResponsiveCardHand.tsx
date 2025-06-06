@@ -2,6 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Card as CardType } from '../core/types';
 import { useContainerQuery } from '../hooks/useResponsive';
+import './ResponsiveCardHand.css';
 
 interface ResponsiveCardHandProps {
   cards: CardType[];
@@ -126,7 +127,7 @@ export const ResponsiveCardHand: React.FC<ResponsiveCardHandProps> = ({
       whileHover: {
         y: -20,
         scale: 1.05,
-        zIndex: 50,
+        zIndex: 'var(--z-card-hover)',
         transition: { type: 'spring', stiffness: 400, damping: 25 }
       }
     };
@@ -161,7 +162,7 @@ export const ResponsiveCardHand: React.FC<ResponsiveCardHandProps> = ({
                 height: layout.cardHeight,
                 marginLeft: -layout.cardWidth / 2,
                 marginTop: -layout.cardHeight / 2,
-                zIndex: index + (selectedCard?.id === card.id ? 100 : 0)
+                zIndex: selectedCard?.id === card.id ? 'var(--z-card-selected)' : `calc(var(--z-card-base) + ${index})`
               }}
               initial={false}
               animate={transform}
@@ -176,19 +177,6 @@ export const ResponsiveCardHand: React.FC<ResponsiveCardHandProps> = ({
         })}
       </div>
 
-      <style jsx>{`
-        @container (max-width: 400px) {
-          .relative {
-            transform: scale(0.8);
-          }
-        }
-
-        @container (min-width: 1000px) {
-          .relative {
-            transform: scale(1.1);
-          }
-        }
-      `}</style>
     </div>
   );
 };

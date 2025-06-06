@@ -302,7 +302,7 @@ const Card: React.FC<CardProps> = ({
             exit={{ opacity: 0, scale: 1 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
             className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none"
-            style={{ zIndex: 9999 }}
+            style={{ zIndex: 'var(--z-tooltip)' }}
           >
             {/* Backdrop - clickable to close */}
             <motion.div

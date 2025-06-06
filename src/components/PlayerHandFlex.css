@@ -17,7 +17,6 @@
   justify-content: center;
   overflow: visible;
   z-index: inherit;
-  isolation: isolate;
   padding: var(--space-xs); /* Add small padding to prevent edge clipping */
 }
 
@@ -143,7 +142,7 @@
 
 /* Hover states */
 .ph-flex-wrapper[data-position="south"] .ph-flex-card:hover {
-  z-index: var(--z-card-hover, 50);
+  z-index: var(--z-card-hover);
   transform: 
     rotateZ(var(--hover-rotation, 0deg))
     translateY(calc(var(--hover-y, 0px) - 20px))
@@ -300,14 +299,14 @@
 
 /* Ensure selected state is visible */
 .ph-flex-card.ph-selected {
-  z-index: var(--z-card-selected, 40);
-  transform: scale(1.05) !important;
+  z-index: var(--z-card-selected);
+  transform: scale(1.05);
   box-shadow: 0 0 var(--shadow-md) rgba(59, 130, 246, 0.8);
 }
 
 /* Keyboard selection state */
 .ph-flex-card.ph-keyboard-selected {
-  z-index: calc(var(--z-card-selected, 40) - 5);
+  z-index: calc(var(--z-card-selected) - 5);
   transform: translateY(-12px) scale(1.02);
 }
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { zIndex } from './ResponsiveDesignSystem';
 
 type AnchorPosition = 'top' | 'right' | 'bottom' | 'left' | 'center';
 type Alignment = 'start' | 'center' | 'end';
@@ -9,7 +8,7 @@ interface PositionedElementProps {
   position: AnchorPosition;
   alignment?: Alignment;
   offset?: string;
-  zIndex?: number;
+  zIndex?: string;  // Changed to string to accept CSS variables
   className?: string;
 }
 
@@ -18,7 +17,7 @@ export const PositionedElement: React.FC<PositionedElementProps> = ({
   position,
   alignment = 'center',
   offset = 'var(--badge-offset)',
-  zIndex: customZIndex = zIndex.badges,
+  zIndex: customZIndex = 'var(--z-player-indicator)',
   className = ''
 }) => {
   const getPositionStyles = (): React.CSSProperties => {
