@@ -24,7 +24,7 @@
 .ph-flex-wrapper[data-position="north"],
 .ph-flex-wrapper[data-position="east"],
 .ph-flex-wrapper[data-position="west"] {
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Flex container for cards */
@@ -133,7 +133,9 @@
 
 .ph-flex-wrapper[data-position="north"] .ph-flex-card {
   flex: 0 0 auto;
-  width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * 0.7);
+
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * var(--north-card-size));
+  width: var(--dynamic-card-width);
 
   /* Negative margin for overlap - using compact ratio */
   margin-right: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact)));
@@ -161,8 +163,11 @@
 .ph-flex-wrapper[data-position="east"] .ph-flex-card,
 .ph-flex-wrapper[data-position="west"] .ph-flex-card {
   flex: 0 0 auto;
-  width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * 0.5);
-  height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * 0.5);
+
+  --dynamic-card-width: calc(var(--card-width) * var(--ph-card-scale) * var(--card-scale) * var(--side-card-size));
+  --dynamic-card-height: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * var(--side-card-size));
+  width: var(--dynamic-card-width);
+  height: var(--dynamic-card-height);
 
   /* Negative margin to create overlap - using compact ratio */
   margin-bottom: calc(var(--card-height) * var(--ph-card-scale) * var(--card-scale) * calc(-1 * var(--card-overlap-compact)));
