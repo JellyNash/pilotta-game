@@ -163,7 +163,7 @@ const Tutorial: React.FC<TutorialProps> = ({ isOpen, onClose }) => {
             <div className="bg-red-900/20 border border-red-700/50 rounded-lg p-4">
               <h4 className="font-semibold text-red-400 mb-2">⚠️ Forced Overtrump Rule</h4>
               <p className="text-sm text-red-200">
-                If you can't follow suit and your partner isn't winning the trick, you MUST play a trump if you have one!
+                If you can't follow suit, you must play a trump. When trumps are already in the trick, you have to beat the highest trump if you can.
               </p>
             </div>
             <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">

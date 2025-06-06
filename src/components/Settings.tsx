@@ -353,7 +353,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                     <p>• First to reach the target score wins</p>
                     <p>• Trump suit beats all other suits</p>
                     <p>• Must follow suit if possible</p>
-                    <p>• Must overtrump if partner isn't winning</p>
+                    <p>• Must play a trump if you can't follow suit, overtrumping if possible</p>
                     <p>• Last trick is worth 10 bonus points</p>
                     <p>• Belote (K+Q of trump) is worth 20 points</p>
                   </div>
