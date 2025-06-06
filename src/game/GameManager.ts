@@ -1,7 +1,8 @@
 import { store } from '../store';
 import { GameFlowController } from './GameFlowController';
 import { newGame, setTargetScore, setAIPersonality, updateSettings } from '../store/gameSlice';
-import { Card, Suit, AIPersonality } from '../core/types';
+import { Card, Suit, AIPersonality, Contract } from '../core/types';
+import { getMinimumBid } from '../core/biddingRules';
 
 export class GameManager {
   private static instance: GameManager;
@@ -95,8 +96,7 @@ export class GameManager {
 
   getMinimumBid() {
     const state = store.getState().game;
-    if (!state.contract) return 80;
-    return Math.min(state.contract.value + 10, 490);
+    return getMinimumBid(state.contract as Contract | null);
   }
 
   canDouble() {

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAppSelector } from '../store/hooks';
 import { Suit, Player, BiddingEntry } from '../core/types';
+import { GAME_CONSTANTS } from '../core/constants';
 import { gameManager } from '../game/GameManager';
 import { getSuitColorValue } from '../utils/suitColors';
 
@@ -121,7 +122,7 @@ const BiddingInterface: React.FC = () => {
   
   // Get minimum and maximum bid values
   const minBid = gameManager.getMinimumBid();
-  const maxBid = 490;
+  const maxBid = GAME_CONSTANTS.BIDDING.CAPOT;
   
   const [selectedBid, setSelectedBid] = useState<number>(minBid);
   const [selectedTrump, setSelectedTrump] = useState<Suit | null>(null);

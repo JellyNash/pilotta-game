@@ -11,13 +11,14 @@ import {
   LAST_TRICK_BONUS,
   TOTAL_POINTS_ALL_TRICKS
 } from './types';
-import { 
-  hasSuit, 
-  getCardsOfSuit, 
-  compareCards, 
+import {
+  hasSuit,
+  getCardsOfSuit,
+  compareCards,
   getCardStrength,
-  countCardPoints 
+  countCardPoints
 } from './cardUtils';
+import * as biddingRules from './biddingRules';
 
 // Check if a card play is legal given the current trick state
 export function isLegalPlay(
@@ -485,42 +486,11 @@ export function isGameOver(gameState: GameState): 'A' | 'B' | null {
 }
 
 // Validate a bid
-export function isValidBid(
-  bid: number, 
-  currentHighestBid: number | null,
-  isCapot: boolean = false
-): boolean {
-  if (isCapot) {
-    return bid === 250;
-  }
-  
-  // Valid bids are 80-160 in increments of 10, plus 250 (capot)
-  if (bid === 250) return true;
-  if (bid < 80 || bid > 160) return false;
-  if (bid % 10 !== 0) return false;
-  
-  // Must be higher than current bid
-  if (currentHighestBid !== null && bid <= currentHighestBid) {
-    return false;
-  }
-  
-  return true;
+export function isValidBid(bid: number, currentHighestBid: number | null): boolean {
+  return biddingRules.isValidBid(bid, currentHighestBid);
 }
 
 // Get next valid bid values
 export function getValidBidValues(currentHighestBid: number | null): number[] {
-  const validBids: number[] = [];
-  
-  const start = currentHighestBid ? currentHighestBid + 10 : 80;
-  
-  for (let bid = start; bid <= 160; bid += 10) {
-    validBids.push(bid);
-  }
-  
-  // Always allow capot
-  if (!validBids.includes(250)) {
-    validBids.push(250);
-  }
-  
-  return validBids;
+  return biddingRules.getValidBids(currentHighestBid);
 }

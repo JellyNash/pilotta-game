@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Card, Suit, Rank, CARD_VALUES } from './types';
+import { getStrength, getValue } from './cardRanking';
 
 // Create a single card
 export function createCard(suit: Suit, rank: Rank): Card {
@@ -39,21 +40,12 @@ export function shuffleDeck(deck: Card[]): Card[] {
 
 // Get card value based on trump status
 export function getCardValue(card: Card, isTrump: boolean): number {
-  const values = isTrump ? CARD_VALUES.trump : CARD_VALUES.nonTrump;
-  return values[card.rank];
+  return getValue(card, isTrump);
 }
 
 // Get card strength for comparison (higher = stronger)
 export function getCardStrength(card: Card, isTrump: boolean): number {
-  if (isTrump) {
-    // Trump order: J, 9, A, 10, K, Q, 8, 7
-    const trumpOrder = [Rank.Seven, Rank.Eight, Rank.Queen, Rank.King, Rank.Ten, Rank.Ace, Rank.Nine, Rank.Jack];
-    return trumpOrder.indexOf(card.rank);
-  } else {
-    // Non-trump order: A, 10, K, Q, J, 9, 8, 7
-    const nonTrumpOrder = [Rank.Seven, Rank.Eight, Rank.Nine, Rank.Jack, Rank.Queen, Rank.King, Rank.Ten, Rank.Ace];
-    return nonTrumpOrder.indexOf(card.rank);
-  }
+  return getStrength(card, isTrump);
 }
 
 // Compare two cards (returns positive if card1 wins, negative if card2 wins)

@@ -1,8 +1,7 @@
 import React, { useState, useRef, useMemo, memo } from 'react';
 import { Player, Card as CardType, Suit } from '../core/types';
 import Card from './Card';
-import { sortHumanPlayerCards } from '../utils/cardSorting';
-import { sortCards } from '../utils/cardSortUtils';
+import { sortHumanPlayerCards, sortCards } from '../core/cardSorting';
 import { useKeyboardNavigation } from '../accessibility';
 import './PlayerHandFlex.css';
 
