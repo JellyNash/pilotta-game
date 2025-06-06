@@ -18,7 +18,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const [animationSpeed, setAnimationSpeed] = useState<'fast' | 'normal' | 'slow'>('normal');
   const [advancedAI, setAdvancedAI] = useState(false);
   const [cardSize, setCardSize] = useState<number>(
-    parseFloat(localStorage.getItem('cardSize') || '1.0')  // Default to 1.0 (100%)
+    parseFloat(localStorage.getItem('cardScale') || '1.0')  // Default to 1.0 (100%)
   );
   const [showTrickPilePoints, setShowTrickPilePoints] = useState(gameSettings?.showTrickPilePoints || false);
   const [rightClickZoom, setRightClickZoom] = useState(gameSettings?.rightClickZoom ?? true);
@@ -35,24 +35,13 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   
   const handleCardSizeChange = (size: number) => {
     setCardSize(size);
-    localStorage.setItem('cardSize', size.toString());
-    
-    // Set CSS variables for card scaling
-    // Human player gets full 25% increments
-    document.documentElement.style.setProperty('--card-size-human', size.toString());
-    // AI players get 5% increments (20% of human scaling)
-    const aiScale = 1.0 + (size - 1.0) * 0.2;
-    document.documentElement.style.setProperty('--card-size-ai', aiScale.toString());
-    
-    // Map numeric scale to size categories for Redux (for backward compatibility)
-    let sizeCategory: 'small' | 'medium' | 'large' | 'xlarge' = 'medium';
-    if (size <= 1.25) sizeCategory = 'small';
-    else if (size <= 1.75) sizeCategory = 'medium';
-    else if (size <= 2.0) sizeCategory = 'large';
-    else sizeCategory = 'xlarge';
-    
-    dispatch(updateSettings({ cardSize: sizeCategory }));
-    gameManager.setCardSize(size);
+    localStorage.setItem('cardScale', size.toString());
+
+    // Update global card scale CSS variable
+    document.documentElement.style.setProperty('--card-scale', size.toString());
+
+    dispatch(updateSettings({ cardScale: size }));
+    gameManager.setCardScale(size);
   };
 
   const handleShowTrickPilePointsChange = (show: boolean) => {

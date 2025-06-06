@@ -18,7 +18,7 @@ import {
 
 // Game Settings interface
 export interface GameSettings {
-  cardSize: 'small' | 'medium' | 'large' | 'xlarge';
+  cardScale: number;
   cardStyle: 'classic' | 'modern' | 'accessible' | 'minimalist';
   soundEnabled: boolean;
   animationSpeed: 'slow' | 'normal' | 'fast';
@@ -63,7 +63,7 @@ const createInitialProfile = (): PlayerProfile => ({
 // Initial state factory
 const createInitialState = (): GameState => {
   // Load saved settings
-  const savedCardSize = localStorage.getItem('cardSize') as 'small' | 'medium' | 'large' | 'xlarge' | null;
+  const savedCardScale = parseFloat(localStorage.getItem('cardScale') || '1');
   // Create players - counterclockwise order: South -> East -> North -> West
   const players: Player[] = [
     {
@@ -143,7 +143,7 @@ const createInitialState = (): GameState => {
     lastRoundScore: null,
     roundHistory: [],
     settings: {
-      cardSize: savedCardSize || 'large',  // Default to large for low vision
+      cardScale: savedCardScale || 1,
       cardStyle: 'classic',  // Default to classic style
       soundEnabled: true,
       animationSpeed: 'normal',
@@ -552,7 +552,7 @@ const gameSlice = createSlice({
     },
 
     updateSettings: (state, action: PayloadAction<Partial<{
-      cardSize: 'small' | 'medium' | 'large' | 'xlarge';
+      cardScale: number;
       cardStyle: 'classic' | 'modern' | 'accessible' | 'minimalist';
       soundEnabled: boolean;
       animationSpeed: 'slow' | 'normal' | 'fast';
@@ -562,7 +562,7 @@ const gameSlice = createSlice({
     }>>) => {
       if (!state.settings) {
         state.settings = {
-          cardSize: 'large',  // Default to large for low vision
+          cardScale: 1,
           cardStyle: 'classic',
           soundEnabled: true,
           animationSpeed: 'normal',

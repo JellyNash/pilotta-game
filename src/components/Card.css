@@ -2,38 +2,38 @@
 
 /* Card text sizes using clamp() tokens */
 .card-main-text {
-  font-size: clamp(1.5rem, 4.5vw, 3rem);
+  font-size: calc(clamp(1.5rem, 4.5vw, 3rem) * var(--ph-card-scale) * var(--card-scale));
 }
 
 .card-main-suit {
-  font-size: clamp(1.75rem, 5vw, 3.5rem);
+  font-size: calc(clamp(1.75rem, 5vw, 3.5rem) * var(--ph-card-scale) * var(--card-scale));
 }
 
 .card-corner-text {
-  font-size: clamp(0.875rem, 2.5vw, 1.5rem);
+  font-size: calc(clamp(0.875rem, 2.5vw, 1.5rem) * var(--ph-card-scale) * var(--card-scale));
 }
 
 .card-corner-suit {
-  font-size: clamp(0.875rem, 2.5vw, 1.5rem);
+  font-size: calc(clamp(0.875rem, 2.5vw, 1.5rem) * var(--ph-card-scale) * var(--card-scale));
 }
 
 .card-corner-suit-small {
-  font-size: clamp(0.625rem, 1.75vw, 1rem);
+  font-size: calc(clamp(0.625rem, 1.75vw, 1rem) * var(--ph-card-scale) * var(--card-scale));
 }
 
 /* Card main content positioning */
 .card-main-content {
-  padding-left: 15%;
-  padding-top: 15%;
+  padding-left: calc(15% * var(--ph-card-scale) * var(--card-scale));
+  padding-top: calc(15% * var(--ph-card-scale) * var(--card-scale));
 }
 
 /* Card corner positioning with responsive values */
 .playing-card .absolute.top-3 {
-  top: clamp(0.5rem, 1.5vw, 0.75rem);
+  top: calc(clamp(0.5rem, 1.5vw, 0.75rem) * var(--ph-card-scale) * var(--card-scale));
 }
 
 .playing-card .absolute.left-3 {
-  left: clamp(0.5rem, 1.5vw, 0.75rem);
+  left: calc(clamp(0.5rem, 1.5vw, 0.75rem) * var(--ph-card-scale) * var(--card-scale));
 }
 
 /* Zoomed card container */
