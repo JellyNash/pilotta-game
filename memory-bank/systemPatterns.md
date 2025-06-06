@@ -44,14 +44,30 @@
 - Responsive token system: Define in tokens.css → Use via clamp() → No hardcoded values.
 - Layout hierarchy: GameLayout grid → Component positioning → No absolute positioning.
 - Scaling enforcement: Every element uses tokens → Audit for violations → ESLint rules.
+- Linting configuration: ESLint (.eslintrc) and Stylelint (.stylelintrc) in JSON format.
 
-## Responsive Implementation Patterns (Session 27)
+## Responsive Implementation Patterns (Sessions 27-29)
 - **Card Overlap**: Use CSS variables (--card-overlap-compact: 0.5) with negative margins
 - **Viewport Bounds**: Reserve space with --zoom-reserve-x/y, apply margins to game-table
-- **Z-Index Management**: Use CSS variables exclusively, increment with calc()
+- **Z-Index Management**: Use CSS variables exclusively from tokens.css, increment with calc()
 - **Mobile Breakpoints**: Structural changes only (hide/show, flex direction)
 - **Declaration Positioning**: Clamp-based offsets allowing temporary overlap
 - **Bidding Layout**: Flex with named classes (.bid-suits-section, .bid-current-section)
 
+## Game Logic Patterns (Session 28)
+- **Early Termination**: Check after each trick if contract is mathematically impossible
+- **Auto-play**: Detect single legal move and play automatically after delay
+- **AI Contract Analysis**: Evaluate points needed vs available, adjust strategy
+- **Failed Contract Scoring**: Ensure contract team gets exactly 0 points
+- **Declaration Ties**: Enable both teams to show when values are equal
+
+## Final Architecture (Session 30)
+- **Component Structure**: Small, focused components with single responsibility
+- **State Management**: Redux Toolkit with typed slices and selectors
+- **Styling Strategy**: CSS Modules + Tailwind utilities + CSS variables
+- **Performance**: React.memo, useMemo, useCallback throughout
+- **Animation**: Pre-defined Framer Motion variants to prevent recreations
+- **Documentation**: Comprehensive technical guide maintained alongside code
+
 ## This Document
-Update as new patterns or architectural changes are introduced.
+Updated with final architectural patterns from Sessions 27-30. Project architecture is now stable and well-documented.

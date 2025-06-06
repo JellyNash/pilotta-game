@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Current Project Status (Session 27 - January 2025)
+## Current Project Status (Session 31 - January 2025)
 
 **✅ ALL RESPONSIVE FIXES COMPLETED**
 
@@ -156,12 +156,13 @@ The game follows a strict phase progression:
 ### Technical Debt
 - **Web Worker**: AI worker implementation exists but needs Vite configuration fixes
 - **Redux Structure**: New modular slices created but not yet integrated
+- **Test Implementation**: Playwright configured but no tests written yet
 
 ### Important Files
-- Animation Variants: `/src/animations/animationVariants.ts`
-- Responsive CSS: `/src/layouts/responsive-variables.css`, `/src/layouts/game-grid.css`
+- Responsive CSS: `/src/styles/tokens.css`, `/src/layouts/game-grid.css`
 - Layout Components: `/src/components/PlayerZone.tsx`, `/src/layouts/PositioningSystem.tsx`
-- Performance Testing: `test-visual-regression.cjs`
+- Linting Config: `.eslintrc.cjs`, `stylelint.config.cjs`
+- Testing Config: `playwright.config.ts`
 
 ### Accessibility Status
 - Basic keyboard navigation added to Card component
@@ -175,6 +176,37 @@ The game follows a strict phase progression:
 - ✅ Card rankings correct (Trump: J-9-A-10-K-Q-8-7)
 - ✅ Counter-clockwise progression
 - ✅ Team-based scoring and trick piles
+
+## Latest Session Updates (2025-01-07)
+
+### Session 31 - Code Cleanup & Component Removal
+1. **Removed Deprecated Components**:
+   - Deleted `AnnouncementDisplay.tsx` - replaced by AnnouncementSystem
+   - Deleted `BiddingAnnouncement.tsx` - functionality merged into AnnouncementSystem
+   - Deleted `UnifiedAnnouncement.tsx` - superseded by AnnouncementSystem
+   - Removed related imports from App.tsx
+
+2. **CSS Architecture Improvements**:
+   - Deleted `table-center.css` - legacy positioning system no longer used
+   - Updated ESLint configuration to disable rule sets temporarily
+   - Enhanced Stylelint configuration with more flexible rules
+   - Simplified `index.css` by removing redundant styles
+
+3. **Component Consolidation**:
+   - Removed `PlayerHand.tsx` - fully replaced by PlayerHandFlex
+   - GameTable now exclusively uses PlayerHandFlex component
+   - Cleaned up imports and dependencies
+
+4. **Code Quality Updates**:
+   - Added `.eslintrc.cjs` configuration file
+   - Added `stylelint.config.cjs` for CSS linting
+   - Added `playwright.config.ts` for E2E testing setup
+   - Removed accessibility stub file (`src/accessibility/stub.ts`)
+
+5. **Documentation Updates**:
+   - Enhanced CSS Architecture documentation
+   - Updated Potpie GitHub setup instructions
+   - Improved tokens.css with better organization
 
 ## Latest Session Updates (2025-01-06)
 
