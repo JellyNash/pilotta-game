@@ -72,7 +72,7 @@ Create comprehensive tokens in `tokens.css`:
 1. **Card System** (Critical)
    - Remove inline calculations from Card.tsx
    - Consolidate to PlayerHandFlex only
-   - Remove PlayerHandArcImproved
+   - Remove PlayerHandArcImproved **(completed)**
 
 2. **Typography** (High)
    - Replace all font-size media queries

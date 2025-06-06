@@ -6,11 +6,13 @@
   flex: 1 1 auto; /* Allow growing and shrinking */
   min-width: 0;
   min-height: 0;
-  width: auto;
-  height: auto;
+  width: var(--hand-container-width);
+  height: var(--hand-container-height);
+  max-width: 100%;
+  max-height: 100%;
   position: relative;
   z-index: var(--z-card-base);
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* Player name positioning */

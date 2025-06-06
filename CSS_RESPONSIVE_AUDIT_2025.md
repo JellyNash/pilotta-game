@@ -43,9 +43,9 @@ Multiple hardcoded values need conversion:
 - **Lines 283-284, 318-319**: Fixed max-widths and heights → Use clamp()
 - **Lines 314, 324-325**: Large screen fixed values → Use clamp()
 
-#### **PlayerHandArcImproved.css**
-- **Line 66**: `padding-bottom: 2rem;` → Consider using clamp()
-- Multiple transform calculations use hardcoded multipliers that could be CSS variables
+#### **PlayerHandArcImproved.css** (removed)
+Legacy file replaced by `PlayerHandFlex.css`. Previous issues included:
+- Hardcoded padding and transform multipliers
 
 #### **PlayerHandFlex.css**
 - **Line 21**: `padding: 8px;` → Convert to relative units
@@ -94,8 +94,7 @@ These can be replaced with clamp():
 2. **BiddingInterface.css** (Lines 33-63)
 3. **ContractIndicator.css** (Lines 31-77)
 4. **TrickPileViewer.css** (Lines 247-339)
-5. **PlayerHandArcImproved.css** (Lines 379-400)
-6. **PlayerHandFlex.css** (Lines 220-261, 264-294, 330-348)
+5. **PlayerHandFlex.css** (Lines 220-261, 264-294, 330-348)
 7. **table-center.css** (Lines 190-224)
 8. **tokens.css** (Lines 171-243)
 

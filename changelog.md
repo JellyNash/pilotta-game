@@ -87,7 +87,7 @@
 - Adjusted spacing to 0.65 overlap for larger cards
 
 ### Technical Improvements
-- Created `PlayerHandArcImproved.css` with scalable architecture
+- Initial experiments introduced `PlayerHandArcImproved.css` with a scalable architecture (now removed in favor of `PlayerHandFlex.css`)
 - CSS variables for all dimensions and parameters
 - Integrated with existing Redux cardSize settings
 - Support for dynamic card counts (future-ready)
@@ -98,8 +98,8 @@
 - Added missing width calculation for zoomed card overlay
 - Resolved card stacking issues from previous sessions
 
-### Files Created/Modified
-- `/src/components/PlayerHandArcImproved.css` - New arc system
+-### Files Created/Modified
+- *(Removed)* `/src/components/PlayerHandArcImproved.css` was replaced by `PlayerHandFlex.css`
 - `/src/components/Card.tsx` - Fixed undefined variable and removed inline position
 - `/src/layouts/responsive.css` - Fixed container query target
 - `/CARD_FAN_ARC_DESIGN.md` - Mathematical documentation

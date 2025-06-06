@@ -189,7 +189,7 @@
 - `Card.tsx` - Remove inline pixel calculations (lines 226-280)
 - `TrickPileViewer.css` - 15+ hardcoded dimensions
 - `AnnouncementSystem.css` - Fixed transforms and blurs
-- `PlayerHandArcImproved.css` - To be removed entirely
+- `PlayerHandArcImproved.css` - Removed; all hands now use `PlayerHandFlex.css`
 - All component CSS files - Convert to clamp() tokens
 
 ## 🎯 NEXT SESSION INSTRUCTIONS 🎯

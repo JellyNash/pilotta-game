@@ -195,13 +195,6 @@ body {
   
 }
 
-/* ==================== CARD SIZE CONSTRAINTS ==================== */
-
-/* Maximum card sizes using tokens */
-.playing-card {
-  max-width: var(--card-width);
-  max-height: var(--card-height);
-}
 
 /* ==================== TRICK AREA RESPONSIVE ==================== */
 .trick-area {
@@ -239,11 +232,7 @@ body {
 
 /* Z-index values now in tokens.css */
 
-/* Basic focus styles */
-.playing-card:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
+/* Basic focus styles now in Card.css */
 
 /* Force hardware acceleration for smooth animations */
 .animate-smooth {
@@ -288,15 +277,6 @@ body {
 .modal-content {
   user-select: text;
 }
-@media (hover: none) and (pointer: coarse) {
-  .playing-card {
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  .playing-card:active {
-    transform: scale(0.98);
-  }
-}
 
 /* Print styles */
 @media print {
@@ -310,10 +290,6 @@ body {
     display: none;
   }
   
-  .playing-card {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
 }
 
 /* Custom slider styles for card size control */

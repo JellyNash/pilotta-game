@@ -256,7 +256,7 @@ The game follows a strict phase progression:
 3. **Created Comprehensive Action Plan**:
    - **Design Token System**: 50+ responsive variables using clamp()
    - **Component Migration**: Convert all hardcoded values to tokens
-   - **Legacy Removal**: Delete PlayerHandArcImproved, reduce media queries
+   - **Legacy Removal**: Removed `PlayerHandArcImproved.css` and reduced media queries
    - **Accessibility Restoration**: Add keyboard nav and ARIA labels
    - **See RESPONSIVE_REFACTOR_PLAN.md for full implementation details**
 
@@ -264,7 +264,7 @@ The game follows a strict phase progression:
    - `Card.tsx`: Remove inline pixel calculations (lines 226-280)
    - `TrickPileViewer.css`: Convert 15+ hardcoded dimensions
    - `AnnouncementSystem.css`: Fix transforms and blur values
-   - `PlayerHandArcImproved.css`: Remove entirely (use PlayerHandFlex)
+   - `PlayerHandArcImproved.css`: (removed, replaced by `PlayerHandFlex.css`)
    - All CSS files: Convert to clamp() token system
 
 ### Session 22 - CSS Variables, Responsive Improvements & Basic Accessibility
@@ -419,7 +419,7 @@ The game follows a strict phase progression:
    - `index.css`: Changed overflow to visible
    - `game-grid.css`: Complete responsive grid implementation
    - `PlayerZone.css`: Updated flex properties
-   - `PlayerHandArcImproved.css`: Added responsive scaling
+   - `PlayerHandArcImproved.css`: (removed in favor of `PlayerHandFlex.css`)
    - `overrides.css`: Added overflow and z-index fixes
    - Created: `RESPONSIVE_DESIGN_IMPLEMENTATION.md`
 
