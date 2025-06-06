@@ -7,33 +7,29 @@ interface DeclarationCardsDisplayProps {
   declarations: Declaration[];
   position: 'north' | 'east' | 'south' | 'west';
   show: boolean;
-  isHumanPlayer?: boolean;
 }
 
 const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
   declarations,
   position,
-  show,
-  isHumanPlayer = false
+  show
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (show && declarations.length > 0) {
       setIsVisible(true);
-      
-      // Auto-hide after 3 seconds for non-human players
-      if (!isHumanPlayer) {
-        const timer = setTimeout(() => {
-          setIsVisible(false);
-        }, 3000);
-        
-        return () => clearTimeout(timer);
-      }
+
+      // Auto-hide after 3 seconds
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
     } else if (!show) {
       setIsVisible(false);
     }
-  }, [show, isHumanPlayer, declarations.length]);
+  }, [show, declarations.length]);
 
   // Get positioning based on player position
   const getContainerStyle = () => {
@@ -49,6 +45,7 @@ const DeclarationCardsDisplay: React.FC<DeclarationCardsDisplayProps> = ({
       case 'south':
         return {
           ...baseStyle,
+          position: 'fixed',
           bottom: 'var(--declaration-offset-v)',
           left: '50%',
           transform: 'translateX(-50%)'
