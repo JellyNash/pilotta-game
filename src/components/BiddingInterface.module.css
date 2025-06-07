@@ -18,7 +18,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-bidding-interface);
+  z-index: var(--z-modal); /* Higher z-index to ensure it's above player hands */
+  isolation: isolate; /* Create new stacking context */
 }
 
 .modalContainer {
@@ -27,7 +28,7 @@
   max-height: var(--bid-modal-max-height);
   max-height: var(--bid-modal-max-height-safe); /* dvh fallback */
   padding: var(--dynamic-padding);
-  background: rgba(30, 41, 59, 0.75);
+  background: rgba(30, 41, 59, 0.95); /* Increased opacity for better visibility */
   backdrop-filter: var(--glass-effect-md);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-drop-xl);
@@ -35,6 +36,8 @@
   flex-direction: column;
   overflow: hidden;
   container-type: inline-size;
+  position: relative;
+  z-index: 1; /* Ensure content is above any background effects */
 }
 
 .modalContent {
@@ -43,6 +46,10 @@
   overflow-x: hidden;
   overscroll-behavior: contain;
   padding: var(--bid-modal-padding);
+  min-height: 0; /* Ensure flex child can shrink */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
 }
 
 /* Content grid for responsive layout */
@@ -63,14 +70,19 @@
 .currentSection {
   flex: 0 1 var(--bid-current-flex-base);
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
 /* Button sizing with text scaling */
 .button {
   width: var(--bid-button-width);
-  min-width: var(--bid-button-width);
+  min-width: var(--bid-button-min-width);
   font-size: calc(var(--fs-lg) * var(--text-scale-factor));
   padding: var(--bid-button-padding);
+  flex-shrink: 1;
 }
 
 .suitButton {
@@ -89,6 +101,10 @@
 
 .actions {
   gap: var(--bid-spacing);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .section {
@@ -181,8 +197,9 @@
   
   /* Center current bid section content */
   .currentSection {
-    display: flex;
-    justify-content: center;
+    align-items: stretch;
+    flex-direction: row;
+    gap: var(--space-md);
   }
 }
 
@@ -192,11 +209,23 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
+  
+  /* Stack current section vertically on very narrow views */
+  .currentSection {
+    flex-direction: column;
+  }
 }
 
 @container (max-width: 20rem) {
   .modalContainer {
     min-width: var(--bid-modal-overflow-threshold);
+  }
+  
+  /* Ensure buttons can shrink further */
+  .button {
+    min-width: clamp(50px, 12cqi, 80px);
+    padding: var(--space-sm) var(--space-md);
+    font-size: calc(var(--fs-sm) * var(--text-scale-factor));
   }
 }
 

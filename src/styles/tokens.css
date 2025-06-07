@@ -252,6 +252,7 @@
   --bid-modal-padding: clamp(1rem, 3vw, 2rem);
   --bid-modal-overflow-threshold: 95vw;
   --bid-button-width: clamp(80px, 20vw, 170px);
+  --bid-button-min-width: clamp(60px, 15cqi, 100px);
   --bid-button-height: clamp(2.5rem, 6vw, 3.5rem);
   --bid-button-padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
   --suit-button-size: clamp(50px, 12vw, 102px);

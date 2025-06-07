@@ -423,7 +423,7 @@ const BiddingInterface: React.FC = () => {
             </div>
             
             {/* Right side: Current Bid + Double/Redouble */}
-            <div className="bid-current-section flex items-stretch">
+            <div className={`${styles.currentSection} flex items-stretch`}>
               <div
                 className="flex flex-col items-center justify-between py-4 space-y-3 ml-auto"
                 style={{ marginInlineEnd: 'var(--bid-margin-right)' }}
@@ -529,7 +529,7 @@ const BiddingInterface: React.FC = () => {
 
           {/* Middle Section - Bid Controls */}
           <div className={`text-center ${focusedElement === 'bid' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
-            <div className="bid-actions flex items-center justify-center">
+            <div className={`${styles.actions} flex items-center justify-center`}>
               {/* Pass Button - Left side */}
               <motion.button
                 whileHover={{ 
