@@ -58,8 +58,6 @@
   --other-card-height: calc(var(--card-height) * var(--other-card-scale));
   
   /* UI scaling */
-  --modal-max-width: calc(min(90vw, 850px) * var(--modal-width-scale));
-  --modal-max-height: min(90dvh, 90vh); /* Fallback for old browsers */
   --text-scale-factor: var(--ui-text-scale);
   
   /* Button dimensions */
@@ -244,7 +242,6 @@
   --ph-arc-lift-step: 8px;          /* step used for index formula */
   
   /* Card animations */
-  --card-transition: var(--duration-fast) var(--ease-out);
   --card-hover-transition: var(--duration-instant) var(--ease-out);
   
   /* ===== BIDDING INTERFACE ===== */
@@ -288,8 +285,6 @@
   /* ===== MODALS AND OVERLAYS ===== */
   --overlay-blur: var(--blur-lg);
   --modal-shadow: 0 var(--shadow-lg) var(--shadow-xl) rgb(0 0 0 / 30%);
-  --modal-max-width: clamp(320px, 90vw, 800px);
-  --modal-max-height: clamp(400px, 80vh, 600px);
   
   /* ===== MISC GAME ELEMENTS ===== */
   --contract-indicator-size: clamp(2rem, 4vw, 3rem);

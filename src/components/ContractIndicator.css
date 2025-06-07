@@ -1,10 +1,6 @@
 .contract-indicator {
   position: absolute;
-  /* Use clamp for positioning */
-  top: clamp(0.5rem, 2vw, 1.5rem);
-  right: clamp(0.5rem, 2vw, 1.5rem);
-  
-  /* Safe area support */
+  /* Use clamp for positioning with safe area support */
   top: max(
     clamp(0.5rem, 2vw, 1.5rem),
     env(safe-area-inset-top)
