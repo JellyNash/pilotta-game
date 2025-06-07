@@ -25,10 +25,13 @@ export interface GameSettings {
   advancedAI: boolean;
   showTrickPilePoints: boolean;
   rightClickZoom: boolean;
-  southCardSize: number;
+  southCardScale: number;
   southCardSpacing: number;
-  aiCardSize: number;
-  aiCardSpacing: number;
+  otherCardScale: number;
+  otherCardSpacing: number;
+  uiTextScale: number;
+  modalWidthScale: number;
+  tableDensity: number;
 }
 
 // Declaration tracking interface
@@ -44,7 +47,6 @@ export interface DeclarationTracking {
 export interface GameState extends BaseGameState {
   settings?: GameSettings;
   declarationTracking?: DeclarationTracking;
-  earlyTermination?: boolean;
   zoomedCard?: string | null; // Card ID that is currently zoomed
 }
 
@@ -68,10 +70,13 @@ const createInitialProfile = (): PlayerProfile => ({
 const createInitialState = (): GameState => {
   // Load saved settings
   const savedCardScale = parseFloat(localStorage.getItem('cardScale') || '1');
-  const savedSouthCardSize = parseFloat(localStorage.getItem('southCardSize') || '0.8');
+  const savedSouthCardScale = parseFloat(localStorage.getItem('southCardScale') || '1');
   const savedSouthCardSpacing = parseFloat(localStorage.getItem('southCardSpacing') || '0.5');
-  const savedAICardSize = parseFloat(localStorage.getItem('aiCardSize') || '0.75');
-  const savedAICardSpacing = parseFloat(localStorage.getItem('aiCardSpacing') || '1');
+  const savedOtherCardScale = parseFloat(localStorage.getItem('otherCardScale') || '0.75');
+  const savedOtherCardSpacing = parseFloat(localStorage.getItem('otherCardSpacing') || '0.5');
+  const savedUITextScale = parseFloat(localStorage.getItem('uiTextScale') || '1');
+  const savedModalWidthScale = parseFloat(localStorage.getItem('modalWidthScale') || '0.9');
+  const savedTableDensity = parseFloat(localStorage.getItem('tableDensity') || '0.85');
   // Create players - counterclockwise order: South -> East -> North -> West
   const players: Player[] = [
     {
@@ -158,14 +163,16 @@ const createInitialState = (): GameState => {
       advancedAI: false,
       showTrickPilePoints: false,
       rightClickZoom: true,
-      southCardSize: savedSouthCardSize,
+      southCardScale: savedSouthCardScale,
       southCardSpacing: savedSouthCardSpacing,
-      aiCardSize: savedAICardSize,
-      aiCardSpacing: savedAICardSpacing
+      otherCardScale: savedOtherCardScale,
+      otherCardSpacing: savedOtherCardSpacing,
+      uiTextScale: savedUITextScale,
+      modalWidthScale: savedModalWidthScale,
+      tableDensity: savedTableDensity
     },
     zoomedCard: null,
     declarationTracking: {},
-    earlyTermination: false
   };
 };
 
@@ -216,7 +223,6 @@ const gameSlice = createSlice({
       state.teams.B.roundScore = 0;
       // Trick piles are derived from completed tricks, so no per-team arrays
       state.declarationTracking = {};
-      state.earlyTermination = false;
     },
 
     startBidding: (state) => {
@@ -542,6 +548,29 @@ const gameSlice = createSlice({
       // Move to next round
       state.round++;
       state.dealerIndex = (state.dealerIndex + 1) % 4;
+      
+      // Reset round-specific state
+      state.contract = null;
+      state.trumpSuit = null;
+      state.currentPlayerIndex = (state.dealerIndex + 1) % 4; // Player after dealer starts
+      state.currentTrick = [];
+      state.completedTricks = [];
+      state.trickNumber = 1;
+      state.teams.A.roundScore = 0;
+      state.teams.B.roundScore = 0;
+      state.declarations = [];
+      state.beloteAnnounced = null;
+      state.declarationTracking = {};
+      state.passCount = 0;
+      state.consecutivePasses = 0;
+      state.biddingHistory = [];
+      state.notifications = [];
+      
+      // Clear hands
+      state.players.forEach(player => {
+        player.hand = [];
+      });
+      
       state.phase = GamePhase.Dealing;
     },
 
@@ -569,19 +598,7 @@ const gameSlice = createSlice({
       state.animatingCards = [];
     },
 
-    updateSettings: (state, action: PayloadAction<Partial<{
-      cardScale: number;
-      cardStyle: 'classic' | 'modern' | 'accessible' | 'minimalist';
-      soundEnabled: boolean;
-      animationSpeed: 'slow' | 'normal' | 'fast';
-      advancedAI: boolean;
-      showTrickPilePoints: boolean;
-      rightClickZoom: boolean;
-      southCardSize: number;
-      southCardSpacing: number;
-      aiCardSize: number;
-      aiCardSpacing: number;
-    }>>) => {
+    updateSettings: (state, action: PayloadAction<Partial<GameSettings>>) => {
       if (!state.settings) {
         state.settings = {
           cardScale: 1,
@@ -591,10 +608,13 @@ const gameSlice = createSlice({
           advancedAI: false,
           showTrickPilePoints: false,
           rightClickZoom: true,
-          southCardSize: 0.8,
+          southCardScale: 1,
           southCardSpacing: 0.5,
-          aiCardSize: 0.75,
-          aiCardSpacing: 1
+          otherCardScale: 0.75,
+          otherCardSpacing: 0.5,
+          uiTextScale: 1,
+          modalWidthScale: 0.9,
+          tableDensity: 0.85
         };
       }
       Object.assign(state.settings, action.payload);
@@ -684,9 +704,6 @@ const gameSlice = createSlice({
       });
     },
 
-    setEarlyTermination: (state, action: PayloadAction<boolean>) => {
-      state.earlyTermination = action.payload;
-    },
 
     setPhase: (state, action: PayloadAction<GamePhase>) => {
       state.phase = action.payload;
@@ -736,7 +753,6 @@ export const {
   updateDeclarationRights,
   enableBothTeamsToShow,
   enableThirdTrickShowing,
-  setEarlyTermination,
   setPhase,
   updateRoundScores
 } = gameSlice.actions;

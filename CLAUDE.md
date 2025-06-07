@@ -11,42 +11,59 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Never use fixed pixels without clamp()
 - Never use Tailwind utilities for sizing
 
-## Current Project Status (Session 33 - January 2025)
+## Current Project Status (Session 34 - January 2025)
 
-**⚠️ UI SCALABILITY OVERHAUL IN PROGRESS**
+**✅ UI SCALABILITY OVERHAUL COMPLETED**
 
-A comprehensive audit revealed systematic issues beyond just cards:
+### Completed in Sessions 33-34:
+1. **Variable System Overhauled**: 
+   - REMOVED: `--ph-card-scale`, `--south-card-size`, `--north-card-size`, `--ai-card-size`, `--ai-card-spacing`
+   - ADDED: `--south-card-scale`, `--other-card-scale`, `--south-card-spacing`, `--other-card-spacing`
+   - ADDED: `--ui-text-scale`, `--modal-width-scale`, `--table-density`
+2. **Early CSS Initialization**: Variables load before React via `src/styles/init-variables.ts`
+3. **Simplified Calculations**: No more compound multipliers in PlayerHandFlex.css
+4. **Settings Updated**: New UI controls and variable names
+5. **Migration Script**: Old localStorage keys automatically converted
+6. **CSS Modules Created**: BiddingInterface.module.css, DetailedScoreboard.module.css
+7. **Responsive Fixes**: ContractIndicator.css now uses clamp() instead of media queries
+8. **Cleanup Complete**: All old variable references removed from codebase
 
-1. **Z-Index Hierarchy**: Fixed - table elements no longer clip cards
-2. **Card Overlaps**: All bot players now use 50% overlap (55% for 8 cards)
-3. **Zoom Feature**: Viewport space reservation prevents clipping
-4. **Bidding Interface**: Fully responsive with mobile vertical stacking
-5. **Declaration Cards**: Clamp-based positioning implemented
-6. **Container Overflow**: Consistent `overflow: visible` everywhere
+**New Variable System**:
+```css
+/* User-controlled variables (set via Settings) */
+--south-card-scale: 1;        /* Your cards: 0.6-1.2 */
+--south-card-spacing: 0.5;    /* Your card overlap: 0.3-0.7 */
+--other-card-scale: 0.75;     /* AI cards: 0.5-1.0 */
+--other-card-spacing: 0.5;    /* AI card overlap: 0.3-0.7 */
+--ui-text-scale: 1;           /* Text size: 0.8-1.3 */
+--modal-width-scale: 0.9;     /* Modal width: 0.8-1.0 */
+--table-density: 0.85;        /* Table spacing: 0.7-1.0 */
 
-**Key Achievements**:
-- Works perfectly from 320px to 4K displays
-- All values use clamp() functions - no hardcoded pixels
-- Single source of truth in tokens.css
-- Modern CSS architecture with @layer system
-- Basic accessibility restored (keyboard nav, ARIA labels)
-- Removed obsolete `ResponsiveCardHand.css` and cleaned built asset directories
-  (`dist-baseline/` and `purged-css/`)
-- Added tokens `--announcement-border-width`, `--ph-card-gap`,
-  `--ph-container-padding` and `--ph-card-scale` for unified spacing and scale
-  control
-- `PlayerHandFlex` now relies on these tokens for its gap, container padding and
-  card scaling
+/* Computed values (single calculation) */
+--south-card-width: calc(var(--card-width) * var(--south-card-scale));
+--south-card-height: calc(var(--card-height) * var(--south-card-scale));
+--other-card-width: calc(var(--card-width) * var(--other-card-scale));
+--other-card-height: calc(var(--card-height) * var(--other-card-scale));
+```
+
+**Key Improvements**:
+- Single source of truth for all UI scaling
+- No compound calculations or variable chains
+- Text scales with viewport via `--text-scale-factor`
+- Modals properly constrained with `--modal-max-width/height`
+- Container queries for component-level responsiveness
+- Safe area support for notched devices
 
 **Active Documentation**:
 - `/docs/RESPONSIVE_DESIGN_CHEATSHEET.md` - **MANDATORY** guidelines for all styling
-- `/COMPREHENSIVE_UI_SCALABILITY_ACTION_PLAN.md` - Current implementation plan
+- `/COMPREHENSIVE_UI_SCALABILITY_ACTION_PLAN.md` - Implementation complete
 - `/docs/CSS_ARCHITECTURE.md` - CSS layer system documentation
 
 **Current State**:
 - Development server runs on http://localhost:3000
 - All critical responsive issues resolved
 - CSS architecture rating: 10/10
+- UI fully scalable from 320px to 4K displays
 
 ## Common Commands
 

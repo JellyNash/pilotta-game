@@ -28,6 +28,11 @@ export class GameManager {
     store.dispatch(setTargetScore(targetScore));
     this.flowController.runGameFlow();
   }
+  
+  // Continue game flow
+  runGameFlow() {
+    this.flowController.runGameFlow();
+  }
 
   // Configuration methods
   setAIPersonality(playerId: string, personality: AIPersonality) {

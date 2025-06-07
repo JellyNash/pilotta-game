@@ -1,0 +1,261 @@
+/* DetailedScoreboard CSS Module - Responsive scoreboard design */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: var(--blur-sm);
+  z-index: var(--z-modal-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+.scoreboard {
+  container-type: inline-size;
+  background: rgb(30, 41, 59);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-drop-xl);
+  width: 100%;
+  max-width: calc(min(90vw, 1200px) * var(--modal-width-scale));
+  max-height: calc(var(--modal-max-height) - var(--space-4xl));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: linear-gradient(to right, rgb(147, 51, 234), rgb(99, 102, 241));
+  padding: var(--space-lg) var(--space-xl);
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: calc(var(--fs-2xl) * var(--text-scale-factor));
+  font-weight: bold;
+  color: white;
+}
+
+.closeButton {
+  color: rgba(255, 255, 255, 0.8);
+  transition: color var(--duration-fast) var(--ease-out);
+  padding: var(--space-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.closeButton:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.closeIcon {
+  width: calc(var(--fs-xl) * var(--text-scale-factor));
+  height: calc(var(--fs-xl) * var(--text-scale-factor));
+}
+
+/* Score totals grid */
+.totalsGrid {
+  margin-top: var(--space-lg);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+
+.totalCard {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.totalLabel {
+  font-size: calc(var(--fs-sm) * var(--text-scale-factor));
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.totalValue {
+  font-size: calc(var(--fs-3xl) * var(--text-scale-factor));
+  font-weight: bold;
+  color: white;
+}
+
+/* Scrollable content area */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: var(--space-xl);
+}
+
+/* Table container with horizontal scroll */
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scoreTable {
+  width: 100%;
+  font-size: calc(var(--fs-base) * var(--text-scale-factor) * var(--table-density));
+  border-collapse: collapse;
+}
+
+.scoreTable th,
+.scoreTable td {
+  padding: calc(var(--space-sm) * var(--table-density));
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scoreTable th {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.scoreTable td {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.scoreTable tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Progressive enhancement for mobile using container queries */
+@container (max-width: 50rem) {
+  .totalsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+  
+  .totalCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .totalValue {
+    font-size: calc(var(--fs-2xl) * var(--text-scale-factor));
+  }
+  
+  /* Convert table to cards on mobile */
+  .scoreTable {
+    display: block;
+  }
+  
+  .scoreTable thead {
+    display: none;
+  }
+  
+  .scoreTable tbody {
+    display: grid;
+    gap: var(--space-md);
+  }
+  
+  .scoreTable tr {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    border: none;
+  }
+  
+  .scoreTable td {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: none;
+    padding: var(--space-xs);
+  }
+  
+  .scoreTable td::before {
+    content: attr(data-label);
+    font-size: calc(var(--fs-xs) * var(--text-scale-factor));
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: var(--space-2xs);
+  }
+}
+
+/* Extreme mobile handling */
+@container (max-width: 30rem) {
+  .header {
+    padding: var(--space-md);
+  }
+  
+  .title {
+    font-size: calc(var(--fs-xl) * var(--text-scale-factor));
+  }
+  
+  .content {
+    padding: var(--space-md);
+  }
+  
+  .scoreTable tr {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Performance optimization for long lists */
+.scoreTable tbody {
+  content-visibility: auto;
+  contain: layout paint size;
+}
+
+/* Round number styling */
+.roundNumber {
+  font-weight: 600;
+  color: rgba(147, 51, 234, 0.8);
+}
+
+/* Winner highlight */
+.winnerCell {
+  color: rgb(34, 197, 94);
+  font-weight: 600;
+}
+
+/* Contract badge integration */
+.contractCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+/* Smooth scrollbar styling */
+.content::-webkit-scrollbar,
+.tableContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.content::-webkit-scrollbar-track,
+.tableContainer::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+}
+
+.content::-webkit-scrollbar-thumb,
+.tableContainer::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.content::-webkit-scrollbar-thumb:hover,
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

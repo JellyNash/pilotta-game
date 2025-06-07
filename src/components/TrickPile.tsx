@@ -33,8 +33,8 @@ const TrickPile: React.FC<TrickPileProps> = ({ teamId, position, currentTrickNum
         <div
           className="relative"
           style={{
-            width: 'calc(var(--card-width) * var(--card-scale) * var(--ai-card-size))',
-            height: 'calc(var(--card-height) * var(--card-scale) * var(--ai-card-size))'
+            width: 'calc(var(--other-card-width) * var(--card-scale))',
+            height: 'calc(var(--other-card-height) * var(--card-scale))'
           }}
         >
           {/* Shadow cards to create stack effect */}

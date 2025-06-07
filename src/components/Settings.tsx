@@ -5,6 +5,15 @@ import { gameManager } from '../game/GameManager';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { updateSettings } from '../store/gameSlice';
+import {
+  setSouthCardScale,
+  setSouthCardSpacing,
+  setOtherCardScale,
+  setOtherCardSpacing,
+  setUITextScale,
+  setModalWidthScale,
+  setTableDensity
+} from '../styles/init-variables';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -17,20 +26,26 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const { enabled: soundEnabled, setEnabled: setSoundEnabled, volume, setVolume } = useSoundSettings();
   const [animationSpeed, setAnimationSpeed] = useState<'fast' | 'normal' | 'slow'>('normal');
   const [advancedAI, setAdvancedAI] = useState(false);
-  const [cardSize, setCardSize] = useState<number>(
-    parseFloat(localStorage.getItem('cardScale') || '1.0')  // Default to 1.0 (100%)
+  const [southCardScale, setSouthCardScaleState] = useState<number>(
+    parseFloat(localStorage.getItem('southCardScale') || '1')
   );
-  const [southCardSize, setSouthCardSize] = useState<number>(
-    parseFloat(localStorage.getItem('southCardSize') || '0.8')
-  );
-  const [southCardSpacing, setSouthCardSpacing] = useState<number>(
+  const [southCardSpacing, setSouthCardSpacingState] = useState<number>(
     parseFloat(localStorage.getItem('southCardSpacing') || '0.5')
   );
-  const [aiCardSize, setAICardSize] = useState<number>(
-    parseFloat(localStorage.getItem('aiCardSize') || '0.75')
+  const [otherCardScale, setOtherCardScaleState] = useState<number>(
+    parseFloat(localStorage.getItem('otherCardScale') || '0.75')
   );
-  const [aiCardSpacing, setAICardSpacing] = useState<number>(
-    parseFloat(localStorage.getItem('aiCardSpacing') || '1')
+  const [otherCardSpacing, setOtherCardSpacingState] = useState<number>(
+    parseFloat(localStorage.getItem('otherCardSpacing') || '0.5')
+  );
+  const [uiTextScale, setUITextScaleState] = useState<number>(
+    parseFloat(localStorage.getItem('uiTextScale') || '1')
+  );
+  const [modalWidthScale, setModalWidthScaleState] = useState<number>(
+    parseFloat(localStorage.getItem('modalWidthScale') || '0.9')
+  );
+  const [tableDensity, setTableDensityState] = useState<number>(
+    parseFloat(localStorage.getItem('tableDensity') || '0.85')
   );
   const [showTrickPilePoints, setShowTrickPilePoints] = useState(gameSettings?.showTrickPilePoints || false);
   const [rightClickZoom, setRightClickZoom] = useState(gameSettings?.rightClickZoom ?? true);
@@ -45,43 +60,46 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     gameManager.enableAdvancedAI(enabled);
   };
   
-  const handleCardSizeChange = (size: number) => {
-    setCardSize(size);
-    localStorage.setItem('cardScale', size.toString());
-
-    // Update global card scale CSS variable
-    document.documentElement.style.setProperty('--card-scale', size.toString());
-
-    dispatch(updateSettings({ cardScale: size }));
-    gameManager.setCardScale(size);
-  };
-
-  const handleSouthCardSizeChange = (size: number) => {
-    setSouthCardSize(size);
-    localStorage.setItem('southCardSize', size.toString());
-    document.documentElement.style.setProperty('--south-card-size', size.toString());
-    dispatch(updateSettings({ southCardSize: size }));
+  const handleSouthCardScaleChange = (scale: number) => {
+    setSouthCardScaleState(scale);
+    setSouthCardScale(scale);
+    dispatch(updateSettings({ southCardScale: scale }));
   };
 
   const handleSouthCardSpacingChange = (spacing: number) => {
+    setSouthCardSpacingState(spacing);
     setSouthCardSpacing(spacing);
-    localStorage.setItem('southCardSpacing', spacing.toString());
-    document.documentElement.style.setProperty('--south-card-spacing', spacing.toString());
     dispatch(updateSettings({ southCardSpacing: spacing }));
   };
 
-  const handleAICardSizeChange = (size: number) => {
-    setAICardSize(size);
-    localStorage.setItem('aiCardSize', size.toString());
-    document.documentElement.style.setProperty('--ai-card-size', size.toString());
-    dispatch(updateSettings({ aiCardSize: size }));
+  const handleOtherCardScaleChange = (scale: number) => {
+    setOtherCardScaleState(scale);
+    setOtherCardScale(scale);
+    dispatch(updateSettings({ otherCardScale: scale }));
   };
 
-  const handleAICardSpacingChange = (spacing: number) => {
-    setAICardSpacing(spacing);
-    localStorage.setItem('aiCardSpacing', spacing.toString());
-    document.documentElement.style.setProperty('--ai-card-spacing', spacing.toString());
-    dispatch(updateSettings({ aiCardSpacing: spacing }));
+  const handleOtherCardSpacingChange = (spacing: number) => {
+    setOtherCardSpacingState(spacing);
+    setOtherCardSpacing(spacing);
+    dispatch(updateSettings({ otherCardSpacing: spacing }));
+  };
+
+  const handleUITextScaleChange = (scale: number) => {
+    setUITextScaleState(scale);
+    setUITextScale(scale);
+    dispatch(updateSettings({ uiTextScale: scale }));
+  };
+
+  const handleModalWidthScaleChange = (scale: number) => {
+    setModalWidthScaleState(scale);
+    setModalWidthScale(scale);
+    dispatch(updateSettings({ modalWidthScale: scale }));
+  };
+
+  const handleTableDensityChange = (density: number) => {
+    setTableDensityState(density);
+    setTableDensity(density);
+    dispatch(updateSettings({ tableDensity: density }));
   };
 
   const handleShowTrickPilePointsChange = (show: boolean) => {
@@ -145,56 +163,54 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="p-6 space-y-8">
-                {/* Card Size Settings */}
+                {/* UI Scaling Settings */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Card Size</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">UI Scaling</h3>
                   
-                  <div>
-                    <label className="block text-sm text-slate-400 mb-3">Card Display Size</label>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => {
-                            const newSize = Math.max(1.0, cardSize - 0.25);
-                            handleCardSizeChange(newSize);
-                          }}
-                          className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white transition-colors"
-                          disabled={cardSize <= 1.0}
-                        >
-                          <span className="text-lg font-bold">−</span>
-                        </button>
-                        <div className="relative flex-1">
-                          <input
-                            type="range"
-                            min="1.0"
-                            max="2.5"
-                            step="0.25"
-                            value={cardSize}
-                            onChange={(e) => handleCardSizeChange(parseFloat(e.target.value))}
-                            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
-                            style={{
-                              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((cardSize - 1.0) / 1.5) * 100}%, #475569 ${((cardSize - 1.0) / 1.5) * 100}%, #475569 100%)`
-                            }}
-                          />
-                          <div className="absolute -top-1 left-0 right-0 flex justify-between pointer-events-none">
-                            {[1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5].map((val) => (
-                              <div key={val} className="w-0.5 h-3 bg-slate-600" />
-                            ))}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => {
-                            const newSize = Math.min(2.5, cardSize + 0.25);
-                            handleCardSizeChange(newSize);
-                          }}
-                          className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white transition-colors"
-                          disabled={cardSize >= 2.5}
-                        >
-                          <span className="text-lg font-bold">+</span>
-                        </button>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-2">Text Scale</label>
+                      <input
+                        type="range"
+                        min="0.8"
+                        max="1.3"
+                        step="0.05"
+                        value={uiTextScale}
+                        onChange={(e) => handleUITextScaleChange(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-slate-400">{Math.round(uiTextScale * 100)}%</span>
                       </div>
-                      <div className="text-center">
-                        <span className="text-sm text-slate-400">Size: {Math.round(cardSize * 100)}%</span>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-2">Modal Width</label>
+                      <input
+                        type="range"
+                        min="0.8"
+                        max="1.0"
+                        step="0.05"
+                        value={modalWidthScale}
+                        onChange={(e) => handleModalWidthScaleChange(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-slate-400">{Math.round(modalWidthScale * 100)}%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-2">Table Density</label>
+                      <input
+                        type="range"
+                        min="0.7"
+                        max="1.0"
+                        step="0.05"
+                        value={tableDensity}
+                        onChange={(e) => handleTableDensityChange(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-slate-400">{Math.round(tableDensity * 100)}%</span>
                       </div>
                     </div>
                   </div>
@@ -231,52 +247,64 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm text-slate-400 mb-2">South Card Size</label>
+                      <label className="block text-sm text-slate-400 mb-2">Your Card Size</label>
                       <input
                         type="range"
-                        min="0.5"
+                        min="0.6"
                         max="1.2"
                         step="0.05"
-                        value={southCardSize}
-                        onChange={(e) => handleSouthCardSizeChange(parseFloat(e.target.value))}
+                        value={southCardScale}
+                        onChange={(e) => handleSouthCardScaleChange(parseFloat(e.target.value))}
                         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
                       />
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-slate-400">{Math.round(southCardScale * 100)}%</span>
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-sm text-slate-400 mb-2">South Card Spacing</label>
+                      <label className="block text-sm text-slate-400 mb-2">Your Card Spacing</label>
                       <input
                         type="range"
                         min="0.3"
-                        max="1"
+                        max="0.7"
                         step="0.05"
                         value={southCardSpacing}
                         onChange={(e) => handleSouthCardSpacingChange(parseFloat(e.target.value))}
                         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
                       />
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-slate-400">{Math.round((1 - southCardSpacing) * 100)}% overlap</span>
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-sm text-slate-400 mb-2">AI Card Size</label>
+                      <label className="block text-sm text-slate-400 mb-2">Opponent Card Size</label>
                       <input
                         type="range"
                         min="0.5"
-                        max="1.2"
+                        max="1.0"
                         step="0.05"
-                        value={aiCardSize}
-                        onChange={(e) => handleAICardSizeChange(parseFloat(e.target.value))}
+                        value={otherCardScale}
+                        onChange={(e) => handleOtherCardScaleChange(parseFloat(e.target.value))}
                         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
                       />
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-slate-400">{Math.round(otherCardScale * 100)}%</span>
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-sm text-slate-400 mb-2">AI Card Spacing</label>
+                      <label className="block text-sm text-slate-400 mb-2">Opponent Card Spacing</label>
                       <input
                         type="range"
-                        min="0.5"
-                        max="1.5"
+                        min="0.3"
+                        max="0.7"
                         step="0.05"
-                        value={aiCardSpacing}
-                        onChange={(e) => handleAICardSpacingChange(parseFloat(e.target.value))}
+                        value={otherCardSpacing}
+                        onChange={(e) => handleOtherCardSpacingChange(parseFloat(e.target.value))}
                         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb"
                       />
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-slate-400">{Math.round((1 - otherCardSpacing) * 100)}% overlap</span>
+                      </div>
                     </div>
                   </div>
                 </div>

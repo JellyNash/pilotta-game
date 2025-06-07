@@ -26,6 +26,24 @@ import './App.css';
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 const DndBackend = isTouchDevice ? TouchBackend : HTML5Backend;
 
+// Migration function for old localStorage keys
+function migrateSettings() {
+  const migrations = {
+    'cardScale': 'southCardScale',
+    'southCardSize': 'southCardScale',
+    'aiCardSize': 'otherCardScale',
+    'aiCardSpacing': 'otherCardSpacing'
+  };
+  
+  Object.entries(migrations).forEach(([oldKey, newKey]) => {
+    const value = localStorage.getItem(oldKey);
+    if (value && !localStorage.getItem(newKey)) {
+      localStorage.setItem(newKey, value);
+      localStorage.removeItem(oldKey);
+    }
+  });
+}
+
 // Inner component with game logic
 function GameContent() {
   const dispatch = useAppDispatch();
@@ -72,6 +90,9 @@ function GameContent() {
   }, []);
 
   useEffect(() => {
+    // Run migrations on mount
+    migrateSettings();
+    
     // Initialize game manager on mount
     gameManager.setAnimationSpeed('normal');
     
@@ -272,15 +293,6 @@ function App() {
     const root = document.documentElement;
     const savedCardScale = parseFloat(localStorage.getItem('cardScale') || '1');
     root.style.setProperty('--card-scale', savedCardScale.toString());
-
-    const southSize = parseFloat(localStorage.getItem('southCardSize') || '0.8');
-    root.style.setProperty('--south-card-size', southSize.toString());
-    const southSpacing = parseFloat(localStorage.getItem('southCardSpacing') || '0.5');
-    root.style.setProperty('--south-card-spacing', southSpacing.toString());
-    const aiSize = parseFloat(localStorage.getItem('aiCardSize') || '0.75');
-    root.style.setProperty('--ai-card-size', aiSize.toString());
-    const aiSpacing = parseFloat(localStorage.getItem('aiCardSpacing') || '1');
-    root.style.setProperty('--ai-card-spacing', aiSpacing.toString());
   }, []);
 
   return (

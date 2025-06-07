@@ -38,7 +38,6 @@ const GameTable: React.FC = () => {
   const teamATricks = useAppSelector(selectTeamATricks);
   const teamBTricks = useAppSelector(selectTeamBTricks);
   const trickNumber = useAppSelector(state => state.game.trickNumber);
-  const earlyTermination = useAppSelector(state => state.game.earlyTermination);
   const biddingHistory = useAppSelector(state => state.game.biddingHistory);
   const settings = useAppSelector(state => state.game.settings);
   const notifications = useAppSelector(state => state.game.notifications || []);
@@ -331,35 +330,6 @@ const GameTable: React.FC = () => {
         </div>
       )}
       
-      {/* Early Termination Animation */}
-      <AnimatePresence>
-        {earlyTermination && settings?.animationSpeed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.8 }}
-              className="absolute inset-0 bg-black"
-            />
-            
-            <motion.div className="relative z-10">
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1, duration: 0.5 }}
-                className="bg-red-600/90 text-white px-8 py-4 rounded-xl shadow-2xl"
-              >
-                <h2 className="text-3xl font-bold">Round Over!</h2>
-                <p className="text-lg mt-2">Contract cannot be made</p>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 

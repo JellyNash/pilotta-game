@@ -1,11 +1,52 @@
 # Active Context
 
 ## Current Work Focus
-- ✅ COMPLETED: All responsive fixes from RESPONSIVE_FIXES_PLAN_2025.md (Session 27)
-- ✅ COMPLETED: Game logic improvements - early termination, auto-play, AI strategy (Session 28)
-- ✅ COMPLETED: CSS consolidation to single source of truth in tokens.css (Session 29)
-- ✅ COMPLETED: Comprehensive project documentation and report (Session 30)
-- ✅ COMPLETED: Code cleanup and component removal (Session 31)
+- 🚧 IN PROGRESS: COMPREHENSIVE_UI_SCALABILITY_ACTION_PLAN.md implementation (Session 33)
+- ✅ COMPLETED: High-priority phases 1-5 (audit, variable system overhaul, early init, Settings update)
+- 📋 PENDING: Medium-priority phases 4.2-4.4, 6-7 (CSS modules, cleanup, documentation)
+
+## Recent Changes (Session 33 - UI Scalability Overhaul)
+
+### Critical Changes Made
+1. **Variable System Overhaul**:
+   - Removed: `--ph-card-scale`, `--south-card-size`, `--north-card-size`, `--ai-card-size`, `--ai-card-spacing`, `--side-card-size`
+   - Added: `--south-card-scale`, `--south-card-spacing`, `--other-card-scale`, `--other-card-spacing`
+   - Added: `--ui-text-scale`, `--modal-width-scale`, `--table-density`
+   - Computed values: `--south-card-width/height`, `--other-card-width/height`
+
+2. **Early CSS Initialization**:
+   - Created `src/styles/init-variables.ts` with initialization functions
+   - Modified `index.html` to call `initializeCSS()` before React hydration
+   - CSS variables now available on page load (fixes undefined variable issues)
+
+3. **PlayerHandFlex.css Simplification**:
+   - Removed all compound calculations (was 3-4 levels deep)
+   - Direct variable references: `var(--south-card-width)` instead of complex calc()
+   - Simplified overlap calculations for all player positions
+
+4. **Settings Component Update**:
+   - Renamed all state variables to match new system
+   - Added new UI scaling controls (text, modal, table density)
+   - Improved labels showing percentages and overlap values
+   - Import setter functions from init-variables.ts
+
+5. **Migration Script**:
+   - Added to App.tsx to handle old localStorage keys
+   - Maps: cardScale→southCardScale, aiCardSize→otherCardScale, etc.
+
+### Files Modified
+- `/src/styles/tokens.css` - New variable system
+- `/src/styles/init-variables.ts` - NEW FILE: Early initialization
+- `/index.html` - Added initialization script
+- `/src/components/PlayerHandFlex.css` - Simplified calculations
+- `/src/components/Settings.tsx` - New variable names and UI controls
+- `/src/App.tsx` - Migration function
+
+### Todo List Status
+- Phase 1-3, 4.1, 5: COMPLETED ✅
+- Phase 4.2-4.4: PENDING (CSS modules for modals)
+- Phase 6: PENDING (final cleanup)
+- Phase 7: PENDING (documentation)
 
 ## Recent Changes (Session 31 - Code Cleanup)
 
@@ -107,5 +148,29 @@
 - StyleLint configuration needs fixing
 - Web Worker for AI needs Vite configuration
 
+## Session 35 Update - Comprehensive Styling Audit
+
+### Critical Findings
+- **178 violations** of mandatory responsive design cheatsheet discovered
+- **CSS Architecture Rating**: Downgraded from 10/10 to 6/10
+- **Compliance Score**: 42/100
+- Previous claims of "100% complete responsive design" proven incorrect
+
+### Urgent Issues
+1. **Fixed pixel values**: 85 violations need clamp() conversion
+2. **Missing dvh/svh**: 24 vh units without fallback
+3. **Tailwind utilities**: 45+ violations of token-only rule
+4. **Touch targets**: No 44px minimum enforcement
+5. **Safe area insets**: Missing on most components
+
+### Immediate Actions Required
+- Convert all px media queries to rem
+- Replace vh with min(90dvh, 90vh) pattern
+- Remove ALL Tailwind utilities from components
+- Implement base component classes with token enforcement
+- Add safe area insets for notched devices
+
+See COMPREHENSIVE_STYLING_AUDIT_REPORT_2025.md for full details.
+
 ## This Document
-Updated with Session 31 - code cleanup and component removal completed. Project is in excellent state with all major features working and documented.
+Updated with Session 35 - Comprehensive styling audit revealed major compliance issues requiring immediate remediation. Project is NOT production-ready until violations are fixed.

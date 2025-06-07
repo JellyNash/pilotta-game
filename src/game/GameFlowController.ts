@@ -18,7 +18,6 @@ import {
   startNextRound,
   setValidMoves,
   updatePlayerProfile,
-  setEarlyTermination,
   setPhase,
   updateRoundScores
 } from '../store/gameSlice';
@@ -829,12 +828,6 @@ export class GameFlowController {
         finalTeamAScore += remainingPoints;
       }
     }
-    
-    // Trigger early termination in state
-    this.dispatch(setEarlyTermination(true));
-    
-    // Wait for animation
-    await this.delay(3000);
     
     // Move directly to scoring with adjusted scores
     this.dispatch(updateRoundScores({ teamA: finalTeamAScore, teamB: finalTeamBScore }));

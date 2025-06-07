@@ -36,12 +36,26 @@
   --card-height: clamp(84px, 14vw, 168px);
   --card-corner-radius: clamp(4px, 0.8vw, 12px);
   --card-shadow-blur: clamp(8px, 1vw, 16px);
-  /* Global scale applied to all card elements */
-  --card-scale: 1;
-  /* Base size multiplier for AI and pile cards */
-  --ai-card-size: 0.75;
-  /* Computed scale for AI cards */
-  --ai-card-scale: calc(var(--ai-card-size) * var(--card-scale));
+  
+  /* User settings with defaults */
+  --south-card-scale: 1;
+  --south-card-spacing: 0.5;
+  --other-card-scale: 0.75;
+  --other-card-spacing: 0.5;
+  --ui-text-scale: 1;
+  --modal-width-scale: 0.9;
+  --table-density: 0.85;
+  
+  /* Computed finals (single calculation) */
+  --south-card-width: calc(var(--card-width) * var(--south-card-scale));
+  --south-card-height: calc(var(--card-height) * var(--south-card-scale));
+  --other-card-width: calc(var(--card-width) * var(--other-card-scale));
+  --other-card-height: calc(var(--card-height) * var(--other-card-scale));
+  
+  /* UI scaling */
+  --modal-max-width: calc(min(90vw, 850px) * var(--modal-width-scale));
+  --modal-max-height: min(90dvh, 90vh); /* Fallback for old browsers */
+  --text-scale-factor: var(--ui-text-scale);
   
   /* Button dimensions */
   --button-height: clamp(2rem, 5vw, 3rem);
@@ -117,6 +131,9 @@
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Card transitions */
+  --card-transition: transform var(--duration-fast) var(--ease-out);
 
   /* ===== Z-INDEX SYSTEM ===== */
 
@@ -211,17 +228,6 @@
   --hand-offset: clamp(1rem, 2vw, 2rem);
   --ph-card-gap: 8px;
   --ph-container-padding: 1rem;
-  --ph-card-scale: clamp(
-    0.5,
-    0.5 + (100vw - 320px) / 1440,
-    1.0
-  );
-  /* Quantifiable sizing for south player's hand */
-  --south-card-size: 0.8;      /* Multiplier for south player cards */
-  --south-card-spacing: 0.5;   /* Multiplier for arc rotation step */
-  --ai-card-spacing: 1;        /* Overlap scale for north/east/west */
-  --north-card-size: var(--ai-card-size);   /* AI player cards */
-  --side-card-size: var(--ai-card-size);    /* East/West cards */
 
   /* Arc layout variables for PlayerHandFlex */
   --ph-arc-rotation-base: -17.5deg; /* starting rotation for leftmost card */
@@ -264,7 +270,7 @@
   /* ===== TRICK PILE VIEWER ===== */
   --trick-pile-width: clamp(200px, 40vw, 400px);
   /* Size of cards in trick pile viewer */
-  --trick-pile-card-size: calc(var(--card-width) * var(--ai-card-size));
+  --trick-pile-card-size: calc(var(--card-width) * var(--other-card-scale));
   --trick-pile-padding: clamp(1rem, 2vw, 2rem);
   --trick-pile-gap: clamp(0.5rem, 1vw, 1rem);
   

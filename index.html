@@ -5,6 +5,11 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pilotta - Cypriot Card Game</title>
+    <script type="module">
+      // Initialize CSS variables before React hydration
+      import { initializeCSS } from './src/styles/init-variables.ts';
+      initializeCSS();
+    </script>
   </head>
   <body>
     <div id="root"></div>
