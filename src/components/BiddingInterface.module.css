@@ -58,6 +58,7 @@
   flex-direction: row;
   gap: var(--space-lg);
   align-items: flex-start;
+  width: 100%;
 }
 
 /* Suits section - responsive flex */
@@ -97,6 +98,9 @@
 /* Responsive gaps using tokens */
 .suitSelection {
   gap: var(--bid-spacing);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .actions {
@@ -105,6 +109,7 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .section {
@@ -114,6 +119,9 @@
 .numberDisplay {
   min-width: var(--bid-display-width);
   height: var(--bid-history-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .textPrimary {
@@ -125,8 +133,10 @@
 }
 
 .stepButton {
-  width: var(--bid-button-size);
-  height: var(--bid-button-size);
+  width: var(--bid-step-button-size);
+  height: var(--bid-step-button-size);
+  min-width: 44px; /* Touch target minimum */
+  font-size: calc(var(--fs-lg) * var(--text-scale-factor));
 }
 
 .numberText {
@@ -150,6 +160,7 @@
   width: 100%;
   font-size: calc(var(--fs-base) * var(--text-scale-factor) * var(--table-density));
   container-type: inline-size;
+  margin-top: var(--space-lg);
 }
 
 /* Responsive table using container queries */
@@ -175,57 +186,158 @@
   }
 }
 
-/* Container query for vertical stacking */
-@container (max-width: 40rem) {
+/* Mobile portrait layout - complete restructuring */
+@container (max-width: 35rem) {
+  .modalContent {
+    padding: var(--bid-modal-padding);
+    gap: var(--bid-modal-gap-mobile);
+  }
+  
+  /* Transform content grid into vertical mobile layout */
   .contentGrid {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "current"
+      "suits";
+    gap: var(--space-md);
   }
   
-  .suitsSection,
+  /* Current bid section moves to top */
   .currentSection {
-    flex: 1 1 100%;
-    max-width: 100%;
+    grid-area: current;
+    flex: unset;
     width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
   }
   
-  /* Stack suit buttons 2x2 on narrow containers */
+  /* Suits section below current bid */
+  .suitsSection {
+    grid-area: suits;
+    flex: unset;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Stack suit buttons 2x2 for touch targets */
   .suitSelection {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--bid-spacing);
+    gap: var(--space-sm);
+    max-width: 240px;
+    margin: 0 auto;
   }
   
-  /* Center current bid section content */
-  .currentSection {
-    align-items: stretch;
-    flex-direction: row;
-    gap: var(--space-md);
-  }
-}
-
-/* Container query for extreme narrow widths */
-@container (max-width: 30rem) {
-  .modalContent {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+  .suitButton {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    min-height: 60px;
   }
   
-  /* Stack current section vertically on very narrow views */
-  .currentSection {
+  /* Bid controls section */
+  .bidControls {
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    width: 100%;
+  }
+  
+  /* Number display row */
+  .numberControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+  }
+  
+  .numberDisplay {
+    min-width: 100px;
+    flex: 0 1 auto;
+  }
+  
+  /* Action buttons - side by side if possible */
+  .actions {
+    gap: var(--space-sm);
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  
+  .button {
+    flex: 1 1 45%;
+    min-width: var(--bid-button-min-width);
+    aspect-ratio: 3/2;
+    padding: var(--bid-button-padding-mobile);
+  }
+  
+  /* Pass/Bid buttons more square on mobile */
+  .passButton,
+  .bidButton {
+    aspect-ratio: 4/3;
+  }
+  
+  /* Adjust text sizes for mobile */
+  .textPrimary {
+    font-size: calc(var(--fs-lg) * var(--text-scale-factor));
+  }
+  
+  .textLarge {
+    font-size: calc(var(--fs-xl) * var(--text-scale-factor));
+  }
+  
+  .numberText {
+    font-size: var(--bid-number-font-mobile);
+  }
+  
+  /* Ensure history table is readable on mobile */
+  .historyTable {
+    font-size: calc(var(--fs-sm) * var(--text-scale-factor));
+    max-height: 200px;
+    overflow-y: auto;
   }
 }
 
-@container (max-width: 20rem) {
-  .modalContainer {
-    min-width: var(--bid-modal-overflow-threshold);
+/* Extreme narrow widths - stack everything */
+@container (max-width: 25rem) {
+  .modalContent {
+    padding: var(--space-sm);
   }
   
-  /* Ensure buttons can shrink further */
+  /* Force single column for all buttons */
+  .actions {
+    flex-direction: column;
+    max-width: 200px;
+  }
+  
   .button {
-    min-width: clamp(50px, 12cqi, 80px);
-    padding: var(--space-sm) var(--space-md);
-    font-size: calc(var(--fs-sm) * var(--text-scale-factor));
+    width: 100%;
+    flex: unset;
+    min-width: unset;
+  }
+  
+  /* Smaller suit buttons but maintain touch target */
+  .suitButton {
+    min-height: 50px;
+    font-size: calc(var(--fs-base) * var(--text-scale-factor));
+  }
+  
+  /* Compact number display */
+  .numberDisplay {
+    min-width: 80px;
+    height: 50px;
+  }
+  
+  .stepButton {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
   }
 }
 
@@ -258,6 +370,23 @@
   transition: all var(--duration-normal) var(--ease-out);
 }
 
+/* Bid controls wrapper */
+.bidControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+/* Number controls wrapper */
+.numberControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
 /* Pass button special styling */
 .passButton {
   background: rgba(239, 68, 68, 0.15);
@@ -288,6 +417,17 @@
 .redoubleButton:hover:not(:disabled) {
   background: rgba(220, 38, 38, 0.25);
   border-color: rgba(220, 38, 38, 0.8);
+}
+
+/* Bid button special styling */
+.bidButton {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.bidButton:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.8);
 }
 
 /* Prefers reduced motion support */

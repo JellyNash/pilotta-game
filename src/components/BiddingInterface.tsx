@@ -307,14 +307,14 @@ const BiddingInterface: React.FC = () => {
       {/* Centered bidding card */}
       <div
         ref={containerRef}
-        className="relative bg-slate-800/75 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl pointer-events-auto mx-4 bidding-container"
+        className={`relative bg-slate-800/75 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl pointer-events-auto mx-4 ${styles.modalContainer}`}
       >
         <div className="space-y-6">
           {/* Top Row - Suit Selection and Current Bid/Double */}
-          <div className="bid-content-grid">
+          <div className={styles.contentGrid}>
             {/* Left side: Suit Selection */}
-            <div className={`bid-suits-section ${focusedElement === 'trump' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
-              <div className="suit-selection flex justify-start">
+            <div className={`${styles.suitsSection} ${focusedElement === 'trump' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
+              <div className={`${styles.suitSelection} flex justify-start`}>
                 {Object.values(Suit).map((suit) => (
                   <motion.button
                     key={suit}
@@ -528,9 +528,10 @@ const BiddingInterface: React.FC = () => {
           </div>
 
           {/* Middle Section - Bid Controls */}
-          <div className={`text-center ${focusedElement === 'bid' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
-            <div className={`${styles.actions} flex items-center justify-center`}>
-              {/* Pass Button - Left side */}
+          <div className={`${styles.bidControls} text-center ${focusedElement === 'bid' ? 'ring-2 ring-blue-500 rounded-lg p-4' : 'p-4'}`}>
+            {/* Number Controls Row */}
+            <div className={styles.numberControls}>
+              {/* Decrement Button */}
               <motion.button
                 whileHover={{ 
                   scale: 1.02,
@@ -541,7 +542,7 @@ const BiddingInterface: React.FC = () => {
                   boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)"
                 }}
                 onClick={handlePass}
-                className={`relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 border border-slate-400/20 backdrop-blur-sm overflow-hidden group ${styles.button} ${styles.textLarge}`}
+                className={`relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 border border-slate-400/20 backdrop-blur-sm overflow-hidden group ${styles.button} ${styles.passButton} ${styles.textLarge}`}
                 title="Pass"
                 aria-label="Pass (skip bidding)"
               >
@@ -686,7 +687,7 @@ const BiddingInterface: React.FC = () => {
                   aria-label={`Bid ${selectedBid} with ${selectedTrump || 'no trump selected'}`}
                   aria-disabled={!selectedTrump}
                   className={`
-                    relative px-10 py-5 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden group ${styles.button} ${styles.textLarge}
+                    relative px-10 py-5 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden group ${styles.button} ${styles.bidButton} ${styles.textLarge}
                     ${!selectedTrump
                       ? 'bg-gradient-to-b from-slate-600/50 to-slate-700/50 cursor-not-allowed opacity-60' 
                       : 'bg-gradient-to-b from-emerald-500/90 to-green-600/90 hover:from-emerald-400/90 hover:to-green-500/90 border border-green-400/30 backdrop-blur-sm'

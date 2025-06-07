@@ -249,13 +249,15 @@
   --bid-modal-max-width: 90vw;
   --bid-modal-max-height: 90vh;
   --bid-modal-max-height-safe: 90dvh;
-  --bid-modal-padding: clamp(1rem, 3vw, 2rem);
+  --bid-modal-padding: clamp(0.75rem, 3vw, 2rem);
+  --bid-modal-gap-mobile: var(--space-sm);
   --bid-modal-overflow-threshold: 95vw;
   --bid-button-width: clamp(80px, 20vw, 170px);
-  --bid-button-min-width: clamp(60px, 15cqi, 100px);
+  --bid-button-min-width: clamp(50px, 15cqi, 80px);
   --bid-button-height: clamp(2.5rem, 6vw, 3.5rem);
-  --bid-button-padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
-  --suit-button-size: clamp(50px, 12vw, 102px);
+  --bid-button-padding: clamp(0.5rem, 1.5vw, 1rem) clamp(0.75rem, 2vw, 1.5rem);
+  --bid-button-padding-mobile: var(--space-sm) var(--space-md);
+  --suit-button-size: clamp(44px, 12vw, 102px); /* 44px minimum for touch targets */
   --suit-button-font: clamp(1rem, 2vw, 1.5rem);
   --bid-card-scale: clamp(0.6, 0.1vw, 1.1);
   --bid-spacing: clamp(0.5rem, 1vw, 1rem);
@@ -266,7 +268,9 @@
   --bid-breakpoint: 640px;
   --dynamic-padding: clamp(1rem, 2vw, 2rem);
   --bid-history-height: clamp(52px, 10vw, 60px);
-  --bid-display-width: clamp(160px, 40vw, 200px);
+  --bid-display-width: clamp(120px, 35vw, 200px);
+  --bid-step-button-size: clamp(36px, 8vw, 56px);
+  --bid-number-font-mobile: clamp(2rem, 8vw, 3rem);
   --bid-number-offset: clamp(50px, 8vw, 60px);
   --bid-margin-right: clamp(10%, 15vw, 20%);
   --bid-increment-delay: 300ms;
