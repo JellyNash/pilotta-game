@@ -234,12 +234,12 @@
 
   /* Arc layout variables for PlayerHandFlex */
   --ph-arc-rotation-base: -17.5deg; /* starting rotation for leftmost card */
-  --ph-arc-rotation-step: 5deg;     /* rotation difference between cards */
+  --ph-arc-rotation-step: clamp(3deg, 0.5vw, 5deg);     /* rotation difference between cards - responsive */
   --ph-arc-lift-max: 35px;          /* outermost card lift */
   --ph-arc-lift-mid: 20px;          /* next inner card lift */
   --ph-arc-lift-low: 10px;          /* inner card lift */
   --ph-arc-lift-min: 5px;           /* center card lift */
-  --ph-arc-lift-step: 8px;          /* step used for index formula */
+  --ph-arc-lift-step: clamp(6px, 1vw, 8px);          /* step used for index formula - responsive */
   
   /* Card animations */
   --card-hover-transition: var(--duration-instant) var(--ease-out);
@@ -291,6 +291,20 @@
   --dealer-badge-size: clamp(1.5rem, 3vw, 2rem);
   --turn-indicator-size: clamp(3px, 0.5vw, 5px);
   --declaration-glow: 0 0 clamp(10px, 2vw, 20px) rgb(255 215 0 / 60%);
+  
+  /* 3D Perspective values */
+  --perspective-near: clamp(500px, 50vw, 800px);
+  --perspective-medium: clamp(800px, 80vw, 1200px);
+  --perspective-far: clamp(1000px, 100vw, 1500px);
+  
+  /* Container widths */
+  --container-width-small: clamp(200px, 50vw, 400px);
+  --container-width-medium: clamp(300px, 70vw, 600px);
+  --container-width-large: clamp(400px, 80vw, 800px);
+  
+  /* Container heights */
+  --container-height-medium: clamp(400px, 80vh, 700px);
+  --container-height-large: clamp(500px, 85vh, 800px);
   
   /* Safe Area Insets for notched devices */
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
