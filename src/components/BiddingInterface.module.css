@@ -23,8 +23,9 @@
 
 .modalContainer {
   width: var(--bid-modal-width);
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: var(--bid-modal-max-width);
+  max-height: var(--bid-modal-max-height);
+  max-height: var(--bid-modal-max-height-safe); /* dvh fallback */
   padding: var(--dynamic-padding);
   background: rgba(30, 41, 59, 0.75);
   backdrop-filter: var(--glass-effect-md);
@@ -33,6 +34,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  container-type: inline-size;
 }
 
 .modalContent {
@@ -40,7 +42,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: var(--bid-modal-padding);
 }
 
 /* Content grid for responsive layout */
@@ -53,13 +55,13 @@
 
 /* Suits section - responsive flex */
 .suitsSection {
-  flex: 1 1 clamp(180px, 60%, 500px);
+  flex: 1 1 var(--bid-section-flex-base);
   min-width: 0;
 }
 
 /* Current bid section - responsive flex */
 .currentSection {
-  flex: 0 1 clamp(120px, 35%, 300px);
+  flex: 0 1 var(--bid-current-flex-base);
   min-width: 0;
 }
 
@@ -68,13 +70,13 @@
   width: var(--bid-button-width);
   min-width: var(--bid-button-width);
   font-size: calc(var(--fs-lg) * var(--text-scale-factor));
-  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  padding: var(--bid-button-padding);
 }
 
 .suitButton {
   width: var(--suit-button-size);
   height: var(--suit-button-size);
-  font-size: calc(var(--fs-xl) * var(--text-scale-factor));
+  font-size: calc(var(--suit-button-font) * var(--text-scale-factor));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,15 +84,15 @@
 
 /* Responsive gaps using tokens */
 .suitSelection {
-  gap: var(--space-sm);
+  gap: var(--bid-spacing);
 }
 
 .actions {
-  gap: var(--space-sm);
+  gap: var(--bid-spacing);
 }
 
 .section {
-  padding: var(--space-md);
+  padding: var(--bid-section-padding);
 }
 
 .numberDisplay {
@@ -144,7 +146,7 @@
   
   .historyTable tbody {
     display: grid;
-    gap: var(--space-sm);
+    gap: var(--bid-history-gap);
   }
   
   .historyTable tr {
@@ -157,8 +159,8 @@
   }
 }
 
-/* Mobile breakpoint for vertical stacking */
-@media (max-width: 640px) {
+/* Container query for vertical stacking */
+@container (max-width: 40rem) {
   .contentGrid {
     flex-direction: column;
   }
@@ -170,11 +172,11 @@
     width: 100%;
   }
   
-  /* Stack suit buttons 2x2 on mobile */
+  /* Stack suit buttons 2x2 on narrow containers */
   .suitSelection {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm);
+    gap: var(--bid-spacing);
   }
   
   /* Center current bid section content */
@@ -184,18 +186,17 @@
   }
 }
 
-/* Extreme mobile handling */
-@media (max-width: 480px) {
-  .modalContainer {
-    max-height: 90vh;
+/* Container query for extreme narrow widths */
+@container (max-width: 30rem) {
+  .modalContent {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 }
 
-@media (max-width: 320px) {
+@container (max-width: 20rem) {
   .modalContainer {
-    min-width: 95vw;
+    min-width: var(--bid-modal-overflow-threshold);
   }
 }
 
@@ -258,4 +259,23 @@
 .redoubleButton:hover:not(:disabled) {
   background: rgba(220, 38, 38, 0.25);
   border-color: rgba(220, 38, 38, 0.8);
+}
+
+/* Prefers reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .suitButton,
+  .suitSymbol,
+  .number,
+  .stepButton {
+    transition: none;
+  }
+  
+  .button:hover:not(:disabled) {
+    transform: none;
+  }
+  
+  .suitButton:hover .suitSymbol {
+    transform: none;
+  }
 }

@@ -321,5 +321,45 @@ Created `test-results/BASELINE_SCREENSHOTS_SUMMARY.md` with complete documentati
 4. Use baseline screenshots for breakpoint verification
 5. Run performance metrics tests
 
+## Session 38 - CSS Refactoring Phase 0 & 1 (2025-06-07)
+
+### Phase 0: Baseline Establishment ✅
+- **Visual baseline captured** at 6 breakpoints using Playwright
+- **Commit hash**: e6b6398bb06661091dfdb0bff8a6fbcaba5447e6
+- **Script created**: scripts/capture-baseline.js for repeatable captures
+- **Breakpoints verified**: 320×568, 375×667, 768×1024, 1366×768, 1920×1080, 3840×2160
+
+### Phase 1: Token System Foundation & Global Audit ✅
+- **Branch**: style-token-audit (commit: ad13283)
+- **CSS linting errors fixed**: 4 critical errors (duplicate properties)
+- **Audit script created**: scripts/find-magic-numbers.js
+- **Audit results**: 220 magic numbers found across 17 CSS files
+- **tokens.css verified**: All typography (9) and spacing (10) scales use proper clamp()
+- **Documentation**: docs/reports/tokens-usage-audit.csv with actionable findings
+
+### Phase 2: South Player Hand Refactoring ✅
+- **Branch**: refactor/south-player-hand-styling (commit: ab82007)
+- **Magic numbers replaced**: 8 values tokenized
+- **Media queries removed**: 2 MQ blocks replaced with responsive clamp() tokens
+- **Logical properties**: All margin-right → margin-inline-end
+- **Motion preferences**: Added @media (prefers-reduced-motion: reduce) section
+- **New tokens added**:
+  - Perspective: --perspective-near/medium/far
+  - Container dimensions: --container-width/height-small/medium/large
+  - Arc parameters now responsive: --ph-arc-rotation-step, --ph-arc-lift-step
+
+### Key Achievements:
+1. **Systematic approach established**: Baseline → Audit → Component-by-component
+2. **SSoT strengthened**: tokens.css now has 110+ clamp() definitions
+3. **First component compliant**: South Player Hand fully refactored
+4. **Tools created**: Reusable scripts for capture and audit
+
+### Next Components to Refactor:
+Based on audit findings (highest violation counts):
+1. North/East/West Player Hands (continuation of PlayerHandFlex.css)
+2. BiddingInterface (32 width violations, hardcoded clamps)
+3. AnnouncementSystem (multiple positioning violations)
+4. Card component (general card styling)
+
 ## This Document
-Updated with Session 37 - Responsive Design Baseline Testing Suite. Created comprehensive Playwright tests and baseline screenshots for UI responsiveness audit.
+Updated with Session 38 - CSS Refactoring Phases 0, 1, and 2 (South Player Hand). Systematic refactoring to achieve RESPONSIVE_DESIGN_CHEATSHEET.md compliance is underway.

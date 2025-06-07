@@ -246,12 +246,21 @@
   
   /* ===== BIDDING INTERFACE ===== */
   --bid-modal-width: clamp(280px, 85vw, 850px);
+  --bid-modal-max-width: 90vw;
+  --bid-modal-max-height: 90vh;
+  --bid-modal-max-height-safe: 90dvh;
+  --bid-modal-padding: clamp(1rem, 3vw, 2rem);
+  --bid-modal-overflow-threshold: 95vw;
   --bid-button-width: clamp(80px, 20vw, 170px);
   --bid-button-height: clamp(2.5rem, 6vw, 3.5rem);
+  --bid-button-padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
   --suit-button-size: clamp(50px, 12vw, 102px);
+  --suit-button-font: clamp(1rem, 2vw, 1.5rem);
   --bid-card-scale: clamp(0.6, 0.1vw, 1.1);
   --bid-spacing: clamp(0.5rem, 1vw, 1rem);
   --bid-button-size: clamp(2.5rem, 5vw, 4rem);
+  --bid-section-flex-base: clamp(180px, 60%, 500px);
+  --bid-current-flex-base: clamp(120px, 35%, 300px);
   --bid-section-min: 180px;
   --bid-breakpoint: 640px;
   --dynamic-padding: clamp(1rem, 2vw, 2rem);

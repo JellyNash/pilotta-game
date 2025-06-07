@@ -5,6 +5,7 @@ import { Suit, Player, BiddingEntry } from '../core/types';
 import { GAME_CONSTANTS } from '../core/constants';
 import { gameManager } from '../game/GameManager';
 import { getSuitColorValue } from '../utils/suitColors';
+import styles from './BiddingInterface.module.css';
 
 // Bidding History Table Component
 interface BiddingHistoryTableProps {
@@ -87,7 +88,7 @@ const BiddingHistoryTable: React.FC<BiddingHistoryTableProps> = ({
                         <span className="inline-block px-4 py-1 rounded-full bg-purple-900/30 text-purple-400 font-bold text-lg">×4</span>
                       ) : (
                         <div className="inline-flex items-center justify-center space-x-1 px-4 py-1 rounded-full bg-slate-600">
-                          <span className="text-white font-bold bid-text-large">{bid.bid}</span>
+                          <span className={`text-white font-bold ${styles.textLarge}`}>{bid.bid}</span>
                           <span className="text-2xl" style={{ color: getSuitColor(bid.trump!) }}>
                             {getSuitSymbol(bid.trump!)}
                           </span>
@@ -425,11 +426,11 @@ const BiddingInterface: React.FC = () => {
             <div className="bid-current-section flex items-stretch">
               <div
                 className="flex flex-col items-center justify-between py-4 space-y-3 ml-auto"
-                style={{ marginRight: 'var(--bid-margin-right)' }}
+                style={{ marginInlineEnd: 'var(--bid-margin-right)' }}
               >
                 {/* Current Contract - always show to maintain height */}
                 <div className={`
-                  inline-flex items-center rounded-xl px-6 py-3 shadow-lg justify-center flex-1 bid-button
+                  inline-flex items-center rounded-xl px-6 py-3 shadow-lg justify-center flex-1 ${styles.button}
                   ${contract 
                     ? isHumanTeamWinning 
                       ? 'bg-green-900/30 border border-green-600/30' 
@@ -444,14 +445,14 @@ const BiddingInterface: React.FC = () => {
                         {getSuitSymbol(contract.trump)}
                       </span>
                       {contract.doubled && !contract.redoubled && (
-                        <span className="text-red-400 font-bold ml-3 bid-text-large">×2</span>
+                        <span className={`text-red-400 font-bold ml-3 ${styles.textLarge}`}>×2</span>
                       )}
                       {contract.redoubled && (
-                        <span className="text-purple-400 font-bold ml-3 bid-text-large">×4</span>
+                        <span className={`text-purple-400 font-bold ml-3 ${styles.textLarge}`}>×4</span>
                       )}
                     </>
                   ) : (
-                    <span className="font-semibold text-slate-400 bid-text-primary">No bids</span>
+                    <span className={`font-semibold text-slate-400 ${styles.textPrimary}`}>No bids</span>
                   )}
                 </div>
                 
@@ -480,7 +481,7 @@ const BiddingInterface: React.FC = () => {
                           }
                         }}
                         onClick={handleDouble}
-                        className="relative px-8 py-3 bg-gradient-to-b from-red-500/90 to-red-600/90 hover:from-red-400/90 hover:to-red-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 mt-2 border border-red-400/30 overflow-hidden group bid-button"
+                        className={`relative px-8 py-3 bg-gradient-to-b from-red-500/90 to-red-600/90 hover:from-red-400/90 hover:to-red-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 mt-2 border border-red-400/30 overflow-hidden group ${styles.button}`}
                         title="Double the current bid"
                         aria-label="Double the current bid (multiply by 2)"
                       >
@@ -511,7 +512,7 @@ const BiddingInterface: React.FC = () => {
                           }
                         }}
                         onClick={handleRedouble}
-                        className="relative px-8 py-3 bg-gradient-to-b from-purple-500/90 to-purple-600/90 hover:from-purple-400/90 hover:to-purple-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 mt-2 border border-purple-400/30 overflow-hidden group bid-button"
+                        className={`relative px-8 py-3 bg-gradient-to-b from-purple-500/90 to-purple-600/90 hover:from-purple-400/90 hover:to-purple-500/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-300 mt-2 border border-purple-400/30 overflow-hidden group ${styles.button}`}
                         title="Redouble the current bid"
                       >
                         <span className="relative z-10">REDOUBLE ×4</span>
@@ -520,7 +521,7 @@ const BiddingInterface: React.FC = () => {
                     )}
                   </>
                 ) : (
-                  <div className="h-[52px] mt-2 bid-button"></div>
+                  <div className={`h-[52px] mt-2 ${styles.button}`}></div>
                 )}
               </div>
             </div>
@@ -540,7 +541,7 @@ const BiddingInterface: React.FC = () => {
                   boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)"
                 }}
                 onClick={handlePass}
-                className="relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 border border-slate-400/20 backdrop-blur-sm overflow-hidden group bid-button bid-text-large"
+                className={`relative px-10 py-5 bg-gradient-to-b from-slate-500/90 to-slate-600/90 hover:from-slate-400/90 hover:to-slate-500/90 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 border border-slate-400/20 backdrop-blur-sm overflow-hidden group ${styles.button} ${styles.textLarge}`}
                 title="Pass"
                 aria-label="Pass (skip bidding)"
               >
@@ -567,7 +568,7 @@ const BiddingInterface: React.FC = () => {
                 aria-label="Decrease bid value"
                 aria-disabled={selectedBid <= minBid}
                 className={`
-                  relative rounded-full transition-all duration-300 touch-target flex items-center justify-center bid-step-button
+                  relative rounded-full transition-all duration-300 touch-target flex items-center justify-center ${styles.stepButton}
                   ${selectedBid <= minBid 
                     ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed' 
                     : 'bg-gradient-to-b from-slate-600/90 to-slate-700/90 hover:from-slate-500/90 hover:to-slate-600/90 text-white shadow-lg hover:shadow-xl border border-slate-500/30'
@@ -585,7 +586,7 @@ const BiddingInterface: React.FC = () => {
               </motion.button>
 
               {/* Bid Display */}
-              <div className="relative bg-gradient-to-b from-slate-900/70 to-slate-800/70 rounded-2xl px-10 py-4 bid-number-display border border-slate-600/30 shadow-inner overflow-hidden">
+              <div className={`relative bg-gradient-to-b from-slate-900/70 to-slate-800/70 rounded-2xl px-10 py-4 ${styles.numberDisplay} border border-slate-600/30 shadow-inner overflow-hidden`}>
                 <div className="relative h-full flex items-center justify-center">
                   {/* Gradient masks for fade effect */}
                   <div className="absolute inset-0 z-10 pointer-events-none">
@@ -608,12 +609,12 @@ const BiddingInterface: React.FC = () => {
                       className="relative"
                     >
                       {/* Previous number (above) */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 text-transparent bg-clip-text bg-gradient-to-b from-white/30 to-slate-300/30 tabular-nums blur-[1px] font-bold bid-number-text bid-number-above">
+                      <div className={`absolute left-1/2 transform -translate-x-1/2 text-transparent bg-clip-text bg-gradient-to-b from-white/30 to-slate-300/30 tabular-nums blur-[1px] font-bold ${styles.numberText} ${styles.numberAbove}`}>
                         {selectedBid > minBid ? selectedBid - 10 : maxBid}
                       </div>
                       
                       {/* Current number */}
-                      <div className="font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 tabular-nums relative bid-number-text">
+                      <div className={`font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 tabular-nums relative ${styles.numberText}`}>
                         {selectedBid}
                         <motion.div
                           initial={{ scaleX: 0, opacity: 0 }}
@@ -625,7 +626,7 @@ const BiddingInterface: React.FC = () => {
                       </div>
                       
                       {/* Next number (below) */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 text-transparent bg-clip-text bg-gradient-to-b from-white/30 to-slate-300/30 tabular-nums blur-[1px] font-bold bid-number-text bid-number-below">
+                      <div className={`absolute left-1/2 transform -translate-x-1/2 text-transparent bg-clip-text bg-gradient-to-b from-white/30 to-slate-300/30 tabular-nums blur-[1px] font-bold ${styles.numberText} ${styles.numberBelow}`}>
                         {selectedBid < maxBid ? selectedBid + 10 : minBid}
                       </div>
                     </motion.div>
@@ -653,7 +654,7 @@ const BiddingInterface: React.FC = () => {
                 aria-label="Increase bid value"
                 aria-disabled={selectedBid >= maxBid}
                 className={`
-                  relative rounded-full transition-all duration-300 touch-target flex items-center justify-center bid-step-button
+                  relative rounded-full transition-all duration-300 touch-target flex items-center justify-center ${styles.stepButton}
                   ${selectedBid >= maxBid 
                     ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed' 
                     : 'bg-gradient-to-b from-slate-600/90 to-slate-700/90 hover:from-slate-500/90 hover:to-slate-600/90 text-white shadow-lg hover:shadow-xl border border-slate-500/30'
@@ -685,7 +686,7 @@ const BiddingInterface: React.FC = () => {
                   aria-label={`Bid ${selectedBid} with ${selectedTrump || 'no trump selected'}`}
                   aria-disabled={!selectedTrump}
                   className={`
-                    relative px-10 py-5 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden group bid-button bid-text-large
+                    relative px-10 py-5 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden group ${styles.button} ${styles.textLarge}
                     ${!selectedTrump
                       ? 'bg-gradient-to-b from-slate-600/50 to-slate-700/50 cursor-not-allowed opacity-60' 
                       : 'bg-gradient-to-b from-emerald-500/90 to-green-600/90 hover:from-emerald-400/90 hover:to-green-500/90 border border-green-400/30 backdrop-blur-sm'
