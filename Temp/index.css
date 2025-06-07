@@ -1,0 +1,350 @@
+/* Import new layered CSS architecture */
+@import url('./styles/app.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Ensure HTML is responsive */
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden auto;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #0f172a;
+  color: #f1f5f9;
+
+  /* Allow scrolling to detect overflow issues */
+  overflow: auto;
+  min-height: 100vh;
+}
+
+.root-container,
+#root {
+  /* Remove fixed dimensions - be responsive */
+  width: 100%;
+  min-height: 100vh;
+
+  /* Change to visible to detect clipping */
+  overflow: visible;
+}
+
+/* ==================== GAME CONTAINMENT ==================== */
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  /* Change to visible to detect overflow */
+  overflow: visible;
+  position: relative;
+}
+
+.game-header {
+  flex-shrink: 0;
+  height: auto;
+  min-height: calc(var(--header-height) * 0.8);
+  max-height: var(--header-height);
+  padding: 0.5rem;
+  background-color: rgb(15 23 42 / 90%);
+  z-index: var(--z-header);
+}
+
+.game-content {
+  flex: 1;
+  overflow: visible;
+  position: relative;
+  min-height: calc(100vh - var(--header-height));
+}
+
+/* Game table must contain all elements */
+.game-table,
+#table {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+/* ==================== ENHANCED CARD STYLES ==================== */
+
+/* Card styles moved to src/components/Card.css to avoid duplicates */
+
+/* Card-specific styles moved to src/components/Card.css */
+
+/* Performance optimizations */
+.card-wrapper {
+  contain: style layout;
+  will-change: transform;
+}
+
+.cards-container {
+  contain: style layout;
+  transform: translateZ(0);
+}
+
+
+
+/* ==================== RESPONSIVE GAME LAYOUT ==================== */
+
+/* Desktop and larger tablets */
+@media (width >= 1024px) {
+  /* North player area */
+  .h-1\/4:first-child {
+    height: 22%;
+  }
+  
+  /* South player area - more space for human player */
+  .h-1\/4:last-child {
+    height: 25%;
+  }
+  
+  /* Side players */
+  .w-1\/4 {
+    width: 22%;
+  }
+}
+
+/* Tablets */
+@media (width <= 1023px) and (width >= 768px) {
+  .game-header {
+    min-height: 3.5rem;
+    max-height: 4rem;
+  }
+  
+  .h-1\/4:first-child {
+    height: 20%;
+  }
+  
+  .h-1\/4:last-child {
+    height: 26%;
+  }
+  
+  .w-1\/4 {
+    width: 20%;
+  }
+}
+
+/* Mobile devices */
+@media (width <= 767px) {
+  .game-header {
+    min-height: 3rem;
+    max-height: 3.5rem;
+    padding: 0.25rem;
+  }
+  
+  .game-header button {
+    padding: 0.5rem;
+  }
+  
+  .game-header svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  /* Adjust player areas for mobile */
+  .h-1\/4:first-child {
+    height: 18%;
+  }
+  
+  .h-1\/4:last-child {
+    height: 28%;
+  }
+  
+  .w-1\/4 {
+    width: 18%;
+  }
+  
+  /* Center play area gets more space */
+  .flex-1 {
+    flex: 1 1 64%;
+  }
+}
+
+/* Small mobile screens */
+@media (width <= 480px) {
+  .h-1\/4:first-child {
+    height: 16%;
+  }
+  
+  .h-1\/4:last-child {
+    height: 30%;
+  }
+  
+  .w-1\/4 {
+    width: 15%;
+  }
+  
+  .flex-1 {
+    flex: 1 1 70%;
+  }
+  
+}
+
+
+/* ==================== TRICK AREA RESPONSIVE ==================== */
+.trick-area {
+  max-width: min(80vw, 400px);
+  max-height: min(40vh, 300px);
+  margin: 0 auto;
+}
+
+@media (width <= 768px) {
+  .trick-area {
+    transform: scale(0.85);
+  }
+}
+
+@media (width <= 480px) {
+  .trick-area {
+    transform: scale(0.7);
+  }
+}
+
+/* ==================== BIDDING INTERFACE ==================== */
+
+/* Removed old positioning styles - bidding interface now handles its own centering */
+
+
+/* Smooth number transitions */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Button press effects */
+.active\:shadow-inner:active {
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 6%);
+}
+
+/* Z-index values now in tokens.css */
+
+/* Basic focus styles now in Card.css */
+
+/* Force hardware acceleration for smooth animations */
+.animate-smooth {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+/* Optimize menu animations */
+.menu-transition {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform: translateZ(0);
+}
+
+
+/* CSS variables now in tokens.css */
+
+/* Performance: Disable expensive effects on low-end devices */
+@media (width <= 768px), (height <= 600px) {
+  .backdrop-blur-md {
+    backdrop-filter: none;
+    background-color: rgb(30 41 59 / 95%);
+  }
+  
+  .backdrop-blur-lg {
+    backdrop-filter: none;
+    background-color: rgb(30 41 59 / 98%);
+  }
+  
+  .shadow-2xl {
+    box-shadow: var(--shadow-drop-md);
+  }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+
+/* Prevent text selection during gameplay */
+.game-content {
+  user-select: none;
+}
+
+/* Allow text selection in modals */
+.modal-content {
+  user-select: text;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .game-header,
+  button {
+    display: none;
+  }
+  
+}
+
+/* Custom slider styles for card size control */
+input[type="range"].slider-thumb {
+  appearance: none;
+  outline: none;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+input[type="range"].slider-thumb:hover {
+  opacity: 1;
+}
+
+input[type="range"].slider-thumb::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #1e40af;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider-thumb::-webkit-slider-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgb(0 0 0 / 30%);
+}
+
+input[type="range"].slider-thumb::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #1e40af;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider-thumb::-moz-range-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgb(0 0 0 / 30%);
+}
+
+/* Disabled button styles for card size controls */
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: inherit;
+}

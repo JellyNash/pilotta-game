@@ -1,0 +1,47 @@
+.contract-indicator {
+  position: absolute;
+  /* Use clamp for positioning */
+  top: clamp(0.5rem, 2vw, 1.5rem);
+  right: clamp(0.5rem, 2vw, 1.5rem);
+  
+  /* Safe area support */
+  top: max(
+    clamp(0.5rem, 2vw, 1.5rem),
+    env(safe-area-inset-top)
+  );
+  right: max(
+    clamp(0.5rem, 2vw, 1.5rem),
+    env(safe-area-inset-right)
+  );
+  
+  /* Remove fixed min-width */
+  min-width: min-content;
+  width: clamp(140px, 25vw, 200px);
+  
+  /* Responsive padding */
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(30, 41, 59, 0.9);
+  backdrop-filter: var(--glass-effect-sm);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-drop-lg);
+  z-index: var(--z-ui-overlay);
+}
+
+.contract-value {
+  font-size: calc(var(--fs-2xl) * var(--text-scale-factor));
+  font-weight: 800;
+}
+
+.contract-suit {
+  font-size: calc(var(--fs-3xl) * var(--text-scale-factor));
+  margin-left: var(--space-xs);
+}
+
+.contract-multiplier {
+  font-size: calc(var(--fs-sm) * var(--text-scale-factor));
+  margin-left: var(--space-sm);
+  color: #fbbf24;
+}
+
+/* Remove ALL media queries - use clamp instead */
+/* All sizing now handled by clamp() and calc() in base rules */

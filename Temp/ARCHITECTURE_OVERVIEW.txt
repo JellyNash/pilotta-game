@@ -1,0 +1,75 @@
+# PILOTTA GAME - STYLING ARCHITECTURE OVERVIEW
+
+## Project Structure
+
+pilotta-game/
+├── src/
+│   ├── styles/               # Core style system
+│   │   ├── tokens.css        # Design tokens (colors, spacing, etc.)
+│   │   ├── tokens-generated.css # Generated tokens
+│   │   ├── tokens.json       # Token definitions
+│   │   ├── tokens.ts         # TypeScript token types
+│   │   ├── utilities.css     # Utility classes
+│   │   ├── breakpoints.ts    # Responsive breakpoints
+│   │   └── init-variables.ts # CSS variable initialization
+│   │
+│   ├── layouts/              # Layout system
+│   │   ├── ResponsiveSystem.ts   # Core responsive logic
+│   │   ├── PositioningSystem.tsx # Component positioning
+│   │   ├── UIPositioner.tsx      # UI element positioning
+│   │   ├── GameLayout.tsx        # Main game layout
+│   │   └── game-grid.css         # CSS Grid layout
+│   │
+│   ├── components/           # Component styles
+│   │   ├── *.css            # Component-specific CSS
+│   │   └── *.module.css     # CSS Modules
+│   │
+│   ├── hooks/               # Styling hooks
+│   │   ├── useResponsive.ts
+│   │   └── useViewportSize.ts
+│   │
+│   ├── App.css              # App-level styles
+│   └── index.css            # Global styles
+│
+├── docs/
+│   ├── RESPONSIVE_DESIGN_CHEATSHEET.md  # SSoT for styling
+│   ├── responsive-system.md
+│   └── CSS_ARCHITECTURE.md
+│
+├── tailwind.config.js       # Tailwind configuration
+├── postcss.config.js        # PostCSS configuration
+├── style-dictionary.config.cjs # Style Dictionary config
+└── stylelint.config.cjs     # Stylelint configuration
+
+## Key Styling Systems
+
+1. **Design Token System**
+   - CSS custom properties
+   - Centralized in tokens.css
+   - Used throughout application
+
+2. **Responsive System**
+   - Custom responsive units (--rsp-*)
+   - Breakpoint-based scaling
+   - Center-based positioning
+
+3. **Layout System**
+   - CSS Grid for main layout
+   - Flexbox for component layouts
+   - Absolute positioning for game elements
+
+4. **Component Styling**
+   - Mix of CSS Modules and regular CSS
+   - BEM-like naming conventions
+   - Scoped component styles
+
+5. **Utilities**
+   - Tailwind CSS (limited use)
+   - Custom utility classes
+   - Responsive helpers
+
+## Configuration
+- PostCSS for processing
+- Tailwind for utilities
+- Stylelint for linting
+- Style Dictionary for token generation

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Card Size Test - 40% Increase</title>
+    <link rel="stylesheet" href="./src/styles/tokens.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, system-ui, sans-serif;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .comparison-container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        .card-section {
+            text-align: center;
+        }
+        
+        .card-demo {
+            background: white;
+            border-radius: var(--card-corner-radius);
+            border: 2px solid #333;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .player-card {
+            width: var(--card-width);
+            height: var(--card-height);
+        }
+        
+        .table-card {
+            width: var(--table-card-width);
+            height: var(--table-card-height);
+        }
+        
+        .measurements {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .size-ratio {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 18px;
+            display: inline-block;
+        }
+        
+        h2 {
+            margin-bottom: 10px;
+        }
+        
+        .viewport-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Table Card Size Test - 40% Increase Verification</h1>
+    
+    <div class="viewport-info" id="viewport-info"></div>
+    
+    <div class="comparison-container">
+        <div class="card-section">
+            <h2>Player Hand Card (Base Size)</h2>
+            <div class="card-demo player-card">A♠</div>
+            <div class="measurements" id="player-measurements"></div>
+        </div>
+        
+        <div class="card-section">
+            <h2>Table Card (40% Larger)</h2>
+            <div class="card-demo table-card">K♥</div>
+            <div class="measurements" id="table-measurements"></div>
+        </div>
+    </div>
+    
+    <div class="size-ratio" id="size-ratio"></div>
+    
+    <h2>Responsive Scaling Test</h2>
+    <p>Resize your browser window to see how both card sizes scale proportionally while maintaining the 40% difference.</p>
+    
+    <script>
+        function updateMeasurements() {
+            const playerCard = document.querySelector('.player-card');
+            const tableCard = document.querySelector('.table-card');
+            
+            const playerWidth = playerCard.offsetWidth;
+            const playerHeight = playerCard.offsetHeight;
+            const tableWidth = tableCard.offsetWidth;
+            const tableHeight = tableCard.offsetHeight;
+            
+            // Calculate actual ratios
+            const widthRatio = (tableWidth / playerWidth);
+            const heightRatio = (tableHeight / playerHeight);
+            
+            // Update measurements
+            document.getElementById('player-measurements').innerHTML = `
+                Width: ${playerWidth}px<br>
+                Height: ${playerHeight}px<br>
+                CSS: var(--card-width) × var(--card-height)
+            `;
+            
+            document.getElementById('table-measurements').innerHTML = `
+                Width: ${tableWidth}px<br>
+                Height: ${tableHeight}px<br>
+                CSS: var(--table-card-width) × var(--table-card-height)
+            `;
+            
+            document.getElementById('size-ratio').innerHTML = `
+                Width Ratio: ${widthRatio.toFixed(2)}x (${((widthRatio - 1) * 100).toFixed(0)}% increase)<br>
+                Height Ratio: ${heightRatio.toFixed(2)}x (${((heightRatio - 1) * 100).toFixed(0)}% increase)
+            `;
+            
+            // Update viewport info
+            document.getElementById('viewport-info').innerHTML = `
+                Viewport: ${window.innerWidth} × ${window.innerHeight}px
+            `;
+            
+            // Check if it's exactly 40% larger
+            const isCorrect = Math.abs(widthRatio - 1.4) < 0.01 && Math.abs(heightRatio - 1.4) < 0.01;
+            document.getElementById('size-ratio').style.background = isCorrect ? '#4CAF50' : '#ff9800';
+        }
+        
+        // Initial update
+        updateMeasurements();
+        
+        // Update on resize
+        window.addEventListener('resize', updateMeasurements);
+        
+        // Also update when fonts load
+        document.fonts.ready.then(updateMeasurements);
+    </script>
+</body>
+</html>

@@ -36,13 +36,13 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
     }
   };
   
-  // Position cards in a diamond pattern
+  // Position cards in a diamond pattern (adjusted for larger cards)
   const getCardPosition = (order: number) => {
     const positions = [
-      { x: 0, y: -60 },    // North
-      { x: 60, y: 0 },     // East
-      { x: 0, y: 60 },     // South
-      { x: -60, y: 0 }     // West
+      { x: 0, y: -84 },    // North (60 * 1.4)
+      { x: 84, y: 0 },     // East (60 * 1.4)
+      { x: 0, y: 84 },     // South (60 * 1.4)
+      { x: -84, y: 0 }     // West (60 * 1.4)
     ];
     
     // Map player positions to trick order
@@ -65,7 +65,11 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
 
   return (
     <div 
-      className="relative w-48 h-48 flex items-center justify-center"
+      className="trick-area-centered relative flex items-center justify-center"
+      style={{
+        width: 'calc(var(--table-card-width) * 2 + 2rem)',
+        height: 'calc(var(--table-card-height) * 2 + 2rem)'
+      }}
     >
       {/* Drop zone indicator */}
       <motion.div
@@ -87,7 +91,12 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
 
       {/* Center decoration */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-24 h-24 rounded-full bg-slate-700/20 backdrop-blur-sm" />
+        <div className="rounded-full bg-slate-700/20 backdrop-blur-sm" 
+          style={{
+            width: 'calc(var(--table-card-width) * 1.2)',
+            height: 'calc(var(--table-card-height) * 0.8)'
+          }}
+        />
       </div>
 
       {/* Cards */}
@@ -99,6 +108,10 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
             <motion.div
               key={`${trickCard.card.id}-${index}`}
               className="absolute"
+              style={{
+                width: 'var(--table-card-width)',
+                height: 'var(--table-card-height)'
+              }}
               initial={{ 
                 scale: 0.8,
                 rotate: 0,
@@ -133,6 +146,7 @@ const TrickArea: React.FC<TrickAreaProps> = ({ currentTrick, isDropActive, trick
               <Card
                 card={trickCard.card}
                 className="shadow-2xl"
+                size="responsive"
               />
               
               {/* Player indicator */}

@@ -1,0 +1,69 @@
+.player-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto; /* Allow growing and shrinking */
+  min-width: 0;
+  min-height: 0;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  z-index: var(--z-north-player);
+  overflow: visible;
+}
+
+/* Individual z-index tokens for each position */
+.player-zone-north {
+  z-index: var(--z-north-player);
+}
+
+.player-zone-east {
+  z-index: var(--z-east-player);
+}
+
+.player-zone-west {
+  z-index: var(--z-west-player);
+}
+
+.player-zone-south {
+  z-index: var(--z-south-player);
+}
+
+/* Player name positioning */
+.player-name-label {
+  position: absolute;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  z-index: var(--z-player-indicator);
+}
+
+.player-name-north {
+  bottom: calc(100% + var(--badge-offset));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.player-name-south {
+  top: calc(100% + var(--badge-offset));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.player-name-east {
+  left: calc(100% + var(--badge-offset));
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.player-name-west {
+  right: calc(100% + var(--badge-offset));
+  top: 50%;
+  transform: translateY(-50%);
+}

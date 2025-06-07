@@ -1,0 +1,245 @@
+/* TrickPileViewer - Minimal Modern Design */
+
+/* Overlay */
+.tpv-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(var(--blur-xs));
+  z-index: var(--z-ui-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Modal */
+.tpv-modal {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(var(--blur-lg));
+  border-radius: var(--radius-md);
+  width: clamp(320px, 90vw, 800px);
+  max-height: clamp(70vh, 85vh, 90vh);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-drop-lg);
+  border: var(--border-thin) solid rgba(255, 255, 255, 0.05);
+}
+
+/* Header - Minimal */
+.tpv-header {
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--border-thin) solid rgba(255, 255, 255, 0.05);
+}
+
+.tpv-title {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: var(--fs-sm);
+  color: #94a3b8;
+}
+
+.tpv-team-indicator {
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tpv-team-indicator.team-a {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.1);
+}
+
+.tpv-team-indicator.team-b {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.tpv-points {
+  font-weight: 700;
+  color: #e2e8f0;
+  font-size: var(--fs-base);
+}
+
+.tpv-total {
+  font-size: var(--fs-xs);
+  color: #64748b;
+}
+
+.tpv-close {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: var(--border-thin) solid rgba(255, 255, 255, 0.1);
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.tpv-close:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Body */
+.tpv-body {
+  flex: 1;
+  padding: var(--trick-pile-padding);
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cross Container using Grid */
+.tpv-cross-container {
+  position: relative;
+  width: 100%;
+  max-width: var(--trick-pile-width);
+  height: var(--trick-pile-width);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 1fr auto 1fr;
+  gap: var(--trick-pile-gap);
+  grid-template-areas:
+    ". top ."
+    "left center right"
+    ". bottom .";
+}
+
+/* Card positions */
+.tpv-card-position {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpv-card-position.tpv-top {
+  grid-area: top;
+}
+
+.tpv-card-position.tpv-right {
+  grid-area: right;
+}
+
+.tpv-card-position.tpv-bottom {
+  grid-area: bottom;
+}
+
+.tpv-card-position.tpv-left {
+  grid-area: left;
+}
+
+/* Table center */
+.tpv-table-center {
+  grid-area: center;
+  position: relative;
+  width: var(--trick-pile-card-size);
+  height: var(--trick-pile-card-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpv-table-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(30, 41, 59, 0.3) 0%, transparent 70%);
+  border: var(--border-thin) solid rgba(100, 116, 139, 0.2);
+}
+
+.tpv-center-info {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+.tpv-suit {
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+
+.tpv-suit.red {
+  color: #ef4444;
+}
+
+.tpv-suit.black {
+  color: #e2e8f0;
+}
+
+/* Card container */
+.tpv-card-container {
+  position: relative;
+  width: fit-content;
+}
+
+/* Play order - Modern style */
+.tpv-play-order {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #1e293b;
+  color: #e2e8f0;
+  border: var(--border-medium) solid #334155;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--fs-2xs);
+  z-index: calc(var(--z-base) + 1);
+  box-shadow: var(--shadow-drop-sm);
+}
+
+.tpv-card {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* Winner effects - Subtle */
+.tpv-card-container.winner .tpv-card {
+  box-shadow: 0 0 0 var(--border-medium) #fbbf24, 0 0 var(--shadow-md) rgba(251, 191, 36, 0.3);
+}
+
+.tpv-winner-glow {
+  position: absolute;
+  inset: -1rem;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 60%);
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Minimal winner indicator */
+.tpv-winner-indicator {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1.75rem;
+  height: 1.75rem;
+  background: #fbbf24;
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: var(--fs-xs);
+  box-shadow: var(--shadow-drop-sm);
+}
+
+/* All responsive sizing now handled by clamp() functions in base rules above */

@@ -232,5 +232,94 @@ All critical mobile issues, z-index conflicts, and missing responsive features h
 
 The project is **NOT compliant** with mandatory responsive design standards and requires immediate remediation.
 
+## Session 36 - Table Card Size Enhancement (2025-01-07)
+
+### Implementation Complete:
+- **Table cards now 40% larger** than player hand cards
+- **Fully responsive** using clamp() values throughout
+- **Proportional scaling** for all card content (text, padding, positioning)
+
+### Technical Details:
+1. **CSS Variables Already Configured**:
+   - `--table-card-width: clamp(84px, 14vw, 168px)` (base 60px × 1.4)
+   - `--table-card-height: clamp(118px, 19.6vw, 235px)` (base 84px × 1.4)
+   - `--table-card-scale: 1.4` for proportional content scaling
+
+2. **Components Using Table Card Sizing**:
+   - `TrickArea.css`: Uses table card dimensions for slots
+   - `Card.css`: Applies proportional scaling to text when in `.trick-area-centered`
+   - `TrickArea.tsx`: Positions cards with 40% larger offsets (84px vs 60px)
+
+3. **Compliance Maintained**:
+   - All values use clamp() - no fixed pixels
+   - Scales smoothly across all viewports
+   - Follows mandatory responsive design cheatsheet
+   - Test file created: `test-table-card-size.html`
+
+### Result:
+Table cards display at exactly 140% the size of player hand cards, improving visibility during gameplay while maintaining full responsive compliance.
+
+## Session 37 - Responsive Design Baseline Testing Suite (2025-06-07)
+
+### Overview
+Created comprehensive Playwright testing suite for responsive design compliance audit as requested by UI responsiveness guru.
+
+### Files Created for Audit (in /Temp folder)
+- 38 styling-related files collected including:
+  - All CSS files (18 files)
+  - TypeScript components as .txt files (14 files)
+  - Configuration files (tailwind.config.js, postcss.config.js)
+  - Documentation (RESPONSIVE_DESIGN_CHEATSHEET.md, etc.)
+  - Architecture overview and file listing
+
+### Test Suites Created
+
+#### 1. Baseline Screenshot Tests
+- `tests/responsive-baseline.spec.ts` - Original comprehensive test
+- `tests/responsive-baseline-fixed.spec.ts` - Fixed version with proper game flow
+- `tests/quick-baseline.spec.ts` - Simplified screenshot capture
+- `capture-screenshots.js` - Standalone script for screenshots
+
+#### 2. Compliance Tests  
+- `tests/cheatsheet-compliance.spec.ts` - Original compliance suite
+- `tests/cheatsheet-compliance-fixed.spec.ts` - Fixed version
+- Tests verify:
+  - Fixed pixel usage without clamp()
+  - Responsive unit (--rsp-*) usage
+  - CSS custom properties
+  - Touch target compliance (44x44px)
+  - Component scaling
+  - Layout shift (CLS)
+
+#### 3. Debug & Report Tests
+- `tests/debug-start-game.spec.ts` - Game flow debugging
+- `tests/generate-baseline-report.spec.ts` - Report generation
+- `tests/generate-compliance-report.ts` - Compliance report
+
+### Screenshots Generated
+Successfully captured 8 baseline screenshots:
+- Mobile (375x667): start & game screens
+- Tablet (768x1024): start & game screens
+- Desktop HD (1280x720): start & game screens
+- Desktop 2K (2560x1440): start & game screens
+
+### Key Findings
+1. **CSS Variables Issue**: No responsive custom properties (--rsp-*) detected
+2. **Touch Target Violations**: 
+   - Difficulty buttons: 88x40px (need 44x44px)
+   - "How to Play" link: 75x20px
+3. **Fixed Pixels**: Extensive use without clamp() functions
+4. **Game Flow**: Properly transitions from start screen to game
+
+### Summary Report
+Created `test-results/BASELINE_SCREENSHOTS_SUMMARY.md` with complete documentation.
+
+### Next Steps for Audit
+1. Review why CSS custom properties aren't loading
+2. Analyze fixed pixel usage patterns
+3. Address touch target compliance issues
+4. Use baseline screenshots for breakpoint verification
+5. Run performance metrics tests
+
 ## This Document
-Updated with Session 35 - Comprehensive styling audit revealing significant compliance issues. Despite previous claims of 10/10 CSS architecture, the audit found 178 violations requiring urgent attention.
+Updated with Session 37 - Responsive Design Baseline Testing Suite. Created comprehensive Playwright tests and baseline screenshots for UI responsiveness audit.

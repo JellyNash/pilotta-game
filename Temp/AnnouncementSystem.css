@@ -1,0 +1,174 @@
+/* Announcement System - Variables now in tokens.css */
+
+/* Announcement container with position and performance optimizations */
+.announcement-container {
+  position: fixed;
+  pointer-events: auto;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Professional glass morphism effect with depth */
+.announcement-card {
+  backdrop-filter: var(--glass-effect-lg);
+  -webkit-backdrop-filter: var(--glass-effect-lg);
+  background-color: rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Multi-layer shadow for depth */
+.announcement-card::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: inherit;
+  border-radius: inherit;
+  filter: blur(var(--blur-lg));
+  opacity: 0.6;
+  z-index: -2;
+  transform: translateZ(-10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Inner glow layer */
+.announcement-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    transparent 100%);
+  pointer-events: none;
+  z-index: var(--z-base);
+}
+
+/* Enhanced hover effects */
+.announcement-container:hover .announcement-card {
+  transform: translateZ(5px) scale(1.02);
+}
+
+.announcement-container:hover .announcement-card::before {
+  filter: blur(var(--blur-xl));
+  opacity: 0.8;
+  transform: translateZ(-15px) scale(1.05);
+}
+
+/* Responsive values are now handled by clamp() in tokens.css */
+
+/* Position-based announcement placement relative to player zones */
+
+/* North player - center top */
+.announcement-position-north {
+  left: 45%;
+  top: calc(var(--edge-gap) + var(--card-height-responsive) * 0.5);
+  transform: translateX(-50%);
+}
+
+/* South player - center bottom */
+.announcement-position-south {
+  left: 45%;
+  top: 75vh;
+  transform: translateX(-50%);
+}
+
+/* When bidding is active, move south announcement higher */
+.announcement-position-south.bidding-active {
+  top: 65vh;
+}
+
+/* East player - right side */
+.announcement-position-east {
+  left: clamp(76vw, 78vw, 80vw);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* West player - left side */
+.announcement-position-west {
+  left: clamp(6vw, 8vw, 10vw);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Position adjustments now handled by clamp() in base rules above */
+
+/* Animation enhancements */
+@keyframes announcement-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes announcement-shimmer {
+  0% { transform: translateX(-100%) skewX(-20deg); }
+  100% { transform: translateX(200%) skewX(-20deg); }
+}
+
+@keyframes sparkle-float {
+  0% { 
+    transform: translateY(0) scale(0);
+    opacity: 0;
+  }
+  25% {
+    transform: translateY(-30px) scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(30px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(0);
+    opacity: 0;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .announcement-system {
+    --announcement-border-width: var(--border-medium);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-system * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile positioning fixes */
+@media (max-width: 640px) {
+  .announcement-north {
+    top: 10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90vw;
+  }
+  
+  .announcement-south {
+    bottom: 20vh; /* Higher to avoid overlap with cards */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90vw;
+  }
+  
+  .announcement-east,
+  .announcement-west {
+    display: none; /* Hide side announcements on mobile */
+  }
+  
+  .announcement-content {
+    font-size: var(--fs-sm);
+    padding: var(--space-xs) var(--space-sm);
+  }
+}

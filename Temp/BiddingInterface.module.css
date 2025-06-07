@@ -1,0 +1,261 @@
+/* BiddingInterface CSS Module - Responsive modal system */
+
+.modal {
+  position: fixed;
+  inset: var(--space-md);
+  max-width: var(--modal-max-width);
+  max-height: var(--modal-max-height);
+  margin: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-bidding-interface);
+}
+
+.modalWrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-bidding-interface);
+}
+
+.modalContainer {
+  width: var(--bid-modal-width);
+  max-width: 90vw;
+  max-height: 90vh;
+  padding: var(--dynamic-padding);
+  background: rgba(30, 41, 59, 0.75);
+  backdrop-filter: var(--glass-effect-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-drop-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+/* Content grid for responsive layout */
+.contentGrid {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-lg);
+  align-items: flex-start;
+}
+
+/* Suits section - responsive flex */
+.suitsSection {
+  flex: 1 1 clamp(180px, 60%, 500px);
+  min-width: 0;
+}
+
+/* Current bid section - responsive flex */
+.currentSection {
+  flex: 0 1 clamp(120px, 35%, 300px);
+  min-width: 0;
+}
+
+/* Button sizing with text scaling */
+.button {
+  width: var(--bid-button-width);
+  min-width: var(--bid-button-width);
+  font-size: calc(var(--fs-lg) * var(--text-scale-factor));
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+}
+
+.suitButton {
+  width: var(--suit-button-size);
+  height: var(--suit-button-size);
+  font-size: calc(var(--fs-xl) * var(--text-scale-factor));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive gaps using tokens */
+.suitSelection {
+  gap: var(--space-sm);
+}
+
+.actions {
+  gap: var(--space-sm);
+}
+
+.section {
+  padding: var(--space-md);
+}
+
+.numberDisplay {
+  min-width: var(--bid-display-width);
+  height: var(--bid-history-height);
+}
+
+.textPrimary {
+  font-size: calc(var(--fs-xl) * var(--text-scale-factor));
+}
+
+.textLarge {
+  font-size: calc(var(--fs-2xl) * var(--text-scale-factor));
+}
+
+.stepButton {
+  width: var(--bid-button-size);
+  height: var(--bid-button-size);
+}
+
+.numberText {
+  font-size: calc(var(--fs-3xl) * var(--text-scale-factor));
+}
+
+.numberAbove {
+  top: calc(var(--bid-number-offset) * -1);
+}
+
+.numberBelow {
+  top: var(--bid-number-offset);
+}
+
+.shadowGlow {
+  box-shadow: var(--shadow-glow-md);
+}
+
+/* History table responsive design */
+.historyTable {
+  width: 100%;
+  font-size: calc(var(--fs-base) * var(--text-scale-factor) * var(--table-density));
+  container-type: inline-size;
+}
+
+/* Responsive table using container queries */
+@container (max-width: 40rem) {
+  .historyTable {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .historyTable tbody {
+    display: grid;
+    gap: var(--space-sm);
+  }
+  
+  .historyTable tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xs);
+    padding: var(--space-xs);
+    background: rgba(51, 65, 85, 0.5);
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* Mobile breakpoint for vertical stacking */
+@media (max-width: 640px) {
+  .contentGrid {
+    flex-direction: column;
+  }
+  
+  .suitsSection,
+  .currentSection {
+    flex: 1 1 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  /* Stack suit buttons 2x2 on mobile */
+  .suitSelection {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+  
+  /* Center current bid section content */
+  .currentSection {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* Extreme mobile handling */
+@media (max-width: 480px) {
+  .modalContainer {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 320px) {
+  .modalContainer {
+    min-width: 95vw;
+  }
+}
+
+/* Button states */
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-drop-lg);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Suit symbol animation */
+.suitSymbol {
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.suitButton:hover .suitSymbol {
+  transform: scale(1.1);
+}
+
+/* Number animations */
+.number {
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+/* Pass button special styling */
+.passButton {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.passButton:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.8);
+}
+
+/* Double/Redouble buttons */
+.doubleButton {
+  background: rgba(251, 146, 60, 0.15);
+  border-color: rgba(251, 146, 60, 0.5);
+}
+
+.doubleButton:hover:not(:disabled) {
+  background: rgba(251, 146, 60, 0.25);
+  border-color: rgba(251, 146, 60, 0.8);
+}
+
+.redoubleButton {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+.redoubleButton:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.25);
+  border-color: rgba(220, 38, 38, 0.8);
+}

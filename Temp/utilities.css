@@ -1,0 +1,10 @@
+/* Utility Classes */
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    padding: var(--space-sm);
+  }
+}

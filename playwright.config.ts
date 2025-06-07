@@ -23,7 +23,7 @@ export default defineConfig({
     ['json', { outputFile: 'test-results/results.json' }]
   ],
   /* Global setup */
-  globalSetup: require.resolve('./tests/global-setup.ts'),
+  globalSetup: './tests/global-setup.ts',
   
   /* Shared settings for all the projects below */
   use: {
